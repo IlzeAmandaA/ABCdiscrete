@@ -20,7 +20,7 @@ class Evolution():
         for i, val in enumerate(b_prime):
             if self.type == 'mutation':
                 b_prime[i]=self.bit_flip(val)
-            elif self.type == 'm_cross':
+            elif self.type == 'mutation_cross':
                 pass #to be implemented
         return b_prime
 

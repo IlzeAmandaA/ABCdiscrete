@@ -22,7 +22,7 @@ class Metropolis():
         self.likelihood_bprime = None
         self.prior_bprime = None
 
-        #self.best_b = (None, None)
+        self.best_b = (None, None)
 
 
 
@@ -45,17 +45,17 @@ class Metropolis():
                 self.likelihood_b = self.likelihood_bprime
                 self.prior_b = self.prior_bprime
 
-            # self.store_best(b)
+            self.store_best(b)
             generated.append(b)
 
             if i%self.evaluate==0:
                 #estimate phi
-                phi = self.estimate_phi(np.array(generated))
+                # phi = self.estimate_phi(np.array(generated))
                 #compute the difference between phi and mu
-                error=self.model.evaluate(phi)
+
+                error=self.model.evaluate(b)
                 print('Error at iteration {} is {}'.format(i, error))
                 performance.append(error)
-
 
         return generated, performance
 
@@ -90,17 +90,18 @@ class Metropolis():
         return np.exp(p)
 
 
-    def estimate_phi(self, simulated_data):
-        return simulated_data.sum(axis=0) / float(simulated_data.shape[0])
 
-    # def store_best(self, b):
-    #     """
-    #     Function to store the b with the highest likelihood
-    #     :param b: np.array
-    #     :return: b with the highest likelihood
-    #     """
-    #     if self.best_b[0]==None:
-    #         self.best_b = (self.likelihood_b, b)
-    #     elif self.best_b[0]< self.likelihood_b:
-    #         self.best_b = (self.likelihood_b, b)
-    #
+    def store_best(self, b):
+        """
+        Function to store the b with the highest likelihood
+        :param b: np.array
+        :return: b with the highest likelihood
+        """
+        if self.best_b[0]==None:
+            self.best_b = (self.likelihood_b, b)
+        elif self.best_b[0]< self.likelihood_b:
+            self.best_b = (self.likelihood_b, b)
+
+
+    # def estimate_phi(self, simulated_data):
+    #     return simulated_data.sum(axis=0) / float(simulated_data.shape[0])

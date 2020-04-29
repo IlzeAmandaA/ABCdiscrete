@@ -20,7 +20,7 @@ from utils.visualization import create_plot
 if __name__ == '__main__':
 
     #possible transformation kernels
-    transformation_kernels = ['mutation'] #, 'mutation_cross']
+    transformation_kernels = ['mutation', 'mutation_cross']
 
     #model settings
     diseases = 20
@@ -29,14 +29,14 @@ if __name__ == '__main__':
 
     #experiment settings
     transformation_p = 0.1
-    number_iterations = 100000
-    num_repetitions = 40
+    number_iterations = 2000
+    num_repetitions = 3
 
     results_all = {}
 
     for transformation in transformation_kernels:
-        print('---- Selected {} as transformation kernel ----'.format(transformation))
-        results_dir = '../results/'
+        print('\n---- Selected {} as transformation kernel ----\n'.format(transformation))
+        results_dir = '../results/benchmark/'
         results_tf= {}
         results_all[transformation] = {}
 
@@ -48,16 +48,24 @@ if __name__ == '__main__':
 
             #initialze experiment settings
             model=BenchmarkStren(diseases, findings)
-            print(model.b_truth)
-            print(model.mu)
+            #print(model.b_truth)
 
             #initialize MCMC settings
-            alg = Metropolis(model, number_iterations, transformation, transformation_p)
+            alg = Metropolis(model=model, num_iterations=number_iterations, prob_trans=transformation_p, transition_type=transformation)
 
             #run the MCMC algorithm
             data, error = alg.run()
 
-            results_tf['rep'+str(rep)]=error
+            textfile = open(results_dir+transformation+'_benchmark.txt', 'a+')
+            textfile.write('------------------------------------------------\n')
+            textfile.write('Iteration {}\n'.format(rep))
+            textfile.write('\n b truth\n')
+            textfile.write(str([int(n) for n in model.b_truth]))
+            textfile.write('\n best simulated b\n')
+            textfile.write(str([int(n) for n in alg.best_b[1]]))
+            textfile.write('\n\n')
+
+            results_tf['rep'+str(rep)]=error 
 
 
         #store results
@@ -69,10 +77,13 @@ if __name__ == '__main__':
         results_all[transformation]['mean']=error_mean
         results_all[transformation]['std'] = error_std
 
+
     pkl.dump(results_all, open(results_dir+'results_benchmark.pkl', 'wb'))
 
-    #create plots
+    # create plots
     create_plot(results_all, results_dir)
+
+
 
 
 
