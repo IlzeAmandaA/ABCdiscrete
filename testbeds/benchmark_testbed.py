@@ -1,7 +1,6 @@
 import numpy as np
 import itertools
-from utils.distributions import likelihood, prior
-from tqdm import tqdm
+from utils.distributions import likelihood
 
 """
 Benchmark implementation following the design of Strens' 2003 Paper
@@ -76,38 +75,4 @@ class BenchmarkStren():
             if bl != self.b_truth[idx]:
                 distance+=1
         return distance
-
-
-    # def estimate_mu(self):
-    #     """
-    #     Function to compute mu_l for every disease l
-    #     :return: np.array, mu, probabilities
-    #     """
-    #     print('Estimating mu by exhaustive evaluation')
-    #     combinations = self.generate_combinations()
-    #
-    #     posterior = [] #approximate the posterior for every generated b
-    #     for b in tqdm(combinations):
-    #         p = 0.
-    #         for idx,f in enumerate(self.findings):
-    #             p += np.log(likelihood(self.q_i0, self.q_il, b,idx,f))
-    #         posterior.append(np.exp(p) * prior(b, self.p_l))  # should i better convert this to sum of logs and then exp
-    #
-    #     mu = []
-    #     for i in range(self.m):
-    #         bl = combinations[:, i] == 1  # create a mask
-    #         bl_mu = np.array([b for a, b in zip(bl, posterior) if a])
-    #         mu_l = np.mean(bl_mu)
-    #         mu.append(mu_l)
-    #
-    #     return np.array(mu)
-
-
-    # def evaluate(self, phi):
-    #     """
-    #     Function to evaluate the difference between the true disease distribution (mu) and simulated samples (phi)
-    #     :param phi: np.array, simulated samples probabilities
-    #     :return: difference (zero when phi=mu, positive otherwise)
-    #     """
-    #     return np.sum((self.mu - phi) * (np.log2(self.mu) - np.log2(phi)))
 

@@ -35,7 +35,7 @@ class Metropolis():
 
         b = np.random.binomial(1,.5,self.model.m) # np.zeros(self.model.m) #b initial
 
-        for i in range(self.iter):
+        for i in tqdm(range(self.iter)):
             b_prime = self.transition.mutation(b) #sample b'
 
             alpha = min(1,self.ratio(b_prime, b))
@@ -48,7 +48,7 @@ class Metropolis():
 
             if i%self.evaluate==0:
                 error=self.model.evaluate(b)
-                print('Error at iteration {} is {}'.format(i, error))
+                # print('Error at iteration {} is {}'.format(i, error))
                 performance.append(error)
 
         return generated, performance
@@ -61,7 +61,7 @@ class Metropolis():
         generated = []
         performance = []
 
-        for i in range(self.iter):
+        for i in tqdm(range(self.iter)):
             b1_, b2_ = self.transition.combi(b1, b2)
 
             if self.acceptance_prob(b1_,b2_, b1, b2):
@@ -86,7 +86,7 @@ class Metropolis():
 
             if i % self.evaluate == 0:
                 error = self.model.evaluate(b1) #maybe change this see
-                print('Error at iteration {} is {}'.format(i, error))
+                # print('Error at iteration {} is {}'.format(i, error))
                 performance.append(error)
 
         return generated, performance
