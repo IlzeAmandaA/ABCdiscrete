@@ -28,8 +28,8 @@ if __name__ == '__main__':
 
 
     #experiment settings
-    number_iterations = 1000000
-    num_repetitions = 40
+    number_iterations = 100000
+    num_repetitions = 20 #40
 
     results_all = {}
     results_dir = 'results/benchmark/'
