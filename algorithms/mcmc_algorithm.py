@@ -8,8 +8,8 @@ Implementation of Metropolis algorithm
 """
 
 class Metropolis():
-    def __init__(self, model, num_iterations=1000, transition_type=None, evaluate=500,
-                 p_flip=0.1, p_cross=0.5):
+    def __init__(self, model, num_iterations=1000, transition_type=None, evaluate=250,
+                 p_flip=0.1, p_cross=0.5, temperature=False):
 
         self.iter = num_iterations
         self.transition_type = transition_type
@@ -17,11 +17,10 @@ class Metropolis():
 
         self.model = model
         self.run = self.run_mutation if transition_type=='mutation' else self.run_combi
-        self.transition = Evolution(p_flip=p_flip,p_cross=p_cross)
+        self.transition = Evolution(p_flip=p_flip,p_cross=p_cross, t=temperature)
 
         self.best_b = (None, None)
         self.b_lh=None
-
 
 
     def run_mutation(self):
@@ -35,8 +34,8 @@ class Metropolis():
 
         b = np.random.binomial(1,.5,self.model.m) # np.zeros(self.model.m) #b initial
 
-        for i in tqdm(range(self.iter)):
-            b_prime = self.transition.mutation(b) #sample b'
+        for i in tqdm(range(1,self.iter+1)):
+            b_prime = self.transition.mutation(b,i) #sample b'
 
             alpha = min(1,self.ratio(b_prime, b))
             if alpha > np.random.uniform(0,1):
@@ -61,8 +60,8 @@ class Metropolis():
         generated = []
         performance = []
 
-        for i in tqdm(range(self.iter)):
-            b1_, b2_ = self.transition.combi(b1, b2)
+        for i in tqdm(range(1,self.iter+1)):
+            b1_, b2_ = self.transition.combi(b1, b2, i)
 
             if self.acceptance_prob(b1_,b2_, b1, b2):
                 alpha=1

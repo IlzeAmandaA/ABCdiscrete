@@ -2,6 +2,7 @@ import numpy as np
 import pickle as pkl
 import os
 import sys
+import argparse
 
 """
 Main file to run to obtain the results of the benchmark experiments 
@@ -16,6 +17,16 @@ from algorithms.mcmc_algorithm import Metropolis
 from utils.visualization import create_plot
 
 
+parser = argparse.ArgumentParser(description='ABC models for discrete data')
+parser.add_argument('--p_mut', type=float, default=0.1, metavar='float',
+                    help='mutation probability')
+parser.add_argument('--p_cross', type=float, default=0.5, metavar='float',
+                    help='crossover probability')
+parser.add_argument('--temp', action='store_true', default=False,
+                    help='initialize temperature')
+
+args = parser.parse_args()
+
 
 if __name__ == '__main__':
 
@@ -28,14 +39,20 @@ if __name__ == '__main__':
 
 
     #experiment settings
-    number_iterations = 100000
-    num_repetitions = 20 #40
+    number_iterations = 10000
+    num_repetitions = 40 #40
 
     results_all = {}
     results_dir = 'results/benchmark/'
 
+    if args.temp:
+        filename = results_dir + '_p_mut_' + str(args.p_mut) + '_temp_'
+    else:
+        filename = results_dir + '_p_mut_' + str(args.p_mut) +'_'
+
     for transformation in transformation_kernels:
         print('\n---- Selected {} as transformation kernel ----\n'.format(transformation))
+        print('---- Initial p_mut {}, p_cross {}, decrease overtime: {} ----\n'.format(args.p_mut, args.p_cross, args.temp))
         results_tf= {}
         results_all[transformation] = {}
 
@@ -49,12 +66,14 @@ if __name__ == '__main__':
             model=BenchmarkStren(diseases, findings)
 
             #initialize MCMC settings
-            alg = Metropolis(model=model, num_iterations=number_iterations, transition_type=transformation)
+            alg = Metropolis(model=model, p_flip=args.p_mut,
+                             num_iterations=number_iterations, transition_type=transformation,
+                             temperature=args.temp)
 
             #run the MCMC algorithm
             data, error = alg.run()
 
-            textfile = open(results_dir+transformation+'_benchmark.txt', 'a+')
+            textfile = open(filename + transformation + '_benchmark.txt', 'a+')
             textfile.write('------------------------------------------------\n')
             textfile.write('Iteration {}\n'.format(rep))
             textfile.write('\n b truth\n')
@@ -77,10 +96,10 @@ if __name__ == '__main__':
         results_all[transformation]['std'] = error_std
 
 
-    pkl.dump(results_all, open(results_dir+'results_benchmark.pkl', 'wb'))
+    pkl.dump(results_all, open(filename + 'results_benchmark.pkl', 'wb'))
 
     # create plots
-    create_plot(results_all, results_dir)
+    create_plot(results_all, filename)
 
 
 
