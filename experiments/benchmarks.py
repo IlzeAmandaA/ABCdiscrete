@@ -39,7 +39,7 @@ if __name__ == '__main__':
 
 
     #experiment settings
-    number_iterations = 10000
+    number_iterations = 20000
     num_repetitions = 40 #40
 
     results_all = {}

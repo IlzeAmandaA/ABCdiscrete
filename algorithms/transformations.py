@@ -10,7 +10,7 @@ class Evolution():
         self.p_flip = p_flip
         self.p_cross = p_cross
         self.temp = t
-        self.max_decrease = self.p_flip/100000 if t else None
+        self.max_decrease = self.p_flip/10000 if t else None
 
     def mutation(self,b, iter):
         """
