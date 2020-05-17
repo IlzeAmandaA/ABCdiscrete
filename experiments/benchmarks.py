@@ -9,7 +9,7 @@ Main file to run to obtain the results of the benchmark experiments
 For code to run please define the correct PYTHONPATH to where the repository is located 
 """
 
-PYTHONPATH = '/home/ilze/PycharmProjects/MasterThesis/ABCdiscrete/experiments'
+PYTHONPATH = '/home/iaa510/ABCdiscrete/experiments'
 sys.path.append(os.path.dirname(os.path.expanduser(PYTHONPATH)))
 
 from testbeds.benchmark_testbed import BenchmarkStren
@@ -39,7 +39,7 @@ if __name__ == '__main__':
 
 
     #experiment settings
-    number_iterations = 20000
+    number_iter = 100000
     num_repetitions = 40 #40
 
     results_all = {}
@@ -67,7 +67,7 @@ if __name__ == '__main__':
 
             #initialize MCMC settings
             alg = Metropolis(model=model, p_flip=args.p_mut,
-                             num_iterations=number_iterations, transition_type=transformation,
+                             num_iterations=number_iter, transition_type=transformation,
                              temperature=args.temp)
 
             #run the MCMC algorithm
