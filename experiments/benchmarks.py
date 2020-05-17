@@ -46,9 +46,9 @@ if __name__ == '__main__':
     results_dir = 'results/benchmark/'
 
     if args.temp:
-        filename = results_dir + '_p_mut_' + str(args.p_mut) + '_temp_'
+        filename = results_dir + '_p_mut_' + str(args.p_mut) + '_temp' + '_p_cross_' + str(args.p_cross) +'_'
     else:
-        filename = results_dir + '_p_mut_' + str(args.p_mut) +'_'
+        filename = results_dir + '_p_mut_' + str(args.p_mut) + '_p_cross_' + str(args.p_cross)+'_'
 
     for transformation in transformation_kernels:
         print('\n---- Selected {} as transformation kernel ----\n'.format(transformation))
@@ -66,7 +66,7 @@ if __name__ == '__main__':
             model=BenchmarkStren(diseases, findings)
 
             #initialize MCMC settings
-            alg = Metropolis(model=model, p_flip=args.p_mut,
+            alg = Metropolis(model=model, p_flip=args.p_mut, p_cross=args.p_cross,
                              num_iterations=number_iter, transition_type=transformation,
                              temperature=args.temp)
 

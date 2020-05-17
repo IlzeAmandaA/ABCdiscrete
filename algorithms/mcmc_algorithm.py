@@ -8,8 +8,8 @@ Implementation of Metropolis algorithm
 """
 
 class Metropolis():
-    def __init__(self, model, num_iterations, transition_type=None, evaluate=400,
-                 p_flip=0.1, p_cross=0.5, temperature=False):
+    def __init__(self, model, num_iterations, p_flip, p_cross,
+                 transition_type, evaluate=400, temperature=False):
 
         self.iter = num_iterations
         self.transition_type = transition_type
