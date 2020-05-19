@@ -6,15 +6,15 @@ Functions for data visualization purposes
 
 def create_plot(data_dict, store):
 
-    formating=[('o', 'dotted'), ('^','dashed')]
+    formating=[('--or'), (':^g'), ('-.vb')]
 
     for i,transformation in enumerate(data_dict):
         results = data_dict[transformation]
         y = results['mean']
         std = results['std']
-        x = [i*500 for i in range(len(y))]
+        x = [i*250 for i in range(len(y))]
         assert len(x)==len(y)==len(std), 'The number of instances fo not match, check create plot function'
-        plt.errorbar(x, results['mean'], yerr=results['std'], fmt=formating[i][0], linestyle=formating[i][1],label=transformation)
+        plt.errorbar(x, results['mean'], yerr=results['std'], fmt=formating[i],label=transformation)
 
     plt.xlabel('iterations')
     plt.ylabel('error')

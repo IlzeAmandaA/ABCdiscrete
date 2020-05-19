@@ -20,5 +20,5 @@ def prior(b, p_l):
     :param b: binary vector (np.array)
     :return: probability
     """
-    return np.exp((np.sum(b * np.log(p_l) + (1 - b) * np.log(1 - p_l))))  # added the exp to get back to x
+    return np.sum(b * np.log(p_l) + (1 - b) * np.log(1 - p_l))
 

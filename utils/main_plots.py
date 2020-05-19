@@ -4,16 +4,16 @@ import matplotlib.pyplot as plt
 Code for loading the pickle file to create different version of the plots 
 """
 
-data = pkl.load(open('results/benchmark/results_benchmark.pkl', 'rb'))
+data = pkl.load(open('results/benchmark/_p_mut_0.5_temp_p_cross_.pkl', 'rb'))
 
 formating =[('o', 'dotted'), ('^' ,'dashed')]
 plt.figure(figsize=(16,6))
 
 for i ,transformation in enumerate(data):
     results = data[transformation]
-    y = list(results['mean'])[0:15]
-    std = list(results['std'])[0:15]
-    x = [ i*500 for i in range(len(y))]
+    y = list(results['mean'])
+    std = list(results['std'])
+    x = [ i*400 for i in range(len(y))]
     assert len(x)==len(y )==len(std), 'The number of instances fo not match, check create plot function'
     plt.errorbar(x, y, yerr=std,
                  fmt=formating[i][0], linestyle=formating[i][1],

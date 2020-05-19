@@ -14,9 +14,8 @@ class BenchmarkStren():
         self.p_l = np.random.uniform(0, 0.5, self.m)  # disease prior
         self.q_i0 = np.random.uniform(0, 1, self.f)  # leak probability
         self.q_il = self.association()  # association between disease l and finding i (finding, disease)
-        self.b_truth = self.sample_b() #sample b_truth from disease prior
-        self.findings = self.sample_f() #generate findings given b_truth
-        # self.mu = self.estimate_mu()
+        self.b_truth = None #sample b_truth from disease prior
+        self.findings = None #generate findings given b_truth
 
     def association(self):
         """
@@ -42,7 +41,8 @@ class BenchmarkStren():
         for l in range(self.m):
             if self.p_l[l] >= np.random.uniform(0,1):
                 b_truth[l] = 1
-        return b_truth
+
+        self.b_truth = b_truth
 
     def sample_f(self):
         """
@@ -53,7 +53,7 @@ class BenchmarkStren():
         for idx in range(self.f):
             if likelihood(self.q_i0, self.q_il, self.b_truth, idx)>= np.random.uniform(0,1):
                 findings[idx]=1
-        return findings
+        self.findings = findings
 
 
     def generate_combinations(self):
@@ -64,7 +64,7 @@ class BenchmarkStren():
         return np.array([list(l) for l in itertools.product([0, 1], repeat=self.m)])
 
 
-    def evaluate(self, b):
+    def loss(self, b):
         """
         Hamming distance to evaluate two strings of bits (b_truth and generated b)
         :param b: np.array
@@ -75,4 +75,15 @@ class BenchmarkStren():
             if bl != self.b_truth[idx]:
                 distance+=1
         return distance
+
+    def initialize(self, N):
+        """
+        Generate a population of data
+        :return: np.array
+        """
+        population = []
+        for i in range(N):
+            population.append(np.random.binomial(1, .5, self.m))
+
+        return np.array(population)
 

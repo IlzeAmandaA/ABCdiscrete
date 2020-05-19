@@ -31,16 +31,16 @@ args = parser.parse_args()
 if __name__ == '__main__':
 
     #possible transformation kernels
-    transformation_kernels = ['mutation', 'combi']
+    transformation_kernels = ['xor','mutation','cross']
 
     #model settings
     diseases = 20
     findings = 80
 
-
     #experiment settings
-    number_iter = 100000
-    num_repetitions = 40 #40
+    number_iter = 20000
+    num_repetitions = 10 #40
+    population = 1000
 
     results_all = {}
     results_dir = 'results/benchmark/'
@@ -49,6 +49,11 @@ if __name__ == '__main__':
         filename = results_dir + '_p_mut_' + str(args.p_mut) + '_temp' + '_p_cross_' + str(args.p_cross) +'_'
     else:
         filename = results_dir + '_p_mut_' + str(args.p_mut) + '_p_cross_' + str(args.p_cross)+'_'
+
+
+    np.random.seed(0)
+    model = BenchmarkStren(diseases, findings)
+    alg = Metropolis(model=model, p_flip=args.p_mut, p_cross=args.p_cross, num_iterations=number_iter, temperature=args.temp)
 
     for transformation in transformation_kernels:
         print('\n---- Selected {} as transformation kernel ----\n'.format(transformation))
@@ -60,18 +65,15 @@ if __name__ == '__main__':
         for rep in range(num_repetitions):
             print('Currently at {}/{}'.format(rep, num_repetitions))
 
-            np.random.seed(rep)
+            np.random.seed(rep+1)
 
-            #initialze experiment settings
-            model=BenchmarkStren(diseases, findings)
+            model.sample_b()
+            model.sample_f()
+            population = model.initialize(1000)
 
-            #initialize MCMC settings
-            alg = Metropolis(model=model, p_flip=args.p_mut, p_cross=args.p_cross,
-                             num_iterations=number_iter, transition_type=transformation,
-                             temperature=args.temp)
 
             #run the MCMC algorithm
-            data, error = alg.run()
+            error = alg.run(population, transformation)
 
             textfile = open(filename + transformation + '_benchmark.txt', 'a+')
             textfile.write('------------------------------------------------\n')
@@ -83,8 +85,7 @@ if __name__ == '__main__':
             textfile.write('\n corresponding likelihood : {}'.format(alg.best_b[1]))
             textfile.write('\n\n')
 
-            results_tf['rep'+str(rep)]=error 
-
+            results_tf['rep'+str(rep)]=error
 
         #store results
         result_matrix = np.array([results for results in results_tf.values()])

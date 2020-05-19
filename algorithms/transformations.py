@@ -18,23 +18,24 @@ class Evolution():
         :param b: string of bits
         :return: mutated b
         """
-        b_prime  = b.copy()
-        for idx, bit in enumerate(b):
+        b_prime  = b[0].copy()
+        for idx, bit in enumerate(b[0]):
             b_prime[idx] = self.bit_flip(bit, iter)
 
-        return b_prime
+        return [b_prime]
 
-    def combi(self, b1, b2, iter):
+    def combi(self, b, iter):
         """
         Combination (Cross-over and mutation)
         :param b1: string of bits
         :param b2: string of bits
         :return: 2 children, crossed over and mutated
         """
-        c1, c2 = self.cross_over(b1,b2)
-        c1_prime = self.mutation(c1,iter)
-        c2_prime = self.mutation(c2,iter)
-        return c1_prime, c2_prime
+        c1, c2 = self.cross_over(b)
+        c1_prime = self.mutation([c1],iter)
+        c2_prime = self.mutation([c2],iter)
+        return (c1_prime[0], c2_prime[0])
+
 
     def bit_flip(self, val, iter):
         """
@@ -47,14 +48,23 @@ class Evolution():
             self.p_flip -= (self.max_decrease * 1/iter)
         return bit
 
-    def cross_over(self, b1, b2):
-        c1 = b1.copy()
-        c2 = b2.copy()
-        for idx,bit in enumerate(b1):
+    def cross_over(self, bs):
+        c1 = bs[0].copy()
+        c2 = bs[1].copy()
+        for idx,bit in enumerate(bs[0]):
             if np.random.uniform(0,1) <= self.p_cross:
                 c2[idx] = bit
-                c1[idx] = b2[idx]
+                c1[idx] = bs[1][idx]
         return c1, c2
+
+    def xor(self, bs):
+        b1, b2, b3 = bs[0], bs[1], bs[2]
+        return b1 * np.logical_or(b2,b3)
+
+    def xom(self, bs, iter):
+        return self.mutation([self.xor(bs)], iter)
+
+
 
 
 
