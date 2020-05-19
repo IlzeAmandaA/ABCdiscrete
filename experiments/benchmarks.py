@@ -38,8 +38,8 @@ if __name__ == '__main__':
     findings = 80
 
     #experiment settings
-    number_iter = 20000
-    num_repetitions = 10 #40
+    number_iter = 80000
+    num_repetitions = 20 #40
     population = 1000
 
     results_all = {}
