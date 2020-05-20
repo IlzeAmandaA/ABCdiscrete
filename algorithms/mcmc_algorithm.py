@@ -91,7 +91,7 @@ class Metropolis():
 
     def posterior(self, b, store=False):
         llh = self.sum_loglikelihood(b)
-        if store: self.b_lh.append(llh)
+        if store: self.b_lh.append(np.exp(llh))
         return np.exp(llh + prior(b, self.model.p_l))
 
 

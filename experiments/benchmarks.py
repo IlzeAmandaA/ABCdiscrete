@@ -38,8 +38,8 @@ if __name__ == '__main__':
     findings = 80
 
     #experiment settings
-    number_iter = 80000
-    num_repetitions = 20 #40
+    number_iter = 100000 #100000
+    num_repetitions = 20 #20
     population = 1000
 
     results_all = {}
@@ -60,7 +60,7 @@ if __name__ == '__main__':
         print('---- Initial p_mut {}, p_cross {}, decrease overtime: {} ----\n'.format(args.p_mut, args.p_cross, args.temp))
         results_tf= {}
         results_all[transformation] = {}
-
+        correct = 0
 
         for rep in range(num_repetitions):
             print('Currently at {}/{}'.format(rep, num_repetitions))
@@ -78,15 +78,23 @@ if __name__ == '__main__':
             textfile = open(filename + transformation + '_benchmark.txt', 'a+')
             textfile.write('------------------------------------------------\n')
             textfile.write('Iteration {}\n'.format(rep))
-            textfile.write('\n b truth\n')
-            textfile.write(str([int(n) for n in model.b_truth]))
-            textfile.write('\n best simulated b\n')
-            textfile.write(str([int(n) for n in alg.best_b[0]]))
-            textfile.write('\n corresponding likelihood : {}'.format(alg.best_b[1]))
+            if np.array_equal(alg.best_b[0], model.b_truth):
+                correct += 1
+                textfile.write('---MATCH---')
+                textfile.write('\n b truth\n')
+                textfile.write(str([int(n) for n in model.b_truth]))
+                textfile.write('\n best simulated b\n')
+                textfile.write(str([int(n) for n in alg.best_b[0]]))
+                textfile.write('\n corresponding likelihood : {}'.format(alg.best_b[1]))
+            else:
+                mismatch = model.loss(alg.best_b[0])
+                textfile.write('--MISMATCH of {}--'.format(mismatch))
+                textfile.write('\n corresponding likelihood : {}'.format(alg.best_b[1]))
             textfile.write('\n\n')
 
             results_tf['rep'+str(rep)]=error
 
+        textfile.write('Number of correct parameter settings {}/{}'.format(correct,num_repetitions))
         #store results
         result_matrix = np.array([results for results in results_tf.values()])
         error_mean = np.mean(result_matrix, axis=0)
