@@ -9,7 +9,7 @@ Main file to run to obtain the results of the benchmark experiments
 For code to run please define the correct PYTHONPATH to where the repository is located 
 """
 
-PYTHONPATH = '/home/iaa510/ABCdiscrete/experiments'
+PYTHONPATH = '/home/ilze/PycharmProjects/MasterThesis/ABCdiscrete/experiments'
 sys.path.append(os.path.dirname(os.path.expanduser(PYTHONPATH)))
 
 from testbeds.benchmark_testbed import BenchmarkStren
@@ -53,6 +53,7 @@ if __name__ == '__main__':
 
     np.random.seed(0)
     model = BenchmarkStren(diseases, findings)
+    print('Disease prior {} \n'.format(model.p_l))
     alg = Metropolis(model=model, p_flip=args.p_mut, p_cross=args.p_cross, num_iterations=number_iter, temperature=args.temp)
 
     for transformation in transformation_kernels:

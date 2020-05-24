@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 Code for loading the pickle file to create different version of the plots 
 """
 
-data = pkl.load(open('results/benchmark/_p_mut_0.1_p_cross_0.5_results_benchmark.pkl', 'rb'))
+data = pkl.load(open('/home/ilze/MasterThesis/results/benchmarks/may23/_p_mut_0.01_p_cross_0.05_results_benchmark.pkl', 'rb'))
 
 formating={'mutation': '--or', 'cross': ':^g', 'xor':'-.vb'}
 plt.figure(figsize=(16,6))
@@ -25,5 +25,5 @@ plt.xlabel('iterations')
 plt.ylabel('error')
 plt.grid(True)
 plt.legend(loc=0)
-plt.savefig('/home/ilze/MasterThesis/results/benchmarks/may20/' +'_p_mut_0.1_p_cross_0.5.png')
+plt.savefig('/home/ilze/MasterThesis/results/benchmarks/may23/' +'_p_mut_0.01_p_cross_0.05.png')
 plt.show()

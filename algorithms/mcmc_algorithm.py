@@ -127,7 +127,7 @@ class Metropolis():
             if b1:
                 if self.best_b[1]<self.b_lh[0]:
                     self.best_b = (b[0], self.b_lh[0])
-                elif len(b)>1:
+                elif len(b)>1 and self.best_b[1]<self.b_lh[1]:
                     self.best_b = (b[1], self.b_lh[1])
 
 
