@@ -12,7 +12,7 @@ parser.add_argument('--pflip', type=float, default=0.1, metavar='float',
                     help='bitflip probability')
 parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
-parser.add_argument('--eval', type=int, default=20, metavar='int',
+parser.add_argument('--eval', type=int, default=5, metavar='int',
                     help = 'number of evaluations')
 
 args = parser.parse_args()
