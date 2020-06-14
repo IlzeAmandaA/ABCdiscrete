@@ -4,7 +4,7 @@ from algorithms.mcmc_algorithm import EvolutionaryMC
 from utils.func_support import *
 
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
-parser.add_argument('--steps', type=int, default=1000000, metavar='int',
+parser.add_argument('--steps', type=int, default=100000, metavar='int',
                     help='evaluation steps')
 parser.add_argument('--seed', type=int, default =1, metavar='int',
                     help='seed')
@@ -12,7 +12,7 @@ parser.add_argument('--pflip', type=float, default=0.1, metavar='float',
                     help='bitflip probability')
 parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
-parser.add_argument('--eval', type=int, default=40, metavar='int',
+parser.add_argument('--eval', type=int, default=20, metavar='int',
                     help = 'number of evaluations')
 
 args = parser.parse_args()
