@@ -12,7 +12,7 @@ def text_output(method, iter, solution, simulation):
     textfile = open('results/benchmark/'+ method + '_benchmark.txt', 'a+')
     textfile.write('------------------------------------------------\n')
     textfile.write('Iteration {}\n'.format(iter))
-    if solution == simulation.model.b_truth:
+    if np.array_equal(solution, simulation.model.b_truth):
         textfile.write('---MATCH---')
     else:
         textfile.write('--MISMATCH --')
@@ -26,8 +26,8 @@ def prepare_data(dict):
     overall={}
     for key, values in dict.items():
         overall[key] = {}
-        overall['mean'] = np.mean(np.asarray(values), axis=0)
-        overall['std'] = np.std(np.asarray(values), axis=0)
+        overall[key]['mean'] = np.mean(np.asarray(values), axis=0)
+        overall[key]['std'] = np.std(np.asarray(values), axis=0)
 
     return overall
 

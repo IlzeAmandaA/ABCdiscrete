@@ -11,6 +11,7 @@ class Proposals():
         new = chain.copy()
         for id, bit in enumerate(chain):
             new[id] = self.bit_flip(bit)
+        return new
 
     def crossover(self, chain_i, chain_j):
         c1 = chain_i.copy()

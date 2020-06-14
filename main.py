@@ -12,24 +12,24 @@ parser.add_argument('--pflip', type=float, default=0.1, metavar='float',
                     help='bitflip probability')
 parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
-parser.add_argument('evaluations', type=int, default=10, metavar='int',
+parser.add_argument('--eval', type=int, default=40, metavar='int',
                     help = 'number of evaluations')
 
 args = parser.parse_args()
 
-
-if '__name__' == '__main__':
+if __name__ == '__main__':
     np.random.seed(args.seed)
     #initialize the prior probability, leak probaility and association probaility
     simulation = EvolutionaryMC(BenchmarkStren(args.pflip, args.pcross))
 
     results = initialze_storage(simulation.model.settings)
 
-    for k in range(args.evaluations):
-        print('Currently at {}/{}'.format(k, args.evaluations))
+    for k in range(args.eval):
+        print('Currently at {}/{}'.format(k, args.eval))
         #initialize goal parameters and the corresponing data
         simulation.model.generate_parameters()
         simulation.model.generate_data()
+        simulation.compute_lh()
 
         #loop over possible proposal methods
         for method in simulation.model.settings:

@@ -22,7 +22,7 @@ class BenchmarkStren():
         self.findings = None #generate findings given b_truth
 
         self.proposals = Proposals(pflip, pcross)
-        self.settings = {'mut': 1., 'mut+crx': 2. / 3., 'mut+xor': 0.5}
+        self.settings = {'mut': 1., 'mut+crx': 2. / 3., 'mut+xor': 0.5} #
 
     def association(self):
         """
@@ -72,13 +72,12 @@ class BenchmarkStren():
         return np.sum(b * np.log(self.p_l) + (1 - b) * np.log(1 - self.p_l))
 
     def product_lh(self, b):
-        product = 0.
+        product = 1.
         for id, f in enumerate(self.findings):
-
             if f == 1:
-                product += (1-np.exp(self.llh(b,id)))
+                product *= (1-np.exp(self.llh(b,id)))
             else:
-                product += np.exp(self.llh(b,id))
+                product *= np.exp(self.llh(b,id))
         return product
 
 
@@ -89,7 +88,7 @@ class BenchmarkStren():
     def proposal(self, population, i, method):
         jprime=None
         j = None
-        if self.proposals[method] >= np.random.uniform(0,1):
+        if self.settings[method] >= np.random.uniform(0,1):
             iprime = self.proposals.mutation(population[i])  # sample using EA
 
         elif method == 'mut+xor':
@@ -97,7 +96,7 @@ class BenchmarkStren():
             iprime = self.proposals.xor(population[i], population[j], population[k])
 
         elif method == 'mut+crx':
-            j = self.sample(i, len(population))
+            j = self.sample(i, len(population))[0]
             iprime, jprime = self.proposals.crossover(population[i], population[j])
 
 
