@@ -3,12 +3,11 @@ from experiments.benchmark_model.proposals import Proposals
 
 
 """
-Main file to run to obtain the results of the benchmark_model experiments 
-For code to run please define the correct PYTHONPATH to where the repository is located 
+QMR-DT sample problem
 """
 
 
-class BenchmarkStren():
+class QMR_DT():
 
     def __init__(self, pflip, pcross):
 
@@ -18,11 +17,13 @@ class BenchmarkStren():
         self.p_l = np.random.uniform(0, 0.5, self.m)  # disease prior
         self.q_i0 = np.random.uniform(0, 1, self.f)  # leak probability
         self.q_il = self.association()  # association between disease l and finding i (finding, disease)
+
+
         self.b_truth = None #sample b_truth from disease prior
         self.findings = None #generate findings given b_truth
 
         self.proposals = Proposals(pflip, pcross)
-        self.settings = {'mut': 1., 'mut+crx': 2. / 3., 'mut+xor': 0.5} #
+        self.settings = {'mut': 1., 'mut+crx': 0.66 , 'mut+xor': 0.5} #
 
     def association(self):
         """
@@ -65,9 +66,8 @@ class BenchmarkStren():
 
     def prior(self, b):
         """
-        Function to estimate the prior probability of a given input string
         :param b: binary vector (np.array)
-        :return: probability
+        :return: log prior
         """
         return np.sum(b * np.log(self.p_l) + (1 - b) * np.log(1 - self.p_l))
 
@@ -91,12 +91,15 @@ class BenchmarkStren():
         if self.settings[method] >= np.random.uniform(0,1):
             iprime = self.proposals.mutation(population[i])  # sample using EA
 
+
         elif method == 'mut+xor':
             j, k = self.sample(i, len(population), 2)
+            assert j!=k, 'Check proposal xor method {} {}'.format(j,k)
             iprime = self.proposals.xor(population[i], population[j], population[k])
 
         elif method == 'mut+crx':
             j = self.sample(i, len(population))[0]
+            assert j!=i, 'Check proposal cross method'
             iprime, jprime = self.proposals.crossover(population[i], population[j])
 
 
@@ -113,8 +116,8 @@ class BenchmarkStren():
         return distance
 
 
-    def sample(self, j, max, size=1):
-        return np.random.choice([x for x in range(1, max) if x != j], size=size)
+    def sample(self, i, max, size=1):
+        return np.random.choice([x for x in range(1, max) if x != i], size=size, replace=False)
 
 
 

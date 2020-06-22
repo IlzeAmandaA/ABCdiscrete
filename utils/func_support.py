@@ -15,11 +15,13 @@ def text_output(method, iter, solution, simulation):
     if np.array_equal(solution, simulation.model.b_truth):
         textfile.write('---MATCH---')
     else:
-        textfile.write('--MISMATCH --')
+        textfile.write('--MISMATCH of {} --'.format(simulation.model.error(solution)))
     textfile.write('\n b truth\n')
     textfile.write(str([int(n) for n in simulation.model.b_truth]))
+    textfile.write('\n target posterior {} '.format(simulation.posterior(simulation.model.b_truth)))
     textfile.write('\n best simulated b\n')
     textfile.write(str([int(n) for n in solution]))
+    textfile.write('\n best posterior {} '.format(simulation.posterior(solution)))
     textfile.write('\n\n')
 
 def prepare_data(dict):
@@ -42,7 +44,7 @@ def plot(avg_dict, location):
         results = avg_dict[transformation]
         y = results['mean']
         std = results['std']
-        x = [i * 250 for i in range(len(y))]
+        x = [i * 500 for i in range(len(y))]
         assert len(x) == len(y) == len(std), 'The number of instances fo not match, check create plot function'
         plt.errorbar(x, results['mean'], yerr=results['std'], fmt=formating[transformation], label=transformation)
 
@@ -57,6 +59,27 @@ def plot(avg_dict, location):
 def create_plot(results, location):
     averages = prepare_data(results)
     plot(averages, location)
+
+def plot_pop(results, name):
+    formats = ['--or',':^g','-.vb']
+    formating = {key:formats[id] for id, key in enumerate(results)}
+
+    plt.figure(figsize=(16, 6))
+
+    for transformation in results:
+        y = results[transformation]
+        std = [0*i for i in range(len(y))]
+        x = [i * 500 for i in range(len(y))]
+        assert len(x) == len(y) == len(std), 'The number of instances fo not match, check create plot function'
+        plt.errorbar(x, y, yerr=std, fmt=formating[transformation], label=transformation)
+
+    plt.xlabel('iterations')
+    plt.ylabel(name)
+    plt.grid(True)
+    plt.legend(loc=0)
+    plt.savefig('results/benchmark/pop_'+ name + '_.png')
+    plt.show()
+
 
 
 

@@ -7,57 +7,78 @@ Implementation of Metropolis algorithm
 
 class EvolutionaryMC():
 
-    def __init__(self, model, nchains=12):
+    def __init__(self, model, nchains=50):
         self.model = model
         self.chains = [self.model.simulate() for n in range(nchains)] #list of nparray
-        self.lh_chains = None #list
+        self.target_chains = None #list #i think I can move it here
 
-    def compute_lh(self):
-        self.lh_chains = [self.model.product_lh(chain) for chain in self.chains]
+    # def compute_lh(self): #compute the target distribution
+    #     self.lh_chains = [self.model.product_lh(chain) for chain in self.chains]
+    #
+    def compute_target(self):
+        self.target_chains = [self.posterior(chain) for chain in self.chains]
 
     def run_mc(self, method, steps):
         #initialize the population
+        chains = self.chains.copy()
+        target_chains = self.target_chains.copy()
 
-        best_lh = max(self.lh_chains)
-        best_params = self.chains[max(range(len(self.lh_chains)), key=lambda i: self.lh_chains[i])]
+        best_target = max(target_chains)
+        best_params = chains[max(range(len(target_chains)), key=lambda i: target_chains[i])]
         fitHistory = []
+        fitDist = []
+        error = []
 
         #how long to run the chains
-        for n in tqdm(range(steps)):
-            for i in range(len(self.chains)): #this is not exaclty random  but if i update the entrie popluation is does mattter
+        for n in range(0,steps):
+            # for i in range(len(self.chains)):
+                #change this to uniform sampling method
+            i = np.random.randint(0,len(chains))
 
-                iprime, jprime, j = self.model.proposal(self.chains, i, method)
-                lh_iprime = self.model.product_lh(iprime)
-                alpha = self.metropolis_ratio(iprime, lh_iprime, i, jprime, j)
+            # for i in range(len(self.chains)): #this is not exaclty random  but if i update the entrie popluation is does mattter
+            iprime, jprime, j = self.model.proposal(chains, i, method)
+            # assert not np.array_equal(iprime,self.chains[i]), 'incorrect proposal iter {}  {}:{}'.format(n, iprime, self.chains[i])
+            target_iprime = self.posterior(iprime)
+            alpha = self.metropolis_ratio(target_iprime, i, jprime, j)
 
-                if alpha >= np.random.uniform(0,1):
-                    self.chains[i] = iprime
-                    self.lh_chains[i] = lh_iprime
+            if alpha >= np.random.uniform(0,1):
+                chains[i] = iprime
+                target_chains[i] = target_iprime
 
-                    if lh_iprime > best_lh:
-                        best_lh = lh_iprime
-                        best_params = iprime
+                if target_iprime >= best_target:
+                    best_target = target_iprime
+                    best_params = iprime
 
-            if n % 1000 == 0:
+            if n % 500 == 0:
                 fitHistory.append(self.model.error(best_params))
+                fitDist.append(best_target)
 
-        return best_params, fitHistory
+                error.append(self.pop_error(chains))
 
-    def metropolis_ratio(self, iprime, lh_iprime, i, jprime, j):
+
+        return best_params, fitHistory, fitDist, error
+
+    def pop_error(self, chains):
+        error = 0.
+        for chain in chains:
+            error += self.model.error(chain)
+        return error
+
+    def metropolis_ratio(self, post_iprime, i, jprime, j):
         if jprime is None:
-            return self.posterior(lh_iprime, iprime) / self.posterior(self.lh_chains[i], self.chains[i])
+            return post_iprime / self.posterior(self.chains[i])
         else:
-            c1 = self.posterior(lh_iprime, iprime)
-            c2 = self.posterior(self.model.product_lh(jprime), jprime)
-            bi = self.posterior(self.lh_chains[i], self.chains[i])
-            bj = self.posterior(self.lh_chains[j], self.chains[j])
+            c1 = post_iprime
+            c2 = self.posterior(jprime)
+            bi = self.posterior(self.chains[i])
+            bj = self.posterior(self.chains[j])
             if (c1 * c2) >= (bi * bj):
                 return 1
             else:
                 return (c1 * c2) / (bi * bj)
 
-    def posterior(self, lh, data):
-        return lh * np.exp(self.model.prior(data))
+    def posterior(self, data):
+        return self.model.product_lh(data) * np.exp(self.model.prior(data))
 
 
 

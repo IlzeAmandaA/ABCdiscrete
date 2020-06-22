@@ -2,7 +2,7 @@ import numpy as np
 
 class Proposals():
 
-    def __init__(self, pflip=0.1,pcross=0.5):
+    def __init__(self, pflip=0.9,pcross=0.5):
         self.pflip = pflip
         self.pcross = pcross
 
@@ -27,5 +27,5 @@ class Proposals():
 
 
     def bit_flip(self, val):
-        bit = 1 - val if np.random.uniform(0, 1) <= self.pflip else val
+        bit = 1 - val if self.pflip >= np.random.uniform(0, 1) else val
         return bit
