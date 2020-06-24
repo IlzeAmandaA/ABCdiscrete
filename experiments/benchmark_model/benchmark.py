@@ -80,6 +80,15 @@ class QMR_DT():
                 product *= np.exp(self.llh(b,id))
         return product
 
+    def product_llh(self,b):
+        product = 0.
+        for id, f in enumerate(self.findings):
+            if f == 1:
+                product += np.log(1-np.exp(self.llh(b,id)))
+            else:
+                product += self.llh(b,id)
+        return product
+
 
     def llh(self,b,id):
         return np.log(1 - self.q_i0[id]) + np.sum(b * np.log(1 - self.q_il[id]))

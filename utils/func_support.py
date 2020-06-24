@@ -19,9 +19,11 @@ def text_output(method, iter, solution, simulation):
     textfile.write('\n b truth\n')
     textfile.write(str([int(n) for n in simulation.model.b_truth]))
     textfile.write('\n target posterior {} '.format(simulation.posterior(simulation.model.b_truth)))
+    textfile.write('\n target likelihood {} '.format(simulation.model.product_lh(simulation.model.b_truth)))
     textfile.write('\n best simulated b\n')
     textfile.write(str([int(n) for n in solution]))
     textfile.write('\n best posterior {} '.format(simulation.posterior(solution)))
+    textfile.write('\n best likelihood {} '.format(simulation.model.product_lh(solution)))
     textfile.write('\n\n')
 
 def prepare_data(dict):
@@ -33,7 +35,7 @@ def prepare_data(dict):
 
     return overall
 
-def plot(avg_dict, location):
+def plot(avg_dict, location, yaxis):
 
     formats = ['--or',':^g','-.vb']
     formating = {key:formats[id] for id, key in enumerate(avg_dict)}
@@ -46,19 +48,19 @@ def plot(avg_dict, location):
         std = results['std']
         x = [i * 500 for i in range(len(y))]
         assert len(x) == len(y) == len(std), 'The number of instances fo not match, check create plot function'
-        plt.errorbar(x, results['mean'], yerr=results['std'], fmt=formating[transformation], label=transformation)
+        plt.errorbar(x, y, yerr=std, fmt=formating[transformation], label=transformation)
 
     plt.xlabel('iterations')
-    plt.ylabel('error')
+    plt.ylabel(yaxis)
     plt.grid(True)
     plt.legend(loc=0)
-    plt.savefig(location + 'benchmark_Stren.png')
+    plt.savefig(location + '.png')
     plt.show()
 
 
-def create_plot(results, location):
+def create_plot(results, location, yaxis):
     averages = prepare_data(results)
-    plot(averages, location)
+    plot(averages, location, yaxis)
 
 def plot_pop(results, name):
     formats = ['--or',':^g','-.vb']

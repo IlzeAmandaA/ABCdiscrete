@@ -16,9 +16,11 @@ class EvolutionaryMC():
     #     self.lh_chains = [self.model.product_lh(chain) for chain in self.chains]
     #
     def compute_target(self):
-        self.target_chains = [self.posterior(chain) for chain in self.chains]
+        # self.target_chains = [self.posterior(chain) for chain in self.chains]
+        self.target_chains = [self.log_posterior(chain) for chain in self.chains]
 
-    def run_mc(self, method, steps):
+    def run_mc(self, method, steps, seed):
+        np.random.seed(seed)
         #initialize the population
         chains = self.chains.copy()
         target_chains = self.target_chains.copy()
@@ -38,8 +40,10 @@ class EvolutionaryMC():
             # for i in range(len(self.chains)): #this is not exaclty random  but if i update the entrie popluation is does mattter
             iprime, jprime, j = self.model.proposal(chains, i, method)
             # assert not np.array_equal(iprime,self.chains[i]), 'incorrect proposal iter {}  {}:{}'.format(n, iprime, self.chains[i])
-            target_iprime = self.posterior(iprime)
+            # target_iprime = self.posterior(iprime)
+            target_iprime = self.log_posterior(iprime)
             alpha = self.metropolis_ratio(target_iprime, i, jprime, j)
+            # target_iprime = self.model.product_lh(iprime)
 
             if alpha >= np.random.uniform(0,1):
                 chains[i] = iprime
@@ -64,21 +68,37 @@ class EvolutionaryMC():
             error += self.model.error(chain)
         return error
 
+    # def metropolis_ratio(self, post_iprime, i, jprime, j):
+    #     if jprime is None:
+    #         return post_iprime / self.posterior(self.chains[i])
+    #     else:
+    #         c1 = post_iprime
+    #         c2 = self.posterior(jprime)
+    #         bi = self.posterior(self.chains[i])
+    #         bj = self.posterior(self.chains[j])
+    #         if (c1 * c2) >= (bi * bj):
+    #             return 1
+    #         else:
+    #             return (c1 * c2) / (bi * bj)
+
     def metropolis_ratio(self, post_iprime, i, jprime, j):
         if jprime is None:
-            return post_iprime / self.posterior(self.chains[i])
+            return post_iprime / self.log_posterior(self.chains[i])
         else:
             c1 = post_iprime
-            c2 = self.posterior(jprime)
-            bi = self.posterior(self.chains[i])
-            bj = self.posterior(self.chains[j])
-            if (c1 * c2) >= (bi * bj):
+            c2 = self.log_posterior(jprime)
+            bi = self.log_posterior(self.chains[i])
+            bj = self.log_posterior(self.chains[j])
+            if (c1 + c2) >= (bi + bj):
                 return 1
             else:
-                return (c1 * c2) / (bi * bj)
+                return (c1 + c2) - (bi + bj)
 
     def posterior(self, data):
         return self.model.product_lh(data) * np.exp(self.model.prior(data))
+
+    def log_posterior(self,data):
+        return self.model.product_llh(data) + self.model.prior(data)
 
 
 
