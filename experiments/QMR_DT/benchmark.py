@@ -1,6 +1,4 @@
 import numpy as np
-from experiments.benchmark_model.proposals import Proposals
-
 
 """
 QMR-DT sample problem
@@ -9,7 +7,7 @@ QMR-DT sample problem
 
 class QMR_DT():
 
-    def __init__(self, pflip, pcross):
+    def __init__(self):
 
         self.m = 20
         self.f = 80
@@ -22,8 +20,6 @@ class QMR_DT():
         self.b_truth = None #sample b_truth from disease prior
         self.findings = None #generate findings given b_truth
 
-        self.proposals = Proposals(pflip, pcross)
-        self.settings = {'mut': 1., 'mut+crx': 0.66 , 'mut+xor': 0.5} #
 
     def association(self):
         """
@@ -89,30 +85,29 @@ class QMR_DT():
                 product += self.llh(b,id)
         return product
 
+    def product_neg_llh(self,b):
+        product = 0.
+        for id, f in enumerate(self.findings):
+            if f == 1:
+                product += np.log(1-np.exp(self.llh(b,id)))
+            else:
+                product += self.llh(b,id)
+        return -product
 
     def llh(self,b,id):
         return np.log(1 - self.q_i0[id]) + np.sum(b * np.log(1 - self.q_il[id]))
 
+    def posterior(self, data):
+        return self.product_lh(data) * np.exp(self.prior(data))
 
-    def proposal(self, population, i, method):
-        jprime=None
-        j = None
-        if self.settings[method] >= np.random.uniform(0,1):
-            iprime = self.proposals.mutation(population[i])  # sample using EA
+    def log_posterior(self,data):
+        return self.product_llh(data) + self.prior(data)
 
-
-        elif method == 'mut+xor':
-            j, k = self.sample(i, len(population), 2)
-            assert j!=k, 'Check proposal xor method {} {}'.format(j,k)
-            iprime = self.proposals.xor(population[i], population[j], population[k])
-
-        elif method == 'mut+crx':
-            j = self.sample(i, len(population))[0]
-            assert j!=i, 'Check proposal cross method'
-            iprime, jprime = self.proposals.crossover(population[i], population[j])
+    def neg_log_posterior(self,data):
+        return -(self.product_llh(data) + self.prior(data))
 
 
-        return iprime, jprime, j
+
 
     def error(self, b):
         """
@@ -124,9 +119,6 @@ class QMR_DT():
                 distance+=1
         return distance
 
-
-    def sample(self, i, max, size=1):
-        return np.random.choice([x for x in range(1, max) if x != i], size=size, replace=False)
 
 
 
