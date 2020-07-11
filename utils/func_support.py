@@ -1,7 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-formats = {'mut': '--or', 'mut+crx': ':^g', 'mut+xor': '-.vb', 'braak': '-hc'} #check
+formats = {'mut': '--or', 'mut+crx': ':^g', 'mut+xor': '-.vb',
+           'de-mc':'--or', 'de-mc1':':^g', 'de-mc2':'-.vb'} #check
 #https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.plot.html
 
 def initialze_storage(settings):
@@ -10,8 +11,8 @@ def initialze_storage(settings):
         store[key] = []
     return store
 
-def text_output(method, iter, solution, simulation):
-    textfile = open('results/benchmark/'+ method + '_benchmark.txt', 'a+')
+def text_output(method, iter, solution, simulation, store):
+    textfile = open(store+ method + '.txt', 'a+')
     textfile.write('------------------------------------------------\n')
     textfile.write('Iteration {}\n'.format(iter))
     if np.array_equal(solution, simulation.model.b_truth):

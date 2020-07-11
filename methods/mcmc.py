@@ -1,5 +1,6 @@
 import numpy as np
 from methods.proposals import Proposals
+from tqdm import tqdm
 
 
 """
@@ -10,12 +11,13 @@ STRENS=False
 
 class EvolutionaryMC():
 
-    def __init__(self, model, pflip, pcross, settings, nchains=12):
+    def __init__(self, model, pflip, pcross, settings, info, nchains=12):
         self.model = model
         self.N = nchains
 
+        self.exp_id = info
         self.proposals = Proposals(pflip, pcross)
-        self.settings =  settings   #Strens
+        self.settings =  settings
 
         self.chains = None #list of nparray
         self.target_chains = None #list #i think I can move it here
@@ -25,6 +27,7 @@ class EvolutionaryMC():
 
     def compute_fitness(self):
         self.target_chains = [self.model.neg_log_posterior(chain) for chain in self.chains]
+
     def run_mc(self, method, steps):
 
         #initialize the population
@@ -55,7 +58,9 @@ class EvolutionaryMC():
                         best_params = iprime
 
             else:
-                for i in range(len(chains)):
+                sample_chains = np.random.choice([i for i in range(len(chains))], size=len(chains), replace=False)
+                # for i in range(len(chains)):
+                for i in sample_chains:
                     iprime, jprime, j = self.proposal(chains, i, method)
                     target_iprime = self.model.neg_log_posterior(iprime)
                     alpha = self.metropolis_ratio(target_iprime, i, jprime, j)
@@ -101,46 +106,38 @@ class EvolutionaryMC():
         jprime=None
         j = None
 
-        if self.settings[method] >= np.random.uniform(0,1):
-            iprime = self.proposals.mutation(population[i])  # sample using EA
 
-        if method == 'mut' and self.settings[method] >= np.random.uniform(0,1):
-            iprime = self.proposals.mutation(population[i])  # sample using EA
-
-        elif method == 'mut+xor':
+        if self.exp_id == 'braak':
             j, k = self.sample(i, len(population), 2)
-            assert j!=k, 'Check proposal xor method {} {}'.format(j,k)
-            iprime = self.proposals.xor(population[i], population[j], population[k])
+            assert j != k, 'Check proposal xor method {} {}'.format(j, k)
+            if method == 'de-mc':
+                iprime = self.proposals.de_mc(population[i], population[j], population[k])
+            elif method == 'de-mc1':
+                iprime = self.proposals.de_mc1(population[i], population[j], population[k])
+            elif method == 'de-mc2':
+                iprime = self.proposals.de_mc2(population[i], population[j], population[k])
 
-        elif method == 'mut+crx':
-            j = self.sample(i, len(population))[0]
-            assert j!=i, 'Check proposal cross method'
-            iprime, jprime = self.proposals.crossover(population[i], population[j])
+        else: #stren
+            if self.settings[method] >= np.random.uniform(0,1):
+                iprime = self.proposals.bit_flip(population[i])
 
-        elif method == 'braak':
-            j, k = self.sample(i, len(population), 2)
-            assert j != k, 'Check proposal braak method {} {}'.format(j, k)
-            iprime = self.proposals.de_mc(population[i], population[j], population[k])
+            elif method == 'mut+crx':
+                j = self.sample(i, len(population))[0]
+                assert j != i, 'Check proposal cross method'
+                iprime, jprime = self.proposals.crossover(population[i], population[j])
 
+            elif method == 'mut+xor':
+                j, k = self.sample(i, len(population), 2)
+                assert j!=k, 'Check proposal xor method {} {}'.format(j,k)
+                iprime = self.proposals.xor(population[i], population[j], population[k])
+
+            else:
+                print('incorrect proposal')
 
         return iprime, jprime, j
 
     def sample(self, i, max, size=1):
         return np.random.choice([x for x in range(1, max) if x != i], size=size, replace=False)
-
-
-
-    # def metropolis_ratio(self, post_iprime, i, jprime, j):
-    #     if jprime is None:
-    #         # return np.exp(post_iprime - self.model.log_posterior(self.chains[i]))#changed this from / to -
-    #         return min(1, np.exp(post_iprime-self.model.log_posterior(self.chains[i])))
-    #     else:
-    #         c1 = post_iprime
-    #         c2 = self.model.log_posterior(jprime)
-    #         bi = self.model.log_posterior(self.chains[i])
-    #         bj = self.model.log_posterior(self.chains[j])
-    #         return min(1,  np.exp((c1 + c2) - (bi + bj)))
-
 
 
 

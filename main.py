@@ -6,7 +6,7 @@ import multiprocessing as mp
 import pickle as pkl
 
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
-parser.add_argument('--parallel', default=True, action='store_false',
+parser.add_argument('--sequential', default=False, action='store_true',
                     help='Flag to run the simulation in parallel processing')
 parser.add_argument('--steps', type=int, default=40000, metavar='int',
                     help='evaluation steps') #200000
@@ -16,21 +16,13 @@ parser.add_argument('--pflip', type=float, default=0.1, metavar='float',
                     help='bitflip probability')
 parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
-parser.add_argument('--eval', type=int, default=10, metavar='int',
+parser.add_argument('--eval', type=int, default=5, metavar='int',
                     help = 'number of evaluations')
+parser.add_argument('--exp', type=str, default='stren', metavar='str',
+                    help='proposal selection')
+
 
 args = parser.parse_args()
-
-
-#define settings to use
-Strens = {'mut': 1., 'mut+xor': 0.5, 'mut+crx': 0.66}
-Proposal_prob = {'mut': 1., 'mut+xor': 0.5, 'mut+crx': 0.66, 'braak':1.} #first try on sequeential setting
-results = {'mut': [],  'mut+xor': [],'mut+crx': []} #, 'braak': []}
-dist_plot = {'mut': [], 'mut+crx': [], 'mut+xor': []}
-pop_error = {'mut': [], 'mut+crx': [], 'mut+xor': []}
-# res_error = {}
-# dist_plot ={}
-
 
 
 def run(run_seed, simulation):
@@ -54,7 +46,8 @@ def run(run_seed, simulation):
         pop_error[method] = error
         dist[method] = fitDist
 
-        text_output(method,run_seed,bestSolution,simulation)
+        global store
+        text_output(method,run_seed,bestSolution,simulation, store)
 
     # plot_pop(dist, 'posterior' + str(run_seed))
 
@@ -62,10 +55,10 @@ def run(run_seed, simulation):
     return (result, dist, pop_error)
 
 
-def parallel():
-
-    np.random.seed(args.seed+4) #to keep the initialization settings the same across runs
-    simulation = EvolutionaryMC(QMR_DT(),args.pflip, args.pcross, settings=Strens)
+def parallel(settings):
+    print('running python in parallel mode')
+    np.random.seed(args.seed) #to keep the initialization settings the same across runs
+    simulation = EvolutionaryMC(QMR_DT(),args.pflip, args.pcross, settings=settings, info=args.exp)
 
     #old spot
     simulation.model.generate_parameters() #create b truth
@@ -98,14 +91,13 @@ def collect_result(outcome):
 
 
 
-def sequential():
-    print('Sequential run')
-    # for k in range(1):
+def sequential(settings):
+    print('running python in sequential mode')
     k=0
 
     np.random.seed(args.seed)
     global simulation
-    simulation = EvolutionaryMC(QMR_DT(),args.pflip, args.pcross, settings=Strens)
+    simulation = EvolutionaryMC(QMR_DT(),args.pflip, args.pcross, settings=settings, info=args.exp)
 
     #initialize goal parameters and the corresponing data
     simulation.model.generate_parameters()
@@ -117,20 +109,21 @@ def sequential():
 
     #loop over possible proposal methods
     for method in simulation.settings:
-        print('Method: {}'.format(method))
+        print('Proposal: {}'.format(method))
         print(simulation.chains[0])
         bestSolution, fitHistory, fitDist, error = simulation.run_mc(method, args.steps)
 
         global results
         results[method].append(fitHistory)
 
-        global res_error
-        res_error[method] = error
+        global pop_error
+        pop_error[method] = error
 
-        global dist_plot
-        dist_plot[method] = fitDist
+        global post_dist
+        post_dist[method] = fitDist
 
-        text_output(method,k,bestSolution,simulation)
+        global store
+        text_output(method,k,bestSolution,simulation,store)
 
     return simulation.model.posterior(simulation.model.b_truth)
 
@@ -139,21 +132,38 @@ def sequential():
 
 if __name__ == '__main__':
 
-    if args.parallel:
-        parallel()
-        create_plot(dist_plot, 'results/benchmark/proposal_dist', 'posterior')
-        pkl.dump(dist_plot, open('results/benchmark/posterior.pkl', 'wb'))
-        create_plot(pop_error,'results/benchmark/pop_error', 'error')
+    Strens = {'mut': 1., 'mut+xor': 0.5, 'mut+crx': 0.66}
+    Braak = ['de-mc', 'de-mc1', 'de-mc2']
 
+    set_proposals = Strens if args.exp == 'stren' else Braak
+    store='results/benchmark/' if args.exp == 'stren' else 'results/de-mc/'
+
+    results = {prop:[] for prop in set_proposals}
+    post_dist = {}
+    pop_error = {}
+
+
+    if args.sequential:
+        true_posterior = sequential(set_proposals)
+        plot_pop(pop_error, 'error')
+        plot_pop(post_dist, 'target_dist', true_posterior)
     else:
-        true_posterior = sequential()
-        plot_pop(res_error, 'error')
-        plot_pop(dist_plot, 'target_dist', true_posterior)
+        for prop in set_proposals:
+            post_dist[prop] = []
+            pop_error[prop] = []
+
+        parallel(set_proposals)
+        create_plot(post_dist, store + 'proposal_dist', 'posterior')
+        pkl.dump(post_dist, open(store+'posterior.pkl', 'wb'))
+        create_plot(pop_error, store+'pop_error', 'error')
+
+    pkl.dump(results, open(store+'error.pkl', 'wb'))
+    create_plot(results, store+args.exp, 'error')
 
 
-    # pkl.dump(res_error, open('results/benchmark/pop_error.pkl', 'wb'))
-    pkl.dump(results, open('results/benchmark/error.pkl', 'wb'))
-    create_plot(results, 'results/benchmark/benchmark_Stren', 'error')
+# results = {'mut': [],  'mut+xor': [],'mut+crx': []} #, 'braak': []}
+# dist_plot = {'mut': [], 'mut+crx': [], 'mut+xor': []}
+# pop_error = {'mut': [], 'mut+crx': [], 'mut+xor': []}
 
 
 
