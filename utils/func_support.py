@@ -56,7 +56,7 @@ def plot(avg_dict, location, yaxis):
     plt.grid(True)
     plt.legend(loc=0)
     plt.savefig(location + '.png')
-    plt.show()
+    # plt.show()
 
 
 def create_plot(results, location, yaxis):

@@ -65,7 +65,7 @@ def parallel(settings):
     simulation.model.generate_data() #sample findings for the generated instance
 
 
-    pool = mp.Pool(processes=5)
+    pool = mp.Pool(processes=10)
 
     for k in range(args.eval):
         pool.apply_async(run, (k,simulation), callback=collect_result)
