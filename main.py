@@ -4,6 +4,7 @@ from methods.mcmc import EvolutionaryMC
 from utils.func_support import *
 import multiprocessing as mp
 import pickle as pkl
+import time
 
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
 parser.add_argument('--sequential', default=False, action='store_true',
@@ -27,6 +28,7 @@ args = parser.parse_args()
 
 def run(run_seed, simulation):
     print(run_seed)
+    start_time = time.time()
 
     result = {}
     dist = {}
@@ -51,7 +53,7 @@ def run(run_seed, simulation):
 
     # plot_pop(dist, 'posterior' + str(run_seed))
 
-
+    print('for run {} time ---- {} minutes ---'.format(run_seed,(time.time() - start_time) / 60))
     return (result, dist, pop_error)
 
 
@@ -132,6 +134,8 @@ def sequential(settings):
 
 if __name__ == '__main__':
 
+
+
     Strens = {'mut': 1., 'mut+xor': 0.5, 'mut+crx': 0.66}
     Braak = ['de-mc', 'de-mc1', 'de-mc2']
 
@@ -159,6 +163,7 @@ if __name__ == '__main__':
 
     pkl.dump(results, open(store+'error.pkl', 'wb'))
     create_plot(results, store+args.exp, 'error')
+
 
 
 # results = {'mut': [],  'mut+xor': [],'mut+crx': []} #, 'braak': []}
