@@ -58,9 +58,9 @@ class EvolutionaryMC():
                         best_params = iprime
 
             else:
-                sample_chains = np.random.choice([i for i in range(len(chains))], size=len(chains), replace=False)
-                # for i in range(len(chains)):
-                for i in sample_chains:
+                # sample_chains = np.random.choice([i for i in range(len(chains))], size=len(chains), replace=False)
+                for i in range(len(chains)):
+                # for i in sample_chains:
                     iprime, jprime, j = self.proposal(chains, i, method)
                     target_iprime = self.model.neg_log_posterior(iprime)
                     alpha = self.metropolis_ratio(target_iprime, i, jprime, j)

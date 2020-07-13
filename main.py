@@ -16,7 +16,7 @@ parser.add_argument('--pflip', type=float, default=0.1, metavar='float',
                     help='bitflip probability')
 parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
-parser.add_argument('--eval', type=int, default=5, metavar='int',
+parser.add_argument('--eval', type=int, default=10, metavar='int',
                     help = 'number of evaluations')
 parser.add_argument('--exp', type=str, default='stren', metavar='str',
                     help='proposal selection')
@@ -81,9 +81,9 @@ def collect_result(outcome):
     for key in result:
         results[key].append(result[key])
 
-    global dist_plot
+    global post_dist
     for key in dist:
-        dist_plot[key].append(dist[key])
+        post_dist[key].append(dist[key])
 
     global pop_error
     for key in pop:
