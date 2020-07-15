@@ -4,11 +4,12 @@ from methods.mcmc import EvolutionaryMC
 from utils.func_support import *
 import multiprocessing as mp
 import pickle as pkl
+import time
 
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
 parser.add_argument('--sequential', default=False, action='store_true',
                     help='Flag to run the simulation in parallel processing')
-parser.add_argument('--steps', type=int, default=40000, metavar='int',
+parser.add_argument('--steps', type=int, default=500000, metavar='int',
                     help='evaluation steps') #200000
 parser.add_argument('--seed', type=int, default=1, metavar='int',
                     help='seed')
@@ -16,7 +17,7 @@ parser.add_argument('--pflip', type=float, default=0.1, metavar='float',
                     help='bitflip probability')
 parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
-parser.add_argument('--eval', type=int, default=10, metavar='int',
+parser.add_argument('--eval', type=int, default=15, metavar='int',
                     help = 'number of evaluations')
 parser.add_argument('--exp', type=str, default='stren', metavar='str',
                     help='proposal selection')
@@ -29,6 +30,7 @@ SEED_MODEL=1
 
 def run(run_seed, simulation):
     print(run_seed)
+    start_time = time.time()
 
     result = {}
     dist = {}
@@ -51,6 +53,7 @@ def run(run_seed, simulation):
         global store
         text_output(method,run_seed,bestSolution,simulation, store)
 
+    print('for run {} time ---- {} minutes ---'.format(run_seed, (time.time() - start_time) / 60))
     return (result, dist, pop_error)
 
 
@@ -74,7 +77,7 @@ def parallel(settings):
     simulation.model.generate_data() #sample findings for the generated instance
 
 
-    pool = mp.Pool(processes=5)
+    pool = mp.Pool(processes=15)
 
     for k in range(args.eval):
         pool.apply_async(run, (k,simulation), callback=collect_result)

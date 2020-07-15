@@ -51,7 +51,7 @@ def plot(avg_dict, location, yaxis):
         assert len(x) == len(y) == len(std), 'The number of instances fo not match, check create plot function'
         plt.errorbar(x, y, yerr=std, fmt=formating[transformation], label=transformation, capsize=10)
 
-    plt.xlabel('iterations')
+    plt.xlabel('evaluations')
     plt.ylabel(yaxis)
     plt.grid(True)
     plt.legend(loc=0)
@@ -80,7 +80,7 @@ def plot_pop(results, name, true=None):
     # except ValueError:
     #     pass
 
-    plt.xlabel('iterations')
+    plt.xlabel('evaluations')
     plt.ylabel(name)
     plt.grid(True)
     plt.legend(loc=0)

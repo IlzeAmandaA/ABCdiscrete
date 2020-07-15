@@ -41,7 +41,9 @@ class EvolutionaryMC():
         fitDist = []
         error = []
 
-        for n in range(0,steps):
+        n=0
+        while n < steps:
+        #for n in range(0,steps):
 
             if STRENS:
                 i = np.random.randint(0,len(chains)) # uniform sampling
@@ -65,6 +67,8 @@ class EvolutionaryMC():
                     target_iprime = self.model.neg_log_posterior(iprime)
                     alpha = self.metropolis_ratio(target_iprime, i, jprime, j)
 
+                    n += 1 if jprime is None else 2
+
                     if alpha >= np.random.uniform(0,1):
                         chains[i] = iprime
                         target_chains[i] = target_iprime
@@ -73,12 +77,12 @@ class EvolutionaryMC():
                             best_target = target_iprime
                             best_params = iprime
 
-            if n % 500 == 0:
-                fitHistory.append(self.model.error(best_params))
-                # fitDist.append(np.exp(best_target))
-                fitDist.append(np.exp(-(best_target)))
+                    if n % 500 == 0:
+                        fitHistory.append(self.model.error(best_params))
+                        # fitDist.append(np.exp(best_target))
+                        fitDist.append(np.exp(-(best_target)))
 
-                error.append(self.pop_error(chains))
+                        error.append(self.pop_error(chains))
 
 
         return best_params, fitHistory, fitDist, error
