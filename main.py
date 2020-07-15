@@ -4,7 +4,6 @@ from methods.mcmc import EvolutionaryMC
 from utils.func_support import *
 import multiprocessing as mp
 import pickle as pkl
-import time
 
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
 parser.add_argument('--sequential', default=False, action='store_true',
@@ -25,19 +24,20 @@ parser.add_argument('--exp', type=str, default='stren', metavar='str',
 
 args = parser.parse_args()
 
+SEED_MODEL=1
+
 
 def run(run_seed, simulation):
     print(run_seed)
-    start_time = time.time()
 
     result = {}
     dist = {}
 
-    #for every run compute a different b_truth, and data
+    '''
+    For every run initialize the chains with different initial  distribution
+    '''
     np.random.seed(run_seed)
-
-
-    simulation.initialize_chains()  # initialzie the chains as fixed for all runs, compute their fitness
+    simulation.initialize_chains()
     simulation.compute_fitness()
 
 
@@ -51,23 +51,30 @@ def run(run_seed, simulation):
         global store
         text_output(method,run_seed,bestSolution,simulation, store)
 
-    # plot_pop(dist, 'posterior' + str(run_seed))
-
-    print('for run {} time ---- {} minutes ---'.format(run_seed,(time.time() - start_time) / 60))
     return (result, dist, pop_error)
 
 
 def parallel(settings):
-    print('running python in parallel mode')
-    np.random.seed(args.seed) #to keep the initialization settings the same across runs
+    print('running python in parallel mode with seed {}'.format(args.seed))
+
+
+    '''
+    keep the underlying model same across all experiments with Seed_model
+    '''
+    np.random.seed(SEED_MODEL)
     simulation = EvolutionaryMC(QMR_DT(),args.pflip, args.pcross, settings=settings, info=args.exp)
 
-    #old spot
+
+    '''
+    Sample different underlying parameter settings for each experiment with args.seed
+    '''
+
+    np.random.seed(args.seed)
     simulation.model.generate_parameters() #create b truth
     simulation.model.generate_data() #sample findings for the generated instance
 
 
-    pool = mp.Pool(processes=10)
+    pool = mp.Pool(processes=5)
 
     for k in range(args.eval):
         pool.apply_async(run, (k,simulation), callback=collect_result)
@@ -97,11 +104,13 @@ def sequential(settings):
     print('running python in sequential mode')
     k=0
 
-    np.random.seed(args.seed)
+    np.random.seed(SEED_MODEL)
     global simulation
     simulation = EvolutionaryMC(QMR_DT(),args.pflip, args.pcross, settings=settings, info=args.exp)
 
+
     #initialize goal parameters and the corresponing data
+    np.random.seed(args.seed)
     simulation.model.generate_parameters()
     simulation.model.generate_data()
 
@@ -134,8 +143,6 @@ def sequential(settings):
 
 if __name__ == '__main__':
 
-
-
     Strens = {'mut': 1., 'mut+xor': 0.5, 'mut+crx': 0.66}
     Braak = ['de-mc', 'de-mc1', 'de-mc2']
 
@@ -152,6 +159,7 @@ if __name__ == '__main__':
         plot_pop(pop_error, 'error')
         plot_pop(post_dist, 'target_dist', true_posterior)
     else:
+
         for prop in set_proposals:
             post_dist[prop] = []
             pop_error[prop] = []
@@ -165,10 +173,6 @@ if __name__ == '__main__':
     create_plot(results, store+args.exp, 'error')
 
 
-
-# results = {'mut': [],  'mut+xor': [],'mut+crx': []} #, 'braak': []}
-# dist_plot = {'mut': [], 'mut+crx': [], 'mut+xor': []}
-# pop_error = {'mut': [], 'mut+crx': [], 'mut+xor': []}
 
 
 
