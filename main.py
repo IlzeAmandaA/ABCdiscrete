@@ -10,7 +10,7 @@ import time
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
 parser.add_argument('--sequential', default=False, action='store_true',
                     help='Flag to run the simulation in parallel processing')
-parser.add_argument('--steps', type=int, default=20000, metavar='int',
+parser.add_argument('--steps', type=int, default=500000, metavar='int',
                     help='evaluation steps') #500000
 parser.add_argument('--seed', type=int, default=0, metavar='int',
                     help='seed')

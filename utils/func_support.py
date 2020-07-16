@@ -30,18 +30,11 @@ def text_output(method, iter, solution, simulation, store):
     textfile.write('\n\n')
 
 def prepare_data(dict, x, transform):
-    print(dict.keys())
     overall={}
     for key, values in dict.items():
-        print(key)
-        print(values)
-        print(len(values[0]))
-        print(len(values[1]))
         assert len(values[0]) == len(values[1]), 'issue with lenghts'
         overall[key] = {}
         overall[key]['mean'] = np.mean(np.asarray(values), axis=0)
-        print('mean')
-        print(overall[key]['mean'])
         overall[key]['std'] = np.std(np.asarray(values), axis=0)
 
         if transform:
@@ -63,10 +56,6 @@ def plot(avg_dict, location, yaxis):
         std = results['std']
         x = results['x']
         # x = [i * 500*20 for i in range(len(y))]
-        print(transformation)
-        print(x)
-        print(y)
-        print(std)
         assert len(x) == len(y) == len(std), 'The number of instances fo not match, check create plot function'
         plt.errorbar(x, y, yerr=std, fmt=formating[transformation], label=transformation, capsize=10)
 
