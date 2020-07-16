@@ -48,7 +48,6 @@ def prepare_data(dict, x, transform):
             overall[key]['mean'] = np.exp(-(overall[key]['mean']))
 
     for key, values in x.items():
-        overall[key] = {}
         overall[key]['x'] = np.mean(np.asarray(values), axis=0)
 
     return overall
