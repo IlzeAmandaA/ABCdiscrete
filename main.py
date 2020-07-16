@@ -27,8 +27,6 @@ parser.add_argument('--exp', type=str, default='stren', metavar='str',
 args = parser.parse_args()
 
 SEED_MODEL=1
-globalvar = sys.modules[__name__]
-globalvar.xlim=None
 
 
 def run(run_seed, simulation):
@@ -37,6 +35,8 @@ def run(run_seed, simulation):
 
     result = {}
     dist = {}
+    pop={}
+    x={}
 
 
     '''
@@ -50,19 +50,17 @@ def run(run_seed, simulation):
     #loop over possible proposal methods
     for method in simulation.settings:
 
-        bestSolution, fitHistory, fitDist, error, x = simulation.run_mc(method, args.steps)
-        print('x {}'.format(x))
+        bestSolution, fitHistory, fitDist, error, x_pos = simulation.run_mc(method, args.steps)
         result[method] = fitHistory
-        pop_error[method] = error
+        pop[method] = error
         dist[method] = fitDist
-        globalvar.xlim=x
-        print('global {}'.format(globalvar.xlim))
+        x[method] = x_pos
 
         global store
         text_output(method,run_seed,bestSolution,simulation, store)
 
     print('for run {} time ---- {} minutes ---'.format(run_seed, (time.time() - start_time) / 60))
-    return (result, dist, pop_error)
+    return (result, dist, pop, xlim)
 
 
 def parallel(settings):
@@ -96,7 +94,7 @@ def parallel(settings):
 
 def collect_result(outcome):
     # for result in result_list:
-    result, dist, pop = outcome
+    result, dist, pop, x = outcome
     global results
     for key in result:
         results[key].append(result[key])
@@ -108,6 +106,11 @@ def collect_result(outcome):
     global pop_error
     for key in pop:
         pop_error[key].append(pop[key])
+
+    global xlim
+    for key in x:
+        xlim[key].append(x[key])
+
 
 
 
@@ -163,6 +166,7 @@ if __name__ == '__main__':
     results = {prop:[] for prop in set_proposals}
     post_dist = {}
     pop_error = {}
+    xlim = {}
 
 
     if args.sequential:
@@ -174,14 +178,15 @@ if __name__ == '__main__':
         for prop in set_proposals:
             post_dist[prop] = []
             pop_error[prop] = []
+            xlim[prop]=[]
 
         parallel(set_proposals)
-        create_plot(post_dist, globalvar.xlim, store + 'proposal_dist', 'posterior', transform=True)
+        create_plot(post_dist, xlim, store + 'proposal_dist', 'posterior', transform=True)
         pkl.dump(post_dist, open(store+'posterior.pkl', 'wb'))
-        create_plot(pop_error, globalvar.xlim, store+'pop_error', 'error')
+        create_plot(pop_error, xlim, store+'pop_error', 'error')
 
     pkl.dump(results, open(store+'error.pkl', 'wb'))
-    create_plot(results, globalvar.xlim, store+args.exp, 'error')
+    create_plot(results, xlim, store+args.exp, 'error')
 
 
 

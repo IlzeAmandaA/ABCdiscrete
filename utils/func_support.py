@@ -29,7 +29,7 @@ def text_output(method, iter, solution, simulation, store):
     textfile.write('\n best likelihood {} '.format(simulation.model.product_lh(solution)))
     textfile.write('\n\n')
 
-def prepare_data(dict, transform):
+def prepare_data(dict, x, transform):
     print(dict.keys())
     overall={}
     for key, values in dict.items():
@@ -47,9 +47,13 @@ def prepare_data(dict, transform):
         if transform:
             overall[key]['mean'] = np.exp(-(overall[key]['mean']))
 
+    for key, values in x.items():
+        overall[key] = {}
+        overall[key]['x'] = np.mean(np.asarray(values), axis=0)
+
     return overall
 
-def plot(avg_dict, x, location, yaxis):
+def plot(avg_dict, location, yaxis):
 
     formating = {key:formats[key] for key in avg_dict}
     plt.figure(figsize=(16, 6))
@@ -58,6 +62,7 @@ def plot(avg_dict, x, location, yaxis):
         results = avg_dict[transformation]
         y = results['mean']
         std = results['std']
+        x = results['x']
         # x = [i * 500*20 for i in range(len(y))]
         assert len(x) == len(y) == len(std), 'The number of instances fo not match, check create plot function'
         plt.errorbar(x, y, yerr=std, fmt=formating[transformation], label=transformation, capsize=10)
@@ -71,8 +76,8 @@ def plot(avg_dict, x, location, yaxis):
 
 
 def create_plot(results,x, location, yaxis, transform=False):
-    averages = prepare_data(results, transform)
-    plot(averages, x,location, yaxis)
+    averages = prepare_data(results, x, transform)
+    plot(averages, location, yaxis)
 
 def plot_pop(results, name, true=None):
     formating = {key:formats[key] for key in results}
