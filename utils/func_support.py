@@ -30,6 +30,7 @@ def text_output(method, iter, solution, simulation, store):
     textfile.write('\n\n')
 
 def prepare_data(dict):
+    print(dict.keys())
     overall={}
     for key, values in dict.items():
         overall[key] = {}

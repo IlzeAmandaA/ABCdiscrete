@@ -9,15 +9,15 @@ import time
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
 parser.add_argument('--sequential', default=False, action='store_true',
                     help='Flag to run the simulation in parallel processing')
-parser.add_argument('--steps', type=int, default=500000, metavar='int',
-                    help='evaluation steps') #200000
+parser.add_argument('--steps', type=int, default=100000, metavar='int',
+                    help='evaluation steps') #500000
 parser.add_argument('--seed', type=int, default=0, metavar='int',
                     help='seed')
 parser.add_argument('--pflip', type=float, default=0.1, metavar='float',
                     help='bitflip probability')
 parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
-parser.add_argument('--eval', type=int, default=15, metavar='int',
+parser.add_argument('--eval', type=int, default=2, metavar='int',
                     help = 'number of evaluations')
 parser.add_argument('--exp', type=str, default='stren', metavar='str',
                     help='proposal selection')
@@ -77,7 +77,7 @@ def parallel(settings):
     simulation.model.generate_data() #sample findings for the generated instance
 
 
-    pool = mp.Pool(processes=15)
+    pool = mp.Pool(processes=2)
 
     for k in range(args.eval):
         pool.apply_async(run, (k,simulation), callback=collect_result)
