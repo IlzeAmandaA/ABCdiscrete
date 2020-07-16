@@ -63,6 +63,10 @@ def plot(avg_dict, location, yaxis):
         std = results['std']
         x = results['x']
         # x = [i * 500*20 for i in range(len(y))]
+        print(transformation)
+        print(x)
+        print(y)
+        print(std)
         assert len(x) == len(y) == len(std), 'The number of instances fo not match, check create plot function'
         plt.errorbar(x, y, yerr=std, fmt=formating[transformation], label=transformation, capsize=10)
 
