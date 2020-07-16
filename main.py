@@ -60,7 +60,7 @@ def run(run_seed, simulation):
         text_output(method,run_seed,bestSolution,simulation, store)
 
     print('for run {} time ---- {} minutes ---'.format(run_seed, (time.time() - start_time) / 60))
-    return (result, dist, pop, xlim)
+    return (result, dist, pop, x)
 
 
 def parallel(settings):
