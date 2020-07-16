@@ -51,10 +51,12 @@ def run(run_seed, simulation):
     for method in simulation.settings:
 
         bestSolution, fitHistory, fitDist, error, x = simulation.run_mc(method, args.steps)
+        print('x {}'.format(x))
         result[method] = fitHistory
         pop_error[method] = error
         dist[method] = fitDist
         globalvar.xlim=x
+        print('global {}'.format(globalvar.xlim))
 
         global store
         text_output(method,run_seed,bestSolution,simulation, store)
