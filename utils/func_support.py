@@ -33,7 +33,7 @@ def prepare_data(dict, transform):
     print(dict.keys())
     overall={}
     for key, values in dict.items():
-        print(values)
+        assert len(values[0][0]) == len(values[0][1]), 'issue with lenghts'
         overall[key] = {}
         overall[key]['mean'] = np.mean(np.asarray(values), axis=0)
         print('mean')
