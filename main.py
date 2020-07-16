@@ -26,6 +26,7 @@ parser.add_argument('--exp', type=str, default='stren', metavar='str',
 args = parser.parse_args()
 
 SEED_MODEL=1
+xlim=None
 
 
 def run(run_seed, simulation):
