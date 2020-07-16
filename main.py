@@ -18,7 +18,7 @@ parser.add_argument('--pflip', type=float, default=0.1, metavar='float',
                     help='bitflip probability')
 parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
-parser.add_argument('--eval', type=int, default=2, metavar='int',
+parser.add_argument('--eval', type=int, default=15, metavar='int',
                     help = 'number of evaluations')
 parser.add_argument('--exp', type=str, default='stren', metavar='str',
                     help='proposal selection')
@@ -64,7 +64,7 @@ def run(run_seed, simulation):
 
 
 def parallel(settings):
-    print('running python in parallel mode with seed {}'.format(args.seed))
+    print('settings {} & running python in parallel mode with seed {}'.format(args.exp,args.seed))
 
 
     '''
@@ -83,7 +83,7 @@ def parallel(settings):
     simulation.model.generate_data() #sample findings for the generated instance
 
 
-    pool = mp.Pool(processes=2)
+    pool = mp.Pool(processes=args.eval)
 
     for k in range(args.eval):
         pool.apply_async(run, (k,simulation), callback=collect_result)
