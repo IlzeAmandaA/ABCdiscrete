@@ -4,6 +4,7 @@ from methods.mcmc import EvolutionaryMC
 from utils.func_support import *
 import multiprocessing as mp
 import pickle as pkl
+import sys
 import time
 
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
@@ -26,7 +27,8 @@ parser.add_argument('--exp', type=str, default='stren', metavar='str',
 args = parser.parse_args()
 
 SEED_MODEL=1
-xlim=None
+globalvar = sys.modules[__name__]
+globalvar.xlim=None
 
 
 def run(run_seed, simulation):
@@ -52,9 +54,7 @@ def run(run_seed, simulation):
         result[method] = fitHistory
         pop_error[method] = error
         dist[method] = fitDist
-
-        global xlim
-        xlim=x
+        globalvar.xlim=x
 
         global store
         text_output(method,run_seed,bestSolution,simulation, store)
@@ -174,12 +174,12 @@ if __name__ == '__main__':
             pop_error[prop] = []
 
         parallel(set_proposals)
-        create_plot(post_dist, xlim, store + 'proposal_dist', 'posterior', transform=True)
+        create_plot(post_dist, globalvar.xlim, store + 'proposal_dist', 'posterior', transform=True)
         pkl.dump(post_dist, open(store+'posterior.pkl', 'wb'))
-        create_plot(pop_error, xlim, store+'pop_error', 'error')
+        create_plot(pop_error, globalvar.xlim, store+'pop_error', 'error')
 
     pkl.dump(results, open(store+'error.pkl', 'wb'))
-    create_plot(results, xlim, store+args.exp, 'error')
+    create_plot(results, globalvar.xlim, store+args.exp, 'error')
 
 
 
