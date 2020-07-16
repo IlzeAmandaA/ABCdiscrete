@@ -34,6 +34,7 @@ def run(run_seed, simulation):
 
     result = {}
     dist = {}
+    global xlim
 
     '''
     For every run initialize the chains with different initial  distribution
@@ -45,7 +46,8 @@ def run(run_seed, simulation):
 
     #loop over possible proposal methods
     for method in simulation.settings:
-        bestSolution, fitHistory, fitDist, error = simulation.run_mc(method, args.steps)
+
+        bestSolution, fitHistory, fitDist, error, xlim = simulation.run_mc(method, args.steps)
         result[method] = fitHistory
         pop_error[method] = error
         dist[method] = fitDist
@@ -168,12 +170,12 @@ if __name__ == '__main__':
             pop_error[prop] = []
 
         parallel(set_proposals)
-        create_plot(post_dist, store + 'proposal_dist', 'posterior')
+        create_plot(post_dist, xlim, store + 'proposal_dist', 'posterior')
         pkl.dump(post_dist, open(store+'posterior.pkl', 'wb'))
-        create_plot(pop_error, store+'pop_error', 'error')
+        create_plot(pop_error, xlim, store+'pop_error', 'error')
 
     pkl.dump(results, open(store+'error.pkl', 'wb'))
-    create_plot(results, store+args.exp, 'error')
+    create_plot(results, xlim, store+args.exp, 'error')
 
 
 

@@ -33,14 +33,14 @@ def prepare_data(dict):
     print(dict.keys())
     overall={}
     for key, values in dict.items():
-        print(values)
+        print(values[0])
         overall[key] = {}
         overall[key]['mean'] = np.mean(np.asarray(values), axis=0)
         overall[key]['std'] = np.std(np.asarray(values), axis=0)
 
     return overall
 
-def plot(avg_dict, location, yaxis):
+def plot(avg_dict, x, location, yaxis):
 
     formating = {key:formats[key] for key in avg_dict}
     plt.figure(figsize=(16, 6))
@@ -49,7 +49,7 @@ def plot(avg_dict, location, yaxis):
         results = avg_dict[transformation]
         y = results['mean']
         std = results['std']
-        x = [i * 500*12 for i in range(len(y))]
+        # x = [i * 500*20 for i in range(len(y))]
         assert len(x) == len(y) == len(std), 'The number of instances fo not match, check create plot function'
         plt.errorbar(x, y, yerr=std, fmt=formating[transformation], label=transformation, capsize=10)
 
@@ -61,9 +61,9 @@ def plot(avg_dict, location, yaxis):
     # plt.show()
 
 
-def create_plot(results, location, yaxis):
+def create_plot(results,x, location, yaxis):
     averages = prepare_data(results)
-    plot(averages, location, yaxis)
+    plot(averages, x,location, yaxis)
 
 def plot_pop(results, name, true=None):
     formating = {key:formats[key] for key in results}
@@ -73,7 +73,7 @@ def plot_pop(results, name, true=None):
     for transformation in results:
         y = results[transformation]
         std = [0*i for i in range(len(y))]
-        x = [i * 500*12 for i in range(len(y))]
+        x = [i * 500*20 for i in range(len(y))]
         assert len(x) == len(y) == len(std), 'The number of instances fo not match, check create plot function'
         plt.errorbar(x, y, yerr=std, fmt=formating[transformation], label=transformation)
 

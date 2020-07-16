@@ -40,6 +40,7 @@ class EvolutionaryMC():
         fitHistory = []
         fitDist = []
         error = []
+        xlim=[]
 
         n=0
         while n < steps:
@@ -77,15 +78,17 @@ class EvolutionaryMC():
                             best_target = target_iprime
                             best_params = iprime
 
-                    if n % 500*12 == 0:
+                    if n % 500*20 == 0:
                         fitHistory.append(self.model.error(best_params))
                         # fitDist.append(np.exp(best_target))
                         fitDist.append(np.exp(-(best_target)))
 
                         error.append(self.pop_error(chains))
 
+                        xlim.append(n)
 
-        return best_params, fitHistory, fitDist, error
+
+        return best_params, fitHistory, fitDist, error, xlim
 
     def pop_error(self, chains):
         error = 0.
