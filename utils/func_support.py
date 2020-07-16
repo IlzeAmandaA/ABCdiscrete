@@ -36,6 +36,8 @@ def prepare_data(dict, transform):
         print(values)
         overall[key] = {}
         overall[key]['mean'] = np.mean(np.asarray(values), axis=0)
+        print('mean')
+        print(overall[key]['mean'])
         overall[key]['std'] = np.std(np.asarray(values), axis=0)
 
         if transform:
