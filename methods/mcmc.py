@@ -77,7 +77,7 @@ class EvolutionaryMC():
                             best_target = target_iprime
                             best_params = iprime
 
-                    if n % 500 == 0:
+                    if n % 500*12 == 0:
                         fitHistory.append(self.model.error(best_params))
                         # fitDist.append(np.exp(best_target))
                         fitDist.append(np.exp(-(best_target)))

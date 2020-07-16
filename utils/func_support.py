@@ -47,7 +47,7 @@ def plot(avg_dict, location, yaxis):
         results = avg_dict[transformation]
         y = results['mean']
         std = results['std']
-        x = [i * 500 for i in range(len(y))]
+        x = [i * 500*12 for i in range(len(y))]
         assert len(x) == len(y) == len(std), 'The number of instances fo not match, check create plot function'
         plt.errorbar(x, y, yerr=std, fmt=formating[transformation], label=transformation, capsize=10)
 
@@ -71,7 +71,7 @@ def plot_pop(results, name, true=None):
     for transformation in results:
         y = results[transformation]
         std = [0*i for i in range(len(y))]
-        x = [i * 500 for i in range(len(y))]
+        x = [i * 500*12 for i in range(len(y))]
         assert len(x) == len(y) == len(std), 'The number of instances fo not match, check create plot function'
         plt.errorbar(x, y, yerr=std, fmt=formating[transformation], label=transformation)
 
