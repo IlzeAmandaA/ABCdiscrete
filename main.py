@@ -34,7 +34,7 @@ def run(run_seed, simulation):
 
     result = {}
     dist = {}
-    global xlim
+
 
     '''
     For every run initialize the chains with different initial  distribution
@@ -47,10 +47,13 @@ def run(run_seed, simulation):
     #loop over possible proposal methods
     for method in simulation.settings:
 
-        bestSolution, fitHistory, fitDist, error, xlim = simulation.run_mc(method, args.steps)
+        bestSolution, fitHistory, fitDist, error, x = simulation.run_mc(method, args.steps)
         result[method] = fitHistory
         pop_error[method] = error
         dist[method] = fitDist
+
+        global xlim
+        xlim=x
 
         global store
         text_output(method,run_seed,bestSolution,simulation, store)
