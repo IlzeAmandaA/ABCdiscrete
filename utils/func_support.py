@@ -29,7 +29,7 @@ def text_output(method, iter, solution, simulation, store):
     textfile.write('\n best likelihood {} '.format(simulation.model.product_lh(solution)))
     textfile.write('\n\n')
 
-def prepare_data(dict):
+def prepare_data(dict, transform):
     print(dict.keys())
     overall={}
     for key, values in dict.items():
@@ -37,6 +37,9 @@ def prepare_data(dict):
         overall[key] = {}
         overall[key]['mean'] = np.mean(np.asarray(values), axis=0)
         overall[key]['std'] = np.std(np.asarray(values), axis=0)
+
+        if transform:
+            overall[key]['mean'] = np.exp(-(overall[key]['mean']))
 
     return overall
 
@@ -61,8 +64,8 @@ def plot(avg_dict, x, location, yaxis):
     # plt.show()
 
 
-def create_plot(results,x, location, yaxis):
-    averages = prepare_data(results)
+def create_plot(results,x, location, yaxis, transform=False):
+    averages = prepare_data(results, transform)
     plot(averages, x,location, yaxis)
 
 def plot_pop(results, name, true=None):

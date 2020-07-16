@@ -174,7 +174,7 @@ if __name__ == '__main__':
             pop_error[prop] = []
 
         parallel(set_proposals)
-        create_plot(post_dist, xlim, store + 'proposal_dist', 'posterior')
+        create_plot(post_dist, xlim, store + 'proposal_dist', 'posterior', transform=True)
         pkl.dump(post_dist, open(store+'posterior.pkl', 'wb'))
         create_plot(pop_error, xlim, store+'pop_error', 'error')
 

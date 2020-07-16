@@ -81,7 +81,7 @@ class EvolutionaryMC():
                     if n % 500*20 == 0:
                         fitHistory.append(self.model.error(best_params))
                         # fitDist.append(np.exp(best_target))
-                        fitDist.append(np.exp(-(best_target)))
+                        fitDist.append(best_target)
 
                         error.append(self.pop_error(chains))
 
