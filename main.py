@@ -11,7 +11,7 @@ parser.add_argument('--sequential', default=False, action='store_true',
                     help='Flag to run the simulation in parallel processing')
 parser.add_argument('--steps', type=int, default=500000, metavar='int',
                     help='evaluation steps') #200000
-parser.add_argument('--seed', type=int, default=1, metavar='int',
+parser.add_argument('--seed', type=int, default=0, metavar='int',
                     help='seed')
 parser.add_argument('--pflip', type=float, default=0.1, metavar='float',
                     help='bitflip probability')
