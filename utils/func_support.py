@@ -35,10 +35,11 @@ def prepare_data(dict, x, transform):
         assert len(values[0]) == len(values[1]), 'issue with lenghts'
         overall[key] = {}
         overall[key]['mean'] = np.mean(np.asarray(values), axis=0)
-        overall[key]['std'] = np.std(np.asarray(values), axis=0)
-
         if transform:
             overall[key]['mean'] = np.exp(-(overall[key]['mean']))
+        overall[key]['std'] = np.std(np.asarray(values), axis=0)
+
+
 
     for key, values in x.items():
         overall[key]['x'] = np.mean(np.asarray(values), axis=0)
