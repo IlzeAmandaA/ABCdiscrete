@@ -5,20 +5,21 @@ from utils.func_support import *
 import multiprocessing as mp
 import pickle as pkl
 import sys
+import os
 import time
 
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
 parser.add_argument('--sequential', default=False, action='store_true',
                     help='Flag to run the simulation in parallel processing')
-parser.add_argument('--steps', type=int, default=600000, metavar='int',
-                    help='evaluation steps') #500000
+parser.add_argument('--steps', type=int, default=10000, metavar='int',
+                    help='evaluation steps') #600000
 parser.add_argument('--seed', type=int, default=0, metavar='int',
                     help='seed')
 parser.add_argument('--pflip', type=float, default=0.1, metavar='float',
                     help='bitflip probability')
 parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
-parser.add_argument('--eval', type=int, default=15, metavar='int',
+parser.add_argument('--eval', type=int, default=2, metavar='int',
                     help = 'number of evaluations')
 parser.add_argument('--exp', type=str, default='stren', metavar='str',
                     help='proposal selection')
@@ -161,7 +162,11 @@ if __name__ == '__main__':
     Braak = ['de-mc', 'de-mc1', 'de-mc2']
 
     set_proposals = Strens if args.exp == 'stren' else Braak
-    store='results/benchmark/' if args.exp == 'stren' else 'results/de-mc/'
+    store='results/benchmark/argseed' if args.exp == 'stren' else 'results/de-mc/argseed'
+    store += str(args.seed)
+
+    if not os.path.exists(store):
+        os.makedirs(store)
 
     results = {prop:[] for prop in set_proposals}
     post_dist = {}
@@ -181,12 +186,12 @@ if __name__ == '__main__':
             xlim[prop]=[]
 
         parallel(set_proposals)
-        create_plot(post_dist, xlim, store + 'proposal_dist', 'posterior', transform=True)
-        pkl.dump(post_dist, open(store+'posterior.pkl', 'wb'))
-        create_plot(pop_error, xlim, store+'pop_error', 'error')
+        create_plot(post_dist, xlim, store + '/proposal_dist', 'posterior', True)
+        pkl.dump(post_dist, open(store+'/posterior.pkl', 'wb'))
+        create_plot(pop_error, xlim, store+'/pop_error', 'error')
 
-    pkl.dump(results, open(store+'error.pkl', 'wb'))
-    create_plot(results, xlim, store+args.exp, 'error')
+    pkl.dump(results, open(store+'/error.pkl', 'wb'))
+    create_plot(results, xlim, store+'/'+args.exp, 'error')
 
 
 
