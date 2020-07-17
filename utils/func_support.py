@@ -12,7 +12,7 @@ def initialze_storage(settings):
     return store
 
 def text_output(method, iter, solution, simulation, store):
-    textfile = open(store+ method + '.txt', 'a+')
+    textfile = open(store + '/'+ method + '.txt', 'a+')
     textfile.write('------------------------------------------------\n')
     textfile.write('Iteration {}\n'.format(iter))
     if np.array_equal(solution, simulation.model.b_truth):
