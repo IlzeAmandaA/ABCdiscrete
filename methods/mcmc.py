@@ -11,7 +11,7 @@ STRENS=False
 
 class EvolutionaryMC():
 
-    def __init__(self, model, pflip, pcross, settings, info, nchains=12):
+    def __init__(self, model, pflip, pcross, settings, info, nchains=24): #12
         self.model = model
         self.N = nchains
 
