@@ -46,6 +46,8 @@ class QMR_DT():
             if self.p_l[l] >= np.random.uniform(0,1):
                 self.b_truth[l] = 1
 
+
+
     def generate_data(self):
         """
         Function that returns possible findings given the underlying disease state b_truth
