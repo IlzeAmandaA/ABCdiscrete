@@ -2,7 +2,7 @@ import numpy as np
 
 class Proposals():
 
-    def __init__(self, pflip=0.1,pcross=0.5):
+    def __init__(self, pflip,pcross):
         self.pflip = pflip
         self.pcross = pcross
 
