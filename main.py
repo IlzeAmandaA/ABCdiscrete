@@ -15,7 +15,7 @@ parser.add_argument('--steps', type=int, default=800000, metavar='int',
                     help='evaluation steps') #600000
 parser.add_argument('--seed', type=int, default=0, metavar='int',
                     help='seed')
-parser.add_argument('--pflip', type=float, default=0.01, metavar='float',
+parser.add_argument('--pflip', type=float, default=0.005, metavar='float',
                     help='bitflip probability') #0.1
 parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
