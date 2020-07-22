@@ -164,18 +164,23 @@ if __name__ == '__main__':
     Strens = {'mut': 1., 'mut+xor': 0.5, 'mut+crx': 0.66}
     Braak = ['de-mc', 'de-mc1', 'de-mc2']
 
-    set_proposals = Strens if args.exp == 'stren' else Braak
-    store='results/benchmark/argseed' if args.exp == 'stren' else 'results/de-mc/argseed'
-    store += str(args.seed)
+    set_proposals = ['de-mc', 'mut+xor']
+    store = 'results/abc/'
 
-    if not os.path.exists(store):
-        os.makedirs(store)
+
+
+
+
+
+
+    # store += str(args.seed)
+    # if not os.path.exists(store):
+    #     os.makedirs(store)
 
     results = {prop:[] for prop in set_proposals}
     post_dist = {}
     pop_error = {}
     xlim = {}
-
 
     if args.sequential:
         true_posterior = sequential(set_proposals)
