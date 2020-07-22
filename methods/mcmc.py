@@ -23,7 +23,11 @@ class EvolutionaryMC():
         self.target_chains = None #list #i think I can move it here
 
     def initialize_chains(self):
-        self.chains = [self.model.simulate() for n in range(self.N)]
+        self.chains = [self.simulate() for n in range(self.N)]
+
+    def simulate(self):
+        return np.random.binomial(1, .5, self.model.m)
+
 
     def compute_fitness(self):
         self.target_chains = [self.model.neg_log_posterior(chain) for chain in self.chains]

@@ -9,11 +9,11 @@ class QMR_DT():
 
     def __init__(self):
 
-        self.m = 20
-        self.f = 80
+        self.m = 10
+        self.f = 20
         self.association_prob = 0.9
-        self.p_l = np.random.uniform(0, 0.5, self.m)  # disease prior
-        self.q_i0 = np.random.uniform(0, 1, self.f)  # leak probability
+        self.p_l = np.random.beta(0.15, 0.15, self.m)  # disease prior
+        self.q_i0 = np.random.beta(0.15, 0.15, self.f)  # leak probability
         self.q_il = self.association()  # association between disease l and finding i (finding, disease)
 
 
@@ -31,7 +31,7 @@ class QMR_DT():
             f_association=np.zeros(self.m)
             for b in range(self.m):
                 if np.random.uniform(0,1) >= self.association_prob:
-                    f_association[b] = np.random.uniform(0,1)
+                    f_association[b] = np.random.beta(0.15,0.15)
             q_il.append(f_association)
 
         return np.array(q_il)
@@ -47,7 +47,6 @@ class QMR_DT():
                 self.b_truth[l] = 1
 
 
-
     def generate_data(self):
         """
         Function that returns possible findings given the underlying disease state b_truth
@@ -58,8 +57,14 @@ class QMR_DT():
             if (1-np.exp(self.llh(self.b_truth, idx)))>= np.random.uniform(0,1):
                 self.findings[idx]=1
 
-    def simulate(self):
-        return np.random.binomial(1, .5, self.m)
+
+    def simulate(self, b):
+        findings = np.zeros(self.f)
+        for idx in range(self.f):
+            if (1 - np.exp(self.llh(b, idx))) >= np.random.uniform(0, 1):
+                findings[idx] = 1
+
+        return findings
 
 
     def prior(self, b):
@@ -67,6 +72,9 @@ class QMR_DT():
         :param b: binary vector (np.array)
         :return: log prior
         """
+        return np.sum(b * np.log(self.p_l) + (1 - b) * np.log(1 - self.p_l))
+
+    def log_prior(self, b):
         return np.sum(b * np.log(self.p_l) + (1 - b) * np.log(1 - self.p_l))
 
     def product_lh(self, b):
