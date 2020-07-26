@@ -10,18 +10,22 @@ import time
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
 parser.add_argument('--sequential', default=False, action='store_true',
                     help='Flag to run the simulation in parallel processing')
-parser.add_argument('--steps', type=int, default=800000, metavar='int',
+parser.add_argument('--steps', type=int, default=40000, metavar='int',
                     help='evaluation steps') #600000
-parser.add_argument('--seed', type=int, default=0, metavar='int',
+parser.add_argument('--seed', type=int, default=4, metavar='int',
                     help='seed')
-parser.add_argument('--pflip', type=float, default=0.005, metavar='float',
+parser.add_argument('--N', type=int, default=24, metavar='int',
+                    help='seed')
+parser.add_argument('--pflip', type=float, default=0.01, metavar='float',
                     help='bitflip probability') #0.1
 parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
 parser.add_argument('--eval', type=int, default=15, metavar='int',
                     help = 'number of evaluations')
-parser.add_argument('--exp', type=str, default='stren', metavar='str',
+parser.add_argument('--exp', type=str, default='abc', metavar='str',
                     help='proposal selection')
+parser.add_argument('--epsilon', type=float, default=1.4, metavar='float',
+                    help='distance threshold')
 
 
 args = parser.parse_args()
@@ -30,17 +34,13 @@ SEED_MODEL=1
 
 
 
-
-
-
 def run(run_seed, simulation):
     print(run_seed)
     start_time = time.time()
 
-    result = {}
-    dist = {}
     pop={}
     x={}
+    ratio={}
 
 
     '''
@@ -48,23 +48,17 @@ def run(run_seed, simulation):
     '''
     np.random.seed(run_seed)
     simulation.initialize_chains()
-    simulation.compute_fitness()
-
 
     #loop over possible proposal methods
     for method in simulation.settings:
 
-        bestSolution, fitHistory, fitDist, error, x_pos = simulation.run_mc(method, args.steps)
-        result[method] = fitHistory
+        error, x_pos, ac_ratio = simulation.run_mc(method, args.steps)
         pop[method] = error
-        dist[method] = fitDist
         x[method] = x_pos
-
-        global store
-        text_output(method,run_seed,bestSolution,simulation, store)
+        ratio[method] = ac_ratio
 
     print('for run {} time ---- {} minutes ---'.format(run_seed, (time.time() - start_time) / 60))
-    return (result, dist, pop, x)
+    return (pop, x, ratio)
 
 
 def parallel(settings):
@@ -75,7 +69,8 @@ def parallel(settings):
     keep the underlying model same across all experiments with Seed_model
     '''
     np.random.seed(SEED_MODEL)
-    simulation = EvolutionaryMC(QMR_DT(),args.pflip, args.pcross, settings=settings, info=args.exp)
+
+    simulation = ABC_Discrete(QMR_DT(),args.pflip, args.pcross, settings=settings, info=args.exp, epsilon=args.epsilon, nchains=args.N)
 
 
     '''
@@ -98,22 +93,19 @@ def parallel(settings):
 
 def collect_result(outcome):
     # for result in result_list:
-    result, dist, pop, x = outcome
-    global results
-    for key in result:
-        results[key].append(result[key])
-
-    global post_dist
-    for key in dist:
-        post_dist[key].append(dist[key])
+    pop, x, r = outcome
 
     global pop_error
-    for key in pop:
-        pop_error[key].append(pop[key])
+    for key, value in pop.item():
+        pop_error[key].append(value)
 
     global xlim
-    for key in x:
-        xlim[key].append(x[key])
+    for key, value in x.item():
+        xlim[key].append(value)
+
+    global acceptance_r
+    for key,value in r.item():
+        acceptance_r[key].append(value)
 
 
 
@@ -124,15 +116,14 @@ def sequential(settings):
 
     np.random.seed(SEED_MODEL)
     global simulation
-    simulation = ABC_Discrete(QMR_DT(), args.pflip, args.pcross, settings=settings, info=args.exp)
-
+    simulation = ABC_Discrete(QMR_DT(), args.pflip, args.pcross, settings=settings, info=args.exp, epsilon=args.epsilon, nchains=args.N)
 
     #initialize goal parameters and the corresponing data
     np.random.seed(args.seed)
     simulation.model.generate_parameters() #create the true underlying parameter settings
     print('true model parameters {}'.format(simulation.model.b_truth))
     simulation.model.generate_data(n=10) #generate 10 true data points
-    print('data points \n')
+    print('data points')
     print(simulation.model.data)
 
     np.random.seed(k)
@@ -142,16 +133,14 @@ def sequential(settings):
     for method in simulation.settings:
         print('Proposal: {}'.format(method))
 
-        error, x = simulation.run_abc(method, args.steps)
+        error, x, ratio = simulation.run_abc(method, args.steps)
+        print('Acceptance ratio : {}'.format(ratio))
 
         global pop_error
         pop_error[method] = error
 
         global xlim
         xlim[method] = x
-        #
-        # global store
-        # text_output(method,k,bestSolution,simulation,store)
 
 
 
@@ -160,35 +149,29 @@ if __name__ == '__main__':
     set_proposals = {'de-mc':None, 'mut+xor':0.5}
     store = 'results/abc/'
 
-    # store += str(args.seed)
-    # if not os.path.exists(store):
-    #     os.makedirs(store)
-
-    results = {prop:[] for prop in set_proposals}
-    post_dist = {}
     pop_error = {}
     xlim = {}
+    acceptance_r ={}
 
     if args.sequential:
-        true_posterior = sequential(set_proposals)
-        plot_pop(pop_error, 'error')
-        # plot_pop(post_dist, 'target_dist', true_posterior)
+        sequential(set_proposals)
+        plot_single(pop_error, xlim, 'error', store + '/pop_error')
 
 
     else:
 
         for prop in set_proposals:
-            post_dist[prop] = []
             pop_error[prop] = []
             xlim[prop]=[]
+            acceptance_r[prop] = []
 
         parallel(set_proposals)
-        create_plot(post_dist, xlim, store + '/proposal_dist', 'posterior', True)
-        pkl.dump(post_dist, open(store+'/posterior.pkl', 'wb'))
+        pkl.dump(xlim, open(store + '/xlim.pkl', 'wb'))
+        pkl.dump(pop_error, open(store+'/pop_error'+ str(args.epsilon)+ '.pkl', 'wb'))
         create_plot(pop_error, xlim, store+'/pop_error', 'error')
 
-    pkl.dump(results, open(store+'/error.pkl', 'wb'))
-    create_plot(results, xlim, store+'/'+args.exp, 'error')
+        report(compute_statistics(acceptance_r), store+'/acceptance_ratio')
+
 
 
 

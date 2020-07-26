@@ -1,15 +1,24 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from operator import  add
 
 formats = {'mut': '--or', 'mut+crx': ':^g', 'mut+xor': '-.vb',
            'de-mc':'--or', 'de-mc1':':^g', 'de-mc2':'-.vb'} #check
 #https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.plot.html
 
-def initialze_storage(settings):
-    store={}
-    for key in settings:
-        store[key] = []
-    return store
+line = {'mut': '--o', 'mut+crx': ':^', 'mut+xor': '-.v',
+        'de-mc':'-<', 'de-mc1':':^', 'de-mc2':'-.v'
+        }
+
+
+color = {'mut': '#fa4224', 'mut+crx': '#388004', 'mut+xor': '#004577',
+         'de-mc':'#ff028d', 'de-mc1':'#388004', 'de-mc2':'#004577'
+         }
+
+fill = {'mut': '#FF9848', 'mut+crx': '#c7fdb5', 'mut+xor': '#95d0fc',
+        'de-mc':'#ffb2d0', 'de-mc1':'#c7fdb5', 'de-mc2':'#95d0fc'
+        }
+
 
 def text_output(method, iter, solution, simulation, store):
     textfile = open(store + '/'+ method + '.txt', 'a+')
@@ -29,7 +38,18 @@ def text_output(method, iter, solution, simulation, store):
     textfile.write('\n best likelihood {} '.format(simulation.model.product_lh(solution)))
     textfile.write('\n\n')
 
-def prepare_data(dict, x, transform):
+def report(dict, store):
+    textfile = open(store + '.txt', 'a+')
+    for method, values in dict.items():
+        textfile.write('proposal : {}'.format(method))
+        textfile.write('acceptance ratio : mean {} (std {}) \n'.format(values['mean'], values['std']))
+
+
+def create_plot(results,x, location, yaxis, transform=False, ylim=None, xlim=None, length=16, height=6):
+    averages = compute_statistics(results, x, transform)
+    plot(averages, location, yaxis, ylim, xlim, length, height)
+
+def compute_statistics(dict, x=None, transform=False):
     overall={}
     for key, values in dict.items():
         assert len(values[0]) == len(values[1]), 'issue with lenghts'
@@ -38,25 +58,33 @@ def prepare_data(dict, x, transform):
         overall[key]['mean'] = np.mean(values, axis=0)
         overall[key]['std'] = np.std(values, axis=0)
 
-    for key, values in x.items():
-        overall[key]['x'] = np.mean(np.asarray(values), axis=0)
+    if x is not None:
+        for key, values in x.items():
+            overall[key]['x'] = np.mean(np.asarray(values), axis=0)
 
     return overall
 
-def plot(avg_dict, location, yaxis):
+def plot(avg_dict, location, yaxis, ylim, xlim, length=16, height=6):
+    plt.figure(figsize=(length, height))
 
-    formating = {key:formats[key] for key in avg_dict}
-    plt.figure(figsize=(16, 6))
-
-    for transformation in avg_dict:
-        results = avg_dict[transformation]
+    for transformation, results in avg_dict.items():
         y = results['mean']
         std = results['std']
         x = results['x']
-        # x = [i * 500*20 for i in range(len(y))]
+        y_min=y-std
+        y_plus=y+std
         assert len(x) == len(y) == len(std), 'The number of instances fo not match, check create plot function'
-        plt.errorbar(x, y, yerr=std, fmt=formating[transformation], label=transformation, capsize=10)
 
+        plt.plot(x,y, line[transformation], color=color[transformation], label = transformation)
+        plt.fill_between(x, y_min, y_plus,
+                         alpha=0.5, edgecolor=color[transformation], facecolor=fill[transformation])
+
+    if ylim is not None:
+        a,b=ylim
+        plt.ylim(a, b)
+    if xlim is not None:
+        a,b = xlim
+        plt.xlim(a,b)
     plt.xlabel('evaluations')
     plt.ylabel(yaxis)
     plt.grid(True)
@@ -65,33 +93,28 @@ def plot(avg_dict, location, yaxis):
     # plt.show()
 
 
-def create_plot(results,x, location, yaxis, transform=False):
-    averages = prepare_data(results, x, transform)
-    plot(averages, location, yaxis)
-
-def plot_pop(results, name, true=None):
-    formating = {key:formats[key] for key in results}
+def plot_single(results, points, name, location):
 
     plt.figure(figsize=(16, 6))
 
-    for transformation in results:
-        y = results[transformation]
-        std = [0*i for i in range(len(y))]
-        x = [i * 500*20 for i in range(len(y))]
-        assert len(x) == len(y) == len(std), 'The number of instances fo not match, check create plot function'
-        plt.errorbar(x, y, yerr=std, fmt=formating[transformation], label=transformation)
+    for transformation, data in results.items():
+        y = np.asarray(data)
+        std = np.std(y)
+        y_min = y+std
+        y_plus = y-std
+        x = points[transformation]
+        assert len(x) == len(y), 'The number of instances fo not match, check create plot function'
+        plt.plot(x, y, line[transformation], color=color[transformation], label=transformation)
+        plt.fill_between(x, y_min, y_plus,
+                         alpha=0.5, edgecolor=color[transformation], facecolor=fill[transformation])
 
-    # try:
-    #     plt.hlines(true, xmin=x[0], xmax=x[-1], colors='c')
-    # except ValueError:
-    #     pass
 
     plt.xlabel('evaluations')
     plt.ylabel(name)
     plt.grid(True)
     plt.legend(loc=0)
-    plt.savefig('results/benchmark/pop_'+ name + '_.png')
-    # plt.show()
+    plt.savefig(location+ '.png')
+
 
 
 

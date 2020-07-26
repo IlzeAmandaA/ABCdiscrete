@@ -12,7 +12,7 @@ Implementation of Metropolis algorithm
 
 class ABC_Discrete():
 
-    def __init__(self, model, pflip, pcross, settings, info, nchains=24): #12 #24
+    def __init__(self, model, pflip, pcross, settings, info, epsilon, nchains): #12 #24
         self.model = model
         self.N = nchains
 
@@ -21,10 +21,14 @@ class ABC_Discrete():
         self.settings =  settings
 
         self.population = None #list of nparray
-        self.epsilon = 10
+        self.epsilon = epsilon #9.25 #1.5
 
     def initialize_chains(self):
-        self.population = [self.model.simulate() for n in range(self.N)]
+        self.population = [self.sample_chain() for n in range(self.N)]
+
+
+    def sample_chain(self):
+        return np.random.binomial(1, .5, self.model.m)
 
 
     def run_abc(self, method, steps):
@@ -34,9 +38,11 @@ class ABC_Discrete():
 
         error = []
         xlim=[]
-        sample = 500*20
+        sample = 250
 
         n=0
+        acceptence_ratio=0.
+
         while n < steps:
             for i in range(len(population)):
                 theta_ = self.proposal(population, i, method)
@@ -44,18 +50,21 @@ class ABC_Discrete():
 
                 if self.distance(x)<=self.epsilon:
                     alpha = self.metropolis(theta_,population[i])
-                    n += 1
+                    acceptence_ratio += 1
 
                     if alpha >= np.random.uniform(0,1):
                         population[i] = theta_
-
+                n += 1
 
                 if n >= sample:
                     error.append(self.pop_error(population))
                     xlim.append(n)
-                    sample += 500*20
+                    sample += 500
 
-        return error, xlim
+
+        acceptence_ratio = (acceptence_ratio/steps)*100
+
+        return error, xlim, acceptence_ratio
 
     def distance(self, f):
         avg=0
@@ -104,6 +113,4 @@ class ABC_Discrete():
 
     def sample(self, i, max, size=1):
         return np.random.choice([x for x in range(1, max) if x != i], size=size, replace=False)
-
-
 

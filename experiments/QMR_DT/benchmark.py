@@ -49,8 +49,8 @@ class QMR_DT():
 
     def generate_data(self, n=1):
         self.data = np.zeros(shape=(n,self.f))
-        for row in self.data:
-            for idx in row:
+        for row in range(self.data.shape[0]):
+            for idx in range(self.data.shape[1]):
                 if (1-np.exp(self.llh(self.b_truth, idx)))>= np.random.uniform(0,1):
                     self.data[row,idx]=1
 
