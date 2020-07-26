@@ -47,6 +47,10 @@ def run(run_seed, simulation):
     For every run initialize the chains with different initial  distribution
     '''
     np.random.seed(run_seed)
+    # np.random.seed(args.seed)
+    simulation.model.generate_parameters() #create b truth
+    simulation.model.generate_data(n=10) #sample findings for the generated instance
+
     simulation.initialize_chains()
 
     #loop over possible proposal methods
@@ -75,10 +79,7 @@ def parallel(settings):
     Sample different underlying parameter settings for each experiment with args.seed
     '''
 
-    np.random.seed(args.seed)
-    simulation.model.generate_parameters() #create b truth
-    simulation.model.generate_data(n=10) #sample findings for the generated instance
-
+    #old location for parameters
 
     pool = mp.Pool(processes=args.eval)
 
