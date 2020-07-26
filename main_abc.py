@@ -145,7 +145,7 @@ def sequential(settings):
 if __name__ == '__main__':
 
     set_proposals = {'de-mc':None, 'mut+xor':0.5}
-    store = 'results/abc/'
+    store = 'results/abc'
 
     pop_error = {}
     xlim = {}
@@ -166,7 +166,7 @@ if __name__ == '__main__':
         parallel(set_proposals)
         pkl.dump(xlim, open(store + '/xlim.pkl', 'wb'))
         pkl.dump(pop_error, open(store+'/pop_error'+ str(args.epsilon)+ '.pkl', 'wb'))
-        create_plot(pop_error, xlim, store+'/pop_error', 'error')
+        create_plot(pop_error, xlim, store +'/pop_error'+ str(args.epsilon), 'error')
 
         report(compute_statistics(acceptance_r), store+'/acceptance_ratio')
 

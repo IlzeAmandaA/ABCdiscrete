@@ -45,7 +45,7 @@ def report(dict, store):
         textfile.write('acceptance ratio : mean {} (std {}) \n'.format(values['mean'], values['std']))
 
 
-def create_plot(results,x, location, yaxis, transform=False, ylim=None, xlim=None, length=16, height=6):
+def create_plot(results, x, location, yaxis, transform=False, ylim=None, xlim=None, length=16, height=6):
     averages = compute_statistics(results, x, transform)
     plot(averages, location, yaxis, ylim, xlim, length, height)
 
