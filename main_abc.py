@@ -1,6 +1,6 @@
 import argparse
 from experiments.QMR_DT.benchmark import QMR_DT
-from methods.mcmc import EvolutionaryMC
+from methods.abc import ABC_Discrete
 from utils.func_support import *
 import multiprocessing as mp
 import pickle as pkl
@@ -124,54 +124,41 @@ def sequential(settings):
 
     np.random.seed(SEED_MODEL)
     global simulation
-    simulation = EvolutionaryMC(QMR_DT(),args.pflip, args.pcross, settings=settings, info=args.exp)
+    simulation = ABC_Discrete(QMR_DT(), args.pflip, args.pcross, settings=settings, info=args.exp)
 
 
     #initialize goal parameters and the corresponing data
     np.random.seed(args.seed)
-    simulation.model.generate_parameters()
-    simulation.model.generate_data()
+    simulation.model.generate_parameters() #create the true underlying parameter settings
+    print('true model parameters {}'.format(simulation.model.b_truth))
+    simulation.model.generate_data(n=10) #generate 10 true data points
+    print('data points \n')
+    print(simulation.model.data)
 
     np.random.seed(k)
     simulation.initialize_chains()
-    simulation.compute_fitness()
 
     #loop over possible proposal methods
     for method in simulation.settings:
         print('Proposal: {}'.format(method))
-        print(simulation.chains[0])
-        bestSolution, fitHistory, fitDist, error = simulation.run_mc(method, args.steps)
 
-        global results
-        results[method].append(fitHistory)
+        error, x = simulation.run_abc(method, args.steps)
 
         global pop_error
         pop_error[method] = error
 
-        global post_dist
-        post_dist[method] = fitDist
-
-        global store
-        text_output(method,k,bestSolution,simulation,store)
-
-    return simulation.model.posterior(simulation.model.b_truth)
-
+        global xlim
+        xlim[method] = x
+        #
+        # global store
+        # text_output(method,k,bestSolution,simulation,store)
 
 
 
 if __name__ == '__main__':
 
-    Strens = {'mut': 1., 'mut+xor': 0.5, 'mut+crx': 0.66}
-    Braak = ['de-mc', 'de-mc1', 'de-mc2']
-
-    set_proposals = ['de-mc', 'mut+xor']
+    set_proposals = {'de-mc':None, 'mut+xor':0.5}
     store = 'results/abc/'
-
-
-
-
-
-
 
     # store += str(args.seed)
     # if not os.path.exists(store):
@@ -185,7 +172,9 @@ if __name__ == '__main__':
     if args.sequential:
         true_posterior = sequential(set_proposals)
         plot_pop(pop_error, 'error')
-        plot_pop(post_dist, 'target_dist', true_posterior)
+        # plot_pop(post_dist, 'target_dist', true_posterior)
+
+
     else:
 
         for prop in set_proposals:

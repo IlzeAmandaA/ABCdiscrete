@@ -18,7 +18,7 @@ class QMR_DT():
 
 
         self.b_truth = None #sample b_truth from disease prior
-        self.findings = None #generate findings given b_truth
+        self.data = None #generate multipl findings given b_truth
 
 
     def association(self):
@@ -47,15 +47,12 @@ class QMR_DT():
                 self.b_truth[l] = 1
 
 
-    def generate_data(self):
-        """
-        Function that returns possible findings given the underlying disease state b_truth
-        :return: findings
-        """
-        self.findings = np.zeros(self.f)
-        for idx in range(self.f):
-            if (1-np.exp(self.llh(self.b_truth, idx)))>= np.random.uniform(0,1):
-                self.findings[idx]=1
+    def generate_data(self, n=1):
+        self.data = np.zeros(shape=(n,self.f))
+        for row in self.data:
+            for idx in row:
+                if (1-np.exp(self.llh(self.b_truth, idx)))>= np.random.uniform(0,1):
+                    self.data[row,idx]=1
 
 
     def simulate(self, b):

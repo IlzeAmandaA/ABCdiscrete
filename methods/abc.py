@@ -1,5 +1,6 @@
 import numpy as np
 from methods.proposals import Proposals
+import sys
 from tqdm import tqdm
 
 
@@ -11,7 +12,7 @@ Implementation of Metropolis algorithm
 
 class ABC_Discrete():
 
-    def __init__(self, model, pflip, pcross, settings, info, nchains=12): #12 #24
+    def __init__(self, model, pflip, pcross, settings, info, nchains=24): #12 #24
         self.model = model
         self.N = nchains
 
@@ -20,7 +21,7 @@ class ABC_Discrete():
         self.settings =  settings
 
         self.population = None #list of nparray
-        self.epsilon = SPECIFY
+        self.epsilon = 10
 
     def initialize_chains(self):
         self.population = [self.model.simulate() for n in range(self.N)]
@@ -38,7 +39,6 @@ class ABC_Discrete():
         n=0
         while n < steps:
             for i in range(len(population)):
-            # for i in sample_chains:
                 theta_ = self.proposal(population, i, method)
                 x=self.model.simulate(theta_)
 
@@ -51,12 +51,11 @@ class ABC_Discrete():
 
 
                 if n >= sample:
-                    #WHAT TO PLOT????
-                    # xlim.append(n)
+                    error.append(self.pop_error(population))
+                    xlim.append(n)
                     sample += 500*20
 
-
-        return WHAT TO RETURN
+        return error, xlim
 
     def distance(self, f):
         avg=0
@@ -64,6 +63,13 @@ class ABC_Discrete():
             avg += self.hamming(f,x)
         avg /= len(self.model.data)
         return avg
+
+    def pop_error(self, chains):
+        error = 0.
+        for chain in chains:
+            error += self.distance(chain)
+        error /= len(chains)
+        return error
 
     def hamming(self, x, x0):
         distance = 0.
@@ -76,37 +82,23 @@ class ABC_Discrete():
         return min(1, np.exp(self.model.log_prior(theta_)-self.model.log_prior(theta)))
 
 
-
-
     def proposal(self, population, i, method):
 
-
-        if self.exp_id == 'braak':
-            j, k = self.sample(i, len(population), 2)
-            assert j != k, 'Check proposal xor method {} {}'.format(j, k)
-            if method == 'de-mc':
-                iprime = self.proposals.de_mc(population[i], population[j], population[k])
-            elif method == 'de-mc1':
-                iprime = self.proposals.de_mc1(population[i], population[j], population[k])
-            elif method == 'de-mc2':
-                iprime = self.proposals.de_mc2(population[i], population[j], population[k])
-
-        else: #stren
-            if self.settings[method] >= np.random.uniform(0,1):
+        if method == 'mut+xor':
+            if self.settings[method] >= np.random.uniform(0, 1):
                 iprime = self.proposals.bit_flip(population[i])
-
-            elif method == 'mut+crx':
-                j = self.sample(i, len(population))[0]
-                assert j != i, 'Check proposal cross method'
-                iprime, jprime = self.proposals.crossover(population[i], population[j])
-
-            elif method == 'mut+xor':
+            else:
                 j, k = self.sample(i, len(population), 2)
-                assert j!=k, 'Check proposal xor method {} {}'.format(j,k)
+                assert j != k, 'Check proposal xor method {} {}'.format(j, k)
                 iprime = self.proposals.xor(population[i], population[j], population[k])
 
-            else:
-                print('incorrect proposal')
+        elif method == 'de-mc':
+            j, k = self.sample(i, len(population), 2)
+            assert j != k, 'Check proposal xor method {} {}'.format(j, k)
+            iprime = self.proposals.de_mc(population[i], population[j], population[k])
+
+        else:
+            sys.exit('Incorrect proposal')
 
         return iprime
 
