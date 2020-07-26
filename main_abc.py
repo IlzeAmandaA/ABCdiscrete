@@ -168,7 +168,7 @@ if __name__ == '__main__':
         pkl.dump(pop_error, open(store+'/pop_error'+ str(args.epsilon)+ '.pkl', 'wb'))
         create_plot(pop_error, xlim, store +'/pop_error'+ str(args.epsilon), 'error')
 
-        report(compute_avg(acceptance_r), store+'/acceptance_ratio')
+        report(compute_avg(acceptance_r), args.epsilon, store+'/acceptance_ratio')
 
 
 

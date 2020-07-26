@@ -38,11 +38,13 @@ def text_output(method, iter, solution, simulation, store):
     textfile.write('\n best likelihood {} '.format(simulation.model.product_lh(solution)))
     textfile.write('\n\n')
 
-def report(dict, store):
+def report(dict,epsilon, store):
     textfile = open(store + '.txt', 'a+')
+    textfile.write('epsilon value: {} \n'.format(epsilon))
     for method, values in dict.items():
-        textfile.write('proposal : {}'.format(method))
+        textfile.write('proposal : {} \n'.format(method))
         textfile.write('acceptance ratio : mean {} (std {}) \n'.format(values['mean'], values['std']))
+    textfile.write('--------------------- \n\n')
 
 
 def create_plot(results, x, location, yaxis, transform=False, ylim=None, xlim=None, length=16, height=6):
