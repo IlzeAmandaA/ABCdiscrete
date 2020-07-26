@@ -67,8 +67,9 @@ def compute_avg(dict):
     overall={}
     for key, values in dict.items():
         overall[key] = {}
-        overall[key]['mean'] = np.mean(np.asarray(values), axis=1)
-        overall[key]['std'] = np.std(np.asarray(values), axis=1)
+        print(values)
+        overall[key]['mean'] = np.mean(np.asarray(values))
+        overall[key]['std'] = np.std(np.asarray(values))
 
     return overall
 
