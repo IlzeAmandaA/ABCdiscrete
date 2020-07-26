@@ -52,6 +52,7 @@ def create_plot(results,x, location, yaxis, transform=False, ylim=None, xlim=Non
 def compute_statistics(dict, x=None, transform=False):
     overall={}
     for key, values in dict.items():
+        print(values)
         assert len(values[0]) == len(values[1]), 'issue with lenghts'
         overall[key] = {}
         values = np.exp(-(np.asarray(values))) if transform else np.asarray(values)
