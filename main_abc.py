@@ -81,7 +81,7 @@ def parallel(settings):
 
     #old location for parameters
 
-    pool = mp.Pool(processes=args.eval)
+    pool = mp.Pool(processes=15)
 
     for k in range(args.eval):
         pool.apply_async(run, (k,simulation), callback=collect_result)
