@@ -94,15 +94,15 @@ def collect_result(outcome):
     pop, x, r = outcome
 
     global pop_error
-    for key, value in pop.item():
+    for key, value in pop.items():
         pop_error[key].append(value)
 
     global xlim
-    for key, value in x.item():
+    for key, value in x.items():
         xlim[key].append(value)
 
     global acceptance_r
-    for key,value in r.item():
+    for key,value in r.items():
         acceptance_r[key].append(value)
 
 
