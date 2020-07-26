@@ -49,21 +49,29 @@ def create_plot(results, x, location, yaxis, transform=False, ylim=None, xlim=No
     averages = compute_statistics(results, x, transform)
     plot(averages, location, yaxis, ylim, xlim, length, height)
 
-def compute_statistics(dict, x=None, transform=False):
+def compute_statistics(dict, x, transform=False):
     overall={}
     for key, values in dict.items():
-        print(values)
         assert len(values[0]) == len(values[1]), 'issue with lenghts'
         overall[key] = {}
         values = np.exp(-(np.asarray(values))) if transform else np.asarray(values)
         overall[key]['mean'] = np.mean(values, axis=0)
         overall[key]['std'] = np.std(values, axis=0)
 
-    if x is not None:
-        for key, values in x.items():
-            overall[key]['x'] = np.mean(np.asarray(values), axis=0)
+    for key, values in x.items():
+        overall[key]['x'] = np.mean(np.asarray(values), axis=0)
 
     return overall
+
+def compute_avg(dict):
+    overall={}
+    for key, values in dict.items():
+        overall[key] = {}
+        overall[key]['mean'] = np.mean(np.asarray(values), axis=1)
+        overall[key]['std'] = np.std(np.asarray(values), axis=1)
+
+    return overall
+
 
 def plot(avg_dict, location, yaxis, ylim, xlim, length=16, height=6):
     plt.figure(figsize=(length, height))
