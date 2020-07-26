@@ -164,7 +164,7 @@ if __name__ == '__main__':
             acceptance_r[prop] = []
 
         parallel(set_proposals)
-        pkl.dump(xlim, open(store + '/xlim.pkl', 'wb'))
+        pkl.dump(xlim, open(store + '/xlim'+ str(args.epsilon)+'.pkl', 'wb'))
         pkl.dump(pop_error, open(store+'/pop_error'+ str(args.epsilon)+ '.pkl', 'wb'))
         create_plot(pop_error, xlim, store +'/pop_error'+ str(args.epsilon), 'error')
 
