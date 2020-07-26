@@ -20,7 +20,7 @@ parser.add_argument('--pflip', type=float, default=0.01, metavar='float',
                     help='bitflip probability') #0.1
 parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
-parser.add_argument('--eval', type=int, default=15, metavar='int',
+parser.add_argument('--eval', type=int, default=2, metavar='int',
                     help = 'number of evaluations')
 parser.add_argument('--exp', type=str, default='abc', metavar='str',
                     help='proposal selection')
@@ -51,8 +51,7 @@ def run(run_seed, simulation):
 
     #loop over possible proposal methods
     for method in simulation.settings:
-
-        error, x_pos, ac_ratio = simulation.run_mc(method, args.steps)
+        error, x_pos, ac_ratio = simulation.run_abc(method, args.steps)
         pop[method] = error
         x[method] = x_pos
         ratio[method] = ac_ratio
@@ -72,14 +71,13 @@ def parallel(settings):
 
     simulation = ABC_Discrete(QMR_DT(),args.pflip, args.pcross, settings=settings, info=args.exp, epsilon=args.epsilon, nchains=args.N)
 
-
     '''
     Sample different underlying parameter settings for each experiment with args.seed
     '''
 
     np.random.seed(args.seed)
     simulation.model.generate_parameters() #create b truth
-    simulation.model.generate_data() #sample findings for the generated instance
+    simulation.model.generate_data(n=10) #sample findings for the generated instance
 
 
     pool = mp.Pool(processes=args.eval)
