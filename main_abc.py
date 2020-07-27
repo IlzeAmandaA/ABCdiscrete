@@ -49,7 +49,7 @@ def run(run_seed, simulation):
     np.random.seed(run_seed)
     # np.random.seed(args.seed)
     simulation.model.generate_parameters() #create b truth
-    simulation.model.generate_data(n=10) #sample findings for the generated instance
+    simulation.model.generate_data(n=50) #sample findings for the generated instance
 
     simulation.initialize_chains()
 
