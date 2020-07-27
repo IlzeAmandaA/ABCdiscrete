@@ -73,10 +73,14 @@ class ABC_Discrete():
         avg /= len(self.model.data)
         return avg
 
+#HOW DIVERSE THE POPULATION IS?
+#EXHAUSTIVE EVALUATION
+
     def pop_error(self, chains):
         error = 0.
         for chain in chains:
-            error += self.distance(chain)
+            x = self.model.simulate(chain)
+            error += self.distance(x)
         error /= len(chains)
         return error
 
