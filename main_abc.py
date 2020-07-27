@@ -12,7 +12,7 @@ parser.add_argument('--sequential', default=False, action='store_true',
                     help='Flag to run the simulation in parallel processing')
 parser.add_argument('--steps', type=int, default=100000, metavar='int',
                     help='evaluation steps') #600000
-parser.add_argument('--seed', type=int, default=4, metavar='int',
+parser.add_argument('--seed', type=int, default=10, metavar='int',
                     help='seed')
 parser.add_argument('--N', type=int, default=24, metavar='int',
                     help='seed')
@@ -121,7 +121,7 @@ def sequential(settings):
     np.random.seed(args.seed)
     simulation.model.generate_parameters() #create the true underlying parameter settings
     print('true model parameters {}'.format(simulation.model.b_truth))
-    simulation.model.generate_data(n=10) #generate 10 true data points
+    simulation.model.generate_data(n=50) #generate 10 true data points
     print('data points')
     print(simulation.model.data)
 
