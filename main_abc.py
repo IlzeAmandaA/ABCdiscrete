@@ -53,6 +53,7 @@ def run(run_seed, simulation):
 
     global variability
     variability.append(compute_variability(simulation.model.data))
+    print(variability)
 
 
     simulation.initialize_chains()
