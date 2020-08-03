@@ -41,6 +41,7 @@ def run(run_seed, simulation):
     pop={}
     x={}
     ratio={}
+    run_var = []
 
 
     '''
@@ -50,10 +51,7 @@ def run(run_seed, simulation):
     # np.random.seed(args.seed)
     simulation.model.generate_parameters() #create b truth
     simulation.model.generate_data(n=10) #sample findings for the generated instance
-
-    global variability
-    variability.append(compute_variability(simulation.model.data))
-    print(variability)
+    run_var.append(compute_variability(simulation.model.data))
 
 
     simulation.initialize_chains()
@@ -66,7 +64,7 @@ def run(run_seed, simulation):
         ratio[method] = ac_ratio
 
     print('for run {} time ---- {} minutes ---'.format(run_seed, (time.time() - start_time) / 60))
-    return (pop, x, ratio)
+    return (pop, x, ratio, run_var)
 
 
 def compute_variability(matrix):
@@ -112,7 +110,7 @@ def parallel(settings):
 
 def collect_result(outcome):
     # for result in result_list:
-    pop, x, r = outcome
+    pop, x, r, var = outcome
 
     global pop_error
     for key, value in pop.items():
@@ -125,6 +123,9 @@ def collect_result(outcome):
     global acceptance_r
     for key,value in r.items():
         acceptance_r[key].append(value)
+
+    global variability
+    variability = var
 
 
 
@@ -192,7 +193,6 @@ if __name__ == '__main__':
         create_plot(pop_error, xlim, store +'/pop_error'+ str(args.epsilon), 'error')
 
         report(compute_avg(acceptance_r), args.epsilon, store+'/acceptance_ratio')
-        print(variability)
         report_variablitity(variability, store+'/acceptance_ratio')
 
 
