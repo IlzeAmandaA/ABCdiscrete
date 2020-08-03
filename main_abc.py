@@ -24,7 +24,7 @@ parser.add_argument('--eval', type=int, default=40, metavar='int',
                     help = 'number of evaluations')
 parser.add_argument('--exp', type=str, default='abc', metavar='str',
                     help='proposal selection')
-parser.add_argument('--epsilon', type=float, default=1, metavar='float',
+parser.add_argument('--epsilon', type=float, default=0.8, metavar='float',
                     help='distance threshold')
 
 
