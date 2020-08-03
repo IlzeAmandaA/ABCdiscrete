@@ -64,7 +64,7 @@ class ABC_Discrete():
 
         acceptence_ratio = (acceptence_ratio/steps)*100
 
-        return error, xlim, acceptence_ratio
+        return error, xlim, acceptence_ratio, population
 
     def exp_epsilon(self):
         return np.random.exponential(self.epsilon)
@@ -76,8 +76,6 @@ class ABC_Discrete():
         avg /= len(self.model.data)
         return avg
 
-#HOW DIVERSE THE POPULATION IS?
-#EXHAUSTIVE EVALUATION
 
     def pop_error(self, chains):
         error = 0.

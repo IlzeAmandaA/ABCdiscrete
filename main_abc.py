@@ -42,6 +42,7 @@ def run(run_seed, simulation):
     x={}
     ratio={}
     run_var = []
+    chains = {}
 
 
     '''
@@ -54,14 +55,19 @@ def run(run_seed, simulation):
     run_var.append(compute_variability(simulation.model.data))
 
 
+
     simulation.initialize_chains()
 
     #loop over possible proposal methods
     for method in simulation.settings:
-        error, x_pos, ac_ratio = simulation.run_abc(method, args.steps)
+        error, x_pos, ac_ratio, population = simulation.run_abc(method, args.steps)
         pop[method] = error
         x[method] = x_pos
         ratio[method] = ac_ratio
+        chains[method] = population
+
+    report_posterior(simulation, run, chains, store+'/posterior')
+
 
     print('for run {} time ---- {} minutes ---'.format(run_seed, (time.time() - start_time) / 60))
     return (pop, x, ratio, run_var)

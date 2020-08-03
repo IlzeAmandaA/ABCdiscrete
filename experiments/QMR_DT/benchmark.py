@@ -94,7 +94,7 @@ class QMR_DT():
 
     def product_neg_llh(self,b):
         product = 0.
-        for id, f in enumerate(self.findings):
+        for id, f in enumerate(self.data):
             if f == 1:
                 product += np.log(1-np.exp(self.llh(b,id)))
             else:
