@@ -66,7 +66,7 @@ def run(run_seed, simulation):
         ratio[method] = ac_ratio
         chains[method] = population
 
-    report_posterior(simulation, run, chains, store+'/posterior')
+    report_posterior(simulation, run_seed, chains, store+'/posterior')
 
     print('for run {} time ---- {} minutes ---'.format(run_seed, (time.time() - start_time) / 60))
     return (pop, x, ratio, run_var)
