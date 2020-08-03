@@ -69,6 +69,8 @@ class QMR_DT():
         :param b: binary vector (np.array)
         :return: log prior
         """
+        print(np.sum(b * np.log(self.p_l) + (1 - b) * np.log(1 - self.p_l)))
+        print('prior')
         return np.sum(b * np.log(self.p_l) + (1 - b) * np.log(1 - self.p_l))
 
     def log_prior(self, b):
@@ -81,6 +83,7 @@ class QMR_DT():
                 product *= (1-np.exp(self.llh(b,id)))
             else:
                 product *= np.exp(self.llh(b,id))
+        print(product)
         return product
 
     def product_llh(self,b):
@@ -105,7 +108,6 @@ class QMR_DT():
         return np.log(1 - self.q_i0[id]) + np.sum(b * np.log(1 - self.q_il[id]))
 
     def posterior(self, data):
-        data = np.asarray(data)
         return self.product_lh(data) * np.exp(self.prior(data))
 
     def log_posterior(self,data):
