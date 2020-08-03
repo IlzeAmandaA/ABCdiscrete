@@ -191,6 +191,7 @@ if __name__ == '__main__':
         create_plot(pop_error, xlim, store +'/pop_error'+ str(args.epsilon), 'error')
 
         report(compute_avg(acceptance_r), args.epsilon, store+'/acceptance_ratio')
+        print(variability)
         report_variablitity(variability, store+'/acceptance_ratio')
 
 
