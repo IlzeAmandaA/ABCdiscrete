@@ -53,10 +53,10 @@ def report_variablitity(list, store):
     textfile.write('avg variability : {}  (std {})  '.format(mean, std))
     textfile.write('--------------------- \n\n')
 
-def report_posterior(sim, run, pop, store):
+def report_posterior(sim, run, pops, store):
     textfile = open(store + '.txt', 'a+')
     textfile.write('Run: {} \n'.format(run))
-    for method, population in pop.items():
+    for method, population in pops.items():
         textfile.write('Method: {} \n'.format(method))
         posterior = []
         posterior.append([sim.model.posterior(chain) for chain in population])
