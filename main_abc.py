@@ -196,6 +196,7 @@ if __name__ == '__main__':
         parallel(set_proposals)
         pkl.dump(xlim, open(store + '/xlim'+ str(args.epsilon)+'.pkl', 'wb'))
         pkl.dump(pop_error, open(store+'/pop_error'+ str(args.epsilon)+ '.pkl', 'wb'))
+        print(pop_error)
         create_plot(pop_error, xlim, store +'/pop_error'+ str(args.epsilon), 'error')
 
         report(compute_avg(acceptance_r), args.epsilon, store+'/acceptance_ratio')
