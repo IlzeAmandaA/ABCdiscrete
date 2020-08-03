@@ -105,6 +105,7 @@ class QMR_DT():
         return np.log(1 - self.q_i0[id]) + np.sum(b * np.log(1 - self.q_il[id]))
 
     def posterior(self, data):
+        data = np.asarray(data)
         return self.product_lh(data) * np.exp(self.prior(data))
 
     def log_posterior(self,data):
