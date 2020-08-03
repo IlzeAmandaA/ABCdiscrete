@@ -51,6 +51,9 @@ def run(run_seed, simulation):
     simulation.model.generate_parameters() #create b truth
     simulation.model.generate_data(n=10) #sample findings for the generated instance
 
+    global variability
+    variability[str(run_seed)] = compute_variability(simulation.model.data)
+
 
     simulation.initialize_chains()
 
@@ -63,6 +66,21 @@ def run(run_seed, simulation):
 
     print('for run {} time ---- {} minutes ---'.format(run_seed, (time.time() - start_time) / 60))
     return (pop, x, ratio)
+
+
+def compute_variability(matrix):
+    results = []
+    for col_id in range(matrix.shape[1]):
+        null=0
+        ones=0
+        for row_id in range(matrix.shape[0]):
+            if matrix[row_id,col_id] == 0:
+                null+=1
+            else:
+                ones+=1
+        per = max(null/matrix.shape[0], ones/matrix.shape[0])
+        results.append(per)
+    return sum(results)/matrix.shape[1]
 
 
 def parallel(settings):
@@ -153,6 +171,7 @@ if __name__ == '__main__':
     pop_error = {}
     xlim = {}
     acceptance_r ={}
+    variability = {}
 
     if args.sequential:
         sequential(set_proposals)
@@ -172,6 +191,7 @@ if __name__ == '__main__':
         create_plot(pop_error, xlim, store +'/pop_error'+ str(args.epsilon), 'error')
 
         report(compute_avg(acceptance_r), args.epsilon, store+'/acceptance_ratio')
+        report_variablitity(variability, store+'/acceptance_ratio')
 
 
 

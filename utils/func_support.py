@@ -44,7 +44,15 @@ def report(dict,epsilon, store):
     for method, values in dict.items():
         textfile.write('proposal : {} \n'.format(method))
         textfile.write('acceptance ratio : mean {} (std {}) \n'.format(values['mean'], values['std']))
+    # textfile.write('--------------------- \n\n')
+
+def report_variablitity(dict, store):
+    textfile = open(store + '.txt', 'a+')
+    for method, values in dict.items():
+        textfile.write('iteration : {}  with  '.format(method))
+        textfile.write('variability of :  {}  \n'.format(values))
     textfile.write('--------------------- \n\n')
+
 
 
 def create_plot(results, x, location, yaxis, transform=False, ylim=None, xlim=None, length=16, height=6):
