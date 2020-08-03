@@ -9,7 +9,6 @@ Implementation of Metropolis algorithm
 """
 
 
-
 class ABC_Discrete():
 
     def __init__(self, model, pflip, pcross, settings, info, epsilon, nchains): #12 #24
@@ -48,7 +47,8 @@ class ABC_Discrete():
                 theta_ = self.proposal(population, i, method)
                 x=self.model.simulate(theta_)
 
-                if self.distance(x)<=self.epsilon:
+                #if self.distance(x)<=self.epsilon:
+                if self.distance(x) <= self.exp_epsilon():
                     alpha = self.metropolis(theta_,population[i])
                     acceptence_ratio += 1
 
@@ -65,6 +65,9 @@ class ABC_Discrete():
         acceptence_ratio = (acceptence_ratio/steps)*100
 
         return error, xlim, acceptence_ratio
+
+    def exp_epsilon(self):
+        return np.random.exponential(self.epsilon)
 
     def distance(self, f):
         avg=0

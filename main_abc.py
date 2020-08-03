@@ -10,7 +10,7 @@ import time
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
 parser.add_argument('--sequential', default=False, action='store_true',
                     help='Flag to run the simulation in parallel processing')
-parser.add_argument('--steps', type=int, default=100000, metavar='int',
+parser.add_argument('--steps', type=int, default=40000, metavar='int',
                     help='evaluation steps') #600000
 parser.add_argument('--seed', type=int, default=10, metavar='int',
                     help='seed')
@@ -24,7 +24,7 @@ parser.add_argument('--eval', type=int, default=40, metavar='int',
                     help = 'number of evaluations')
 parser.add_argument('--exp', type=str, default='abc', metavar='str',
                     help='proposal selection')
-parser.add_argument('--epsilon', type=float, default=1., metavar='float',
+parser.add_argument('--epsilon', type=float, default=1, metavar='float',
                     help='distance threshold')
 
 
@@ -49,7 +49,8 @@ def run(run_seed, simulation):
     np.random.seed(run_seed)
     # np.random.seed(args.seed)
     simulation.model.generate_parameters() #create b truth
-    simulation.model.generate_data(n=50) #sample findings for the generated instance
+    simulation.model.generate_data(n=10) #sample findings for the generated instance
+
 
     simulation.initialize_chains()
 
@@ -111,21 +112,22 @@ def collect_result(outcome):
 
 def sequential(settings):
     print('running python in sequential mode')
-    k=0
+
 
     np.random.seed(SEED_MODEL)
     global simulation
     simulation = ABC_Discrete(QMR_DT(), args.pflip, args.pcross, settings=settings, info=args.exp, epsilon=args.epsilon, nchains=args.N)
 
     #initialize goal parameters and the corresponing data
+
     np.random.seed(args.seed)
     simulation.model.generate_parameters() #create the true underlying parameter settings
     print('true model parameters {}'.format(simulation.model.b_truth))
-    simulation.model.generate_data(n=50) #generate 10 true data points
+    simulation.model.generate_data(n=10) #generate 10 true data points
     print('data points')
     print(simulation.model.data)
 
-    np.random.seed(k)
+    np.random.seed(SEED_MODEL)
     simulation.initialize_chains()
 
     #loop over possible proposal methods
