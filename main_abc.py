@@ -52,7 +52,7 @@ def run(run_seed, simulation):
     simulation.model.generate_data(n=10) #sample findings for the generated instance
 
     global variability
-    variability[str(run_seed)] = compute_variability(simulation.model.data)
+    variability.append(compute_variability(simulation.model.data))
 
 
     simulation.initialize_chains()
@@ -171,7 +171,7 @@ if __name__ == '__main__':
     pop_error = {}
     xlim = {}
     acceptance_r ={}
-    variability = {}
+    variability = []
 
     if args.sequential:
         sequential(set_proposals)

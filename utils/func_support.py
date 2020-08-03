@@ -46,11 +46,11 @@ def report(dict,epsilon, store):
         textfile.write('acceptance ratio : mean {} (std {}) \n'.format(values['mean'], values['std']))
     # textfile.write('--------------------- \n\n')
 
-def report_variablitity(dict, store):
+def report_variablitity(list, store):
+    mean = np.mean(np.asarray(list))
+    std = np.std(np.asarray(list))
     textfile = open(store + '.txt', 'a+')
-    for method, values in dict.items():
-        textfile.write('iteration : {}  with  '.format(method))
-        textfile.write('variability of :  {}  \n'.format(values))
+    textfile.write('avg variability : {}  (std {})  '.format(mean, std))
     textfile.write('--------------------- \n\n')
 
 
