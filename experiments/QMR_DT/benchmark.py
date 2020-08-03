@@ -76,7 +76,7 @@ class QMR_DT():
 
     def product_lh(self, b):
         product = 1.
-        for id, f in enumerate(self.findings):
+        for id, f in enumerate(self.data):
             if f == 1:
                 product *= (1-np.exp(self.llh(b,id)))
             else:
@@ -85,7 +85,7 @@ class QMR_DT():
 
     def product_llh(self,b):
         product = 0.
-        for id, f in enumerate(self.findings):
+        for id, f in enumerate(self.data):
             if f == 1:
                 product += np.log(1-np.exp(self.llh(b,id)))
             else:
