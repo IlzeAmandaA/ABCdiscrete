@@ -67,10 +67,9 @@ def run(run_seed, simulation):
 
     report_posterior(simulation, run_seed, chains, store+'/posterior' +str(args.epsilon))
 
-    print(simulation.output_post)
     print('for run {} time ---- {} minutes ---'.format(run_seed, (time.time() - start_time) / 60))
 
-    return (pop, x, ratio, run_var)
+    return (pop, x, ratio, run_var, simulation)
 
 
 def compute_variability(matrix):
@@ -96,7 +95,6 @@ def parallel(settings):
     keep the underlying model same across all experiments with Seed_model
     '''
     np.random.seed(SEED_MODEL)
-    global simulation
     simulation = ABC_Discrete(QMR_DT(),args.pflip, args.pcross, settings=settings, info=args.exp, epsilon=args.epsilon, nchains=args.N)
 
     '''
@@ -116,9 +114,11 @@ def parallel(settings):
 
 
 
+
+
 def collect_result(outcome):
     # for result in result_list:
-    pop, x, r, var = outcome
+    pop, x, r, var, sim = outcome
 
     global pop_error
     for key, value in pop.items():
@@ -134,6 +134,9 @@ def collect_result(outcome):
 
     global variability
     variability = var
+
+    global simulation
+    simulation = sim
 
 
 
