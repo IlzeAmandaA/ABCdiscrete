@@ -44,7 +44,7 @@ def run(run_seed, simulation):
     run_var = []
     chains = {}
 
-    # global output_post
+    global output_post
     output_post[str(run_seed)] = {}
 
 
@@ -75,7 +75,7 @@ def run(run_seed, simulation):
     for key in post_method:
         output_post[str(run_seed)][key] = post_method[key]
 
-    # global output_true
+    global output_true
     output_true[str(run_seed)] = true_post
 
     print('for run {} time ---- {} minutes ---'.format(run_seed, (time.time() - start_time) / 60))
