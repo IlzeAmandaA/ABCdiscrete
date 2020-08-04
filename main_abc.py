@@ -10,7 +10,7 @@ import time
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
 parser.add_argument('--sequential', default=False, action='store_true',
                     help='Flag to run the simulation in parallel processing')
-parser.add_argument('--steps', type=int, default=80000, metavar='int',
+parser.add_argument('--steps', type=int, default=20000, metavar='int',
                     help='evaluation steps') #600000
 parser.add_argument('--seed', type=int, default=10, metavar='int',
                     help='seed')
@@ -44,7 +44,7 @@ def run(run_seed, simulation):
     run_var = []
     chains = {}
 
-    global output_post
+    # global output_post
     output_post[str(run_seed)] = {}
 
 
@@ -75,14 +75,10 @@ def run(run_seed, simulation):
     for key in post_method:
         output_post[str(run_seed)][key] = post_method[key]
 
-    global output_true
+    # global output_true
     output_true[str(run_seed)] = true_post
 
     print('for run {} time ---- {} minutes ---'.format(run_seed, (time.time() - start_time) / 60))
-    print('output post')
-    print(output_post)
-    print('output true')
-    print(output_true)
 
     return (pop, x, ratio, run_var)
 
@@ -217,6 +213,9 @@ if __name__ == '__main__':
 
         report(compute_avg(acceptance_r), args.epsilon, store+'/acceptance_ratio')
         report_variablitity(variability, store+'/acceptance_ratio')
+
+        print(output_true)
+        print(output_post)
 
 
 
