@@ -50,7 +50,7 @@ class ABC_Discrete():
                 #if self.distance(x)<=self.epsilon:
                 if self.distance(x) <= self.exp_epsilon():
                     alpha = self.metropolis(theta_,population[i])
-                    acceptence_ratio += 1 if steps <= 10000 else 0
+                    acceptence_ratio += 1 if n <= 10000 else 0
 
                     if alpha >= np.random.uniform(0,1):
                         population[i] = theta_
