@@ -53,7 +53,7 @@ def report_variablitity(list, store):
     textfile.write('avg variability : {}  (std {})  '.format(mean, std))
     textfile.write('--------------------- \n\n')
 
-def report_posterior(sim, run, pops, output, store):
+def report_posterior(sim, run, pops, store):
     textfile = open(store + '.txt', 'a+')
     textfile.write('\nRun: {} \n'.format(run))
     post_dict = {}
