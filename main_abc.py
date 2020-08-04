@@ -96,7 +96,7 @@ def parallel(settings):
     keep the underlying model same across all experiments with Seed_model
     '''
     np.random.seed(SEED_MODEL)
-
+    global simulation
     simulation = ABC_Discrete(QMR_DT(),args.pflip, args.pcross, settings=settings, info=args.exp, epsilon=args.epsilon, nchains=args.N)
 
     '''
@@ -109,9 +109,6 @@ def parallel(settings):
 
     for k in range(args.eval):
         pool.apply_async(run, (k,simulation), callback=collect_result)
-
-    print(simulation.output_true)
-    print(simulation.output_post)
 
     pool.close()
     pool.join()
@@ -207,6 +204,9 @@ if __name__ == '__main__':
 
         report(compute_avg(acceptance_r), args.epsilon, store+'/acceptance_ratio')
         report_variablitity(variability, store+'/acceptance_ratio')
+        global simulation
+        print(simulation.output_post)
+        print(simulation.output_true)
 
 
 
