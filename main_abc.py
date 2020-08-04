@@ -65,26 +65,12 @@ def run(run_seed, simulation):
         ratio[method] = ac_ratio
         chains[method] = population
 
-    report_posterior(simulation, run_seed, chains, store+'/posterior' +str(args.epsilon))
+    post = report_posterior(simulation, run_seed, chains, store+'/posterior' +str(args.epsilon))
 
     print('for run {} time ---- {} minutes ---'.format(run_seed, (time.time() - start_time) / 60))
 
-    return (pop, x, ratio, run_var)
+    return (pop, x, ratio, run_var, run_seed, post)
 
-
-def compute_variability(matrix):
-    results = []
-    for col_id in range(matrix.shape[1]):
-        null=0
-        ones=0
-        for row_id in range(matrix.shape[0]):
-            if matrix[row_id,col_id] == 0:
-                null+=1
-            else:
-                ones+=1
-        per = max(null/matrix.shape[0], ones/matrix.shape[0])
-        results.append(per)
-    return sum(results)/matrix.shape[1]
 
 
 def parallel(simulation):
@@ -108,7 +94,7 @@ def parallel(simulation):
 
 def collect_result(outcome):
     # for result in result_list:
-    pop, x, r, var = outcome
+    pop, x, r, var, run_id, post = outcome
 
     global pop_error
     for key, value in pop.items():
@@ -125,6 +111,26 @@ def collect_result(outcome):
     global variability
     variability = var
 
+    global output_post
+    output_post[run_id] = post[0]
+
+    global output_true
+    output_true[run_id] = post[1]
+
+
+def compute_variability(matrix):
+    results = []
+    for col_id in range(matrix.shape[1]):
+        null=0
+        ones=0
+        for row_id in range(matrix.shape[0]):
+            if matrix[row_id,col_id] == 0:
+                null+=1
+            else:
+                ones+=1
+        per = max(null/matrix.shape[0], ones/matrix.shape[0])
+        results.append(per)
+    return sum(results)/matrix.shape[1]
 
 
 
@@ -172,6 +178,9 @@ if __name__ == '__main__':
     xlim = {}
     acceptance_r ={}
     variability = []
+    output_post = {}
+    output_true = {}
+
 
     '''
     keep the underlying model same across all experiments with Seed_model
@@ -201,8 +210,8 @@ if __name__ == '__main__':
         report(compute_avg(acceptance_r), args.epsilon, store+'/acceptance_ratio')
         report_variablitity(variability, store+'/acceptance_ratio')
 
-        print(simulation.output_post)
-        print(simulation.output_true)
+        print(output_post)
+        print(output_true)
 
 
 
