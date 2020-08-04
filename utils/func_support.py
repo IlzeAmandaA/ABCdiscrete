@@ -57,14 +57,12 @@ def report_posterior(sim, run, pops, store):
     textfile = open(store + '.txt', 'a+')
     textfile.write('\nRun: {} \n'.format(run))
     for method, population in pops.items():
-        print(method)
         textfile.write('Method: {} \n'.format(method))
         posterior_list = []
         for chain in population:
             posterior_list.append(sim.model.posterior_abc(chain))
         post_avg = np.mean(np.asarray(posterior_list))
         post_std = np.std(np.asarray(posterior_list))
-        print(post_std)
         textfile.write('avg post : {}  (std {})  \n'.format(post_avg, post_std))
     textfile.write('true post : {}  '.format(sim.model.posterior_abc(sim.model.b_truth)))
     textfile.write('--------------------- \n\n')
