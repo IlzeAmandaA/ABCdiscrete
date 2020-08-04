@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from operator import  add
+import collections
 
 formats = {'mut': '--or', 'mut+crx': ':^g', 'mut+xor': '-.vb',
            'de-mc':'--or', 'de-mc1':':^g', 'de-mc2':'-.vb'} #check
@@ -156,6 +157,44 @@ def plot_single(results, points, name, location):
     plt.grid(True)
     plt.legend(loc=0)
     plt.savefig(location+ '.png')
+
+def plot_dist(dict_res, dict_true, location):
+    format = {'mut+xor':['green','lightgreen'], 'de-mc':['blue','lightblue']}
+    od_res = collections.OrderedDict(sorted(dict_res.items()))
+    od_true = collections.OrderedDict(sorted(dict_true.items()))
+
+    move = 0.01
+
+    fig, ax = plt.subplots(figsize=(16, 6))
+
+    for selection in ['mut+xor', 'de-mc']:
+        x = []
+        y = []
+        std = []
+
+        for id in od_res:
+            y.append(od_res[id][selection][0])
+            std.append(od_res[id][selection][1])
+            if selection == 'mut+xor':
+                x.append(float(id)+move)
+            else:
+                x.append(float(id)-move)
+
+        ax.errorbar(x, y, yerr = std, label = selection,
+                    fmt = 'o', color = format[selection][0], ecolor = format[selection][1],
+                    elinewidth=3, capsize=0)
+
+    x = [int(k) for k in od_true.keys()],
+    ax.scatter(x, [v for v in od_true.values()], color='magenta', label='true posterior')
+
+    # Set plot title and axes labels
+    ax.set(xlabel="Run",
+           ylabel="Posterior")
+
+    plt.xticks(x, [str(id) for id in x])
+    plt.legend()
+    plt.savefig(location + '.png')
+
 
 
 

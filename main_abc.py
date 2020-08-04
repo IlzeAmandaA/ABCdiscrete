@@ -112,10 +112,10 @@ def collect_result(outcome):
     variability = var
 
     global output_post
-    output_post[run_id] = post[0]
+    output_post[run_id+1] = post[0]
 
     global output_true
-    output_true[run_id] = post[1]
+    output_true[run_id+1] = post[1]
 
 
 def compute_variability(matrix):
@@ -209,9 +209,8 @@ if __name__ == '__main__':
 
         report(compute_avg(acceptance_r), args.epsilon, store+'/acceptance_ratio')
         report_variablitity(variability, store+'/acceptance_ratio')
+        plot_dist(output_post, output_true, store +'/dist'+ str(args.epsilon))
 
-        print(output_post)
-        print(output_true)
 
 
 
