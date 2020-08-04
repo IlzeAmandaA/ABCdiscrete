@@ -51,8 +51,8 @@ def run(run_seed, simulation):
     '''
     np.random.seed(run_seed)
     # np.random.seed(args.seed)
-    simulation.model.generate_parameters() #create b truth
-    simulation.model.generate_data(n=10) #sample findings for the generated instance
+    # simulation.model.generate_parameters() #create b truth
+    # simulation.model.generate_data(n=10) #sample findings for the generated instance
     run_var.append(compute_variability(simulation.model.data))
 
     simulation.initialize_chains()
@@ -65,7 +65,7 @@ def run(run_seed, simulation):
         ratio[method] = ac_ratio
         chains[method] = population
 
-    post = report_posterior(simulation, run_seed, chains, store+'/posterior' +str(args.epsilon))
+    post = report_posterior(simulation, run_seed, chains, store+'/posterior' +str(args.epsilon) + 'same')
 
     print('for run {} time ---- {} minutes ---'.format(run_seed, (time.time() - start_time) / 60))
 
@@ -76,9 +76,6 @@ def run(run_seed, simulation):
 def parallel(simulation):
     print('settings {} & running python in parallel mode with seed {}'.format(args.exp,args.seed))
 
-    '''
-    Sample different underlying parameter settings for each experiment with args.seed
-    '''
 
     #old location for parameters
 
@@ -187,7 +184,8 @@ if __name__ == '__main__':
     '''
     np.random.seed(SEED_MODEL)
     simulation = ABC_Discrete(QMR_DT(),args.pflip, args.pcross, settings=set_proposals, info=args.exp, epsilon=args.epsilon, nchains=args.N)
-
+    simulation.model.generate_parameters() #create b truth
+    simulation.model.generate_data(n=10) #sample findings for the generated instance
 
     if args.sequential:
         sequential(set_proposals)
@@ -203,13 +201,13 @@ if __name__ == '__main__':
 
 
         parallel(simulation)
-        pkl.dump(xlim, open(store + '/xlim'+ str(args.epsilon)+'.pkl', 'wb'))
-        pkl.dump(pop_error, open(store+'/pop_error'+ str(args.epsilon)+ '.pkl', 'wb'))
-        create_plot(pop_error, xlim, store +'/pop_error'+ str(args.epsilon), 'error')
+        pkl.dump(xlim, open(store + '/xlim'+ str(args.epsilon)+'same.pkl', 'wb'))
+        pkl.dump(pop_error, open(store+'/pop_error'+ str(args.epsilon)+ 'same.pkl', 'wb'))
+        create_plot(pop_error, xlim, store +'/pop_error'+ str(args.epsilon) + 'same', 'error')
 
-        report(compute_avg(acceptance_r), args.epsilon, store+'/acceptance_ratio')
-        report_variablitity(variability, store+'/acceptance_ratio')
-        plot_dist(output_post, output_true, store +'/dist'+ str(args.epsilon))
+        report(compute_avg(acceptance_r), args.epsilon, store+'/acceptance_ratio' + 'same')
+        report_variablitity(variability, store+'/acceptance_ratio' + 'same')
+        plot_dist(output_post, output_true, store +'/dist'+ str(args.epsilon) + 'same')
 
 
 
