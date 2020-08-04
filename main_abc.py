@@ -10,7 +10,7 @@ import time
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
 parser.add_argument('--sequential', default=False, action='store_true',
                     help='Flag to run the simulation in parallel processing')
-parser.add_argument('--steps', type=int, default=40000, metavar='int',
+parser.add_argument('--steps', type=int, default=80000, metavar='int',
                     help='evaluation steps') #600000
 parser.add_argument('--seed', type=int, default=10, metavar='int',
                     help='seed')
@@ -24,7 +24,7 @@ parser.add_argument('--eval', type=int, default=40, metavar='int',
                     help = 'number of evaluations')
 parser.add_argument('--exp', type=str, default='abc', metavar='str',
                     help='proposal selection')
-parser.add_argument('--epsilon', type=float, default=0.7, metavar='float',
+parser.add_argument('--epsilon', type=float, default=0.5, metavar='float',
                     help='distance threshold')
 
 
