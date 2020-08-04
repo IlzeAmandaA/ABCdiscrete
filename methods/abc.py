@@ -22,6 +22,9 @@ class ABC_Discrete():
         self.population = None #list of nparray
         self.epsilon = epsilon #9.25 #1.5
 
+        self.output_post = {}
+        self.output_true = {}
+
     def initialize_chains(self):
         self.population = [self.sample_chain() for n in range(self.N)]
 

@@ -54,9 +54,10 @@ def report_variablitity(list, store):
     textfile.write('--------------------- \n\n')
 
 def report_posterior(sim, run, pops, store):
+    sim.output_post[str(run)] = {}
+
     textfile = open(store + '.txt', 'a+')
     textfile.write('\nRun: {} \n'.format(run))
-    post_dict = {}
 
     for method, population in pops.items():
         textfile.write('Method: {} \n'.format(method))
@@ -65,16 +66,13 @@ def report_posterior(sim, run, pops, store):
             posterior_list.append(sim.model.posterior_abc(chain))
         post_avg = np.mean(np.asarray(posterior_list))
         post_std = np.std(np.asarray(posterior_list))
-        post_dict[method] = [post_avg,post_std]
+        sim.output_post[str(run)][method] = [post_avg,post_std]
         textfile.write('avg post : {}  (std {})  \n'.format(post_avg, post_std))
 
-    print('dict')
-    print(post_dict)
     true_post = sim.model.posterior_abc(sim.model.b_truth)
+    sim.output_true[str(run)] = true_post
     textfile.write('true post : {}  '.format(true_post))
     textfile.write('--------------------- \n\n')
-
-    return post_dict, true_post
 
 
 def create_plot(results, x, location, yaxis, transform=False, ylim=None, xlim=None, length=16, height=6):

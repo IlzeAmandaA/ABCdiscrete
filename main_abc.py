@@ -44,9 +44,6 @@ def run(run_seed, simulation):
     run_var = []
     chains = {}
 
-    global output_post
-    output_post[str(run_seed)] = {}
-
 
 
     '''
@@ -68,15 +65,7 @@ def run(run_seed, simulation):
         ratio[method] = ac_ratio
         chains[method] = population
 
-    post_method, true_post=report_posterior(simulation, run_seed, chains, store+'/posterior' +str(args.epsilon))
-    print(post_method)
-    print(true_post)
-
-    for key in post_method:
-        output_post[str(run_seed)][key] = post_method[key]
-
-    global output_true
-    output_true[str(run_seed)] = true_post
+    report_posterior(simulation, run_seed, chains, store+'/posterior' +str(args.epsilon))
 
     print('for run {} time ---- {} minutes ---'.format(run_seed, (time.time() - start_time) / 60))
 
@@ -122,6 +111,9 @@ def parallel(settings):
 
     pool.close()
     pool.join()
+
+    print(simulation.output_true)
+    print(simulation.output_post)
 
 
 def collect_result(outcome):
@@ -190,8 +182,7 @@ if __name__ == '__main__':
     xlim = {}
     acceptance_r ={}
     variability = []
-    output_post = {}
-    output_true = {}
+
 
     if args.sequential:
         sequential(set_proposals)
@@ -214,8 +205,7 @@ if __name__ == '__main__':
         report(compute_avg(acceptance_r), args.epsilon, store+'/acceptance_ratio')
         report_variablitity(variability, store+'/acceptance_ratio')
 
-        print(output_true)
-        print(output_post)
+
 
 
 
