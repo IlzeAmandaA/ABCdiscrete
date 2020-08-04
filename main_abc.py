@@ -69,7 +69,7 @@ def run(run_seed, simulation):
 
     print('for run {} time ---- {} minutes ---'.format(run_seed, (time.time() - start_time) / 60))
 
-    return (pop, x, ratio, run_var, simulation)
+    return (pop, x, ratio, run_var)
 
 
 def compute_variability(matrix):
@@ -111,14 +111,15 @@ def parallel(settings):
     pool.close()
     pool.join()
 
-
+    global simulation
+    simulation = simulation
 
 
 
 
 def collect_result(outcome):
     # for result in result_list:
-    pop, x, r, var, sim = outcome
+    pop, x, r, var = outcome
 
     global pop_error
     for key, value in pop.items():
@@ -134,9 +135,6 @@ def collect_result(outcome):
 
     global variability
     variability = var
-
-    global simulation
-    simulation = sim
 
 
 
