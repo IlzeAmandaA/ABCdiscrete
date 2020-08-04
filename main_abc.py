@@ -182,6 +182,7 @@ if __name__ == '__main__':
     xlim = {}
     acceptance_r ={}
     variability = []
+    simulation = None
 
 
     if args.sequential:
@@ -204,7 +205,7 @@ if __name__ == '__main__':
 
         report(compute_avg(acceptance_r), args.epsilon, store+'/acceptance_ratio')
         report_variablitity(variability, store+'/acceptance_ratio')
-        global simulation
+
         print(simulation.output_post)
         print(simulation.output_true)
 
