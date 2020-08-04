@@ -67,6 +67,7 @@ def run(run_seed, simulation):
 
     report_posterior(simulation, run_seed, chains, store+'/posterior' +str(args.epsilon))
 
+    print(simulation.output_post)
     print('for run {} time ---- {} minutes ---'.format(run_seed, (time.time() - start_time) / 60))
 
     return (pop, x, ratio, run_var)
@@ -109,11 +110,13 @@ def parallel(settings):
     for k in range(args.eval):
         pool.apply_async(run, (k,simulation), callback=collect_result)
 
+    print(simulation.output_true)
+    print(simulation.output_post)
+
     pool.close()
     pool.join()
 
-    print(simulation.output_true)
-    print(simulation.output_post)
+
 
 
 def collect_result(outcome):
