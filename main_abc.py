@@ -87,15 +87,8 @@ def compute_variability(matrix):
     return sum(results)/matrix.shape[1]
 
 
-def parallel(settings):
+def parallel(simulation):
     print('settings {} & running python in parallel mode with seed {}'.format(args.exp,args.seed))
-
-
-    '''
-    keep the underlying model same across all experiments with Seed_model
-    '''
-    np.random.seed(SEED_MODEL)
-    simulation = ABC_Discrete(QMR_DT(),args.pflip, args.pcross, settings=settings, info=args.exp, epsilon=args.epsilon, nchains=args.N)
 
     '''
     Sample different underlying parameter settings for each experiment with args.seed
@@ -110,10 +103,6 @@ def parallel(settings):
 
     pool.close()
     pool.join()
-
-    global simulation
-    simulation = simulation
-
 
 
 
@@ -183,7 +172,12 @@ if __name__ == '__main__':
     xlim = {}
     acceptance_r ={}
     variability = []
-    simulation = None
+
+    '''
+    keep the underlying model same across all experiments with Seed_model
+    '''
+    np.random.seed(SEED_MODEL)
+    simulation = ABC_Discrete(QMR_DT(),args.pflip, args.pcross, settings=set_proposals, info=args.exp, epsilon=args.epsilon, nchains=args.N)
 
 
     if args.sequential:
@@ -199,7 +193,7 @@ if __name__ == '__main__':
             acceptance_r[prop] = []
 
 
-        parallel(set_proposals)
+        parallel(simulation)
         pkl.dump(xlim, open(store + '/xlim'+ str(args.epsilon)+'.pkl', 'wb'))
         pkl.dump(pop_error, open(store+'/pop_error'+ str(args.epsilon)+ '.pkl', 'wb'))
         create_plot(pop_error, xlim, store +'/pop_error'+ str(args.epsilon), 'error')
