@@ -20,7 +20,7 @@ parser.add_argument('--pflip', type=float, default=0.01, metavar='float',
                     help='bitflip probability') #0.1
 parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
-parser.add_argument('--eval', type=int, default=40, metavar='int',
+parser.add_argument('--eval', type=int, default=100, metavar='int',
                     help = 'number of evaluations')
 parser.add_argument('--exp', type=str, default='abc', metavar='str',
                     help='proposal selection')
@@ -50,9 +50,8 @@ def run(run_seed, simulation):
     For every run initialize the chains with different initial  distribution
     '''
     np.random.seed(run_seed)
-    # np.random.seed(args.seed)
-    # simulation.model.generate_parameters() #create b truth
-    # simulation.model.generate_data(n=10) #sample findings for the generated instance
+    simulation.model.generate_parameters() #create b truth
+    simulation.model.generate_data(n=10) #sample findings for the generated instance
     run_var.append(compute_variability(simulation.model.data))
 
     simulation.initialize_chains()
@@ -65,7 +64,7 @@ def run(run_seed, simulation):
         ratio[method] = ac_ratio
         chains[method] = population
 
-    post = report_posterior(simulation, run_seed, chains, store+'/posterior' +str(args.epsilon) + 'same')
+    post = report_posterior(simulation, run_seed, chains, store+'/posterior' +str(args.epsilon))
 
     print('for run {} time ---- {} minutes ---'.format(run_seed, (time.time() - start_time) / 60))
 
@@ -201,13 +200,13 @@ if __name__ == '__main__':
 
 
         parallel(simulation)
-        pkl.dump(xlim, open(store + '/xlim'+ str(args.epsilon)+'same.pkl', 'wb'))
-        pkl.dump(pop_error, open(store+'/pop_error'+ str(args.epsilon)+ 'same.pkl', 'wb'))
-        create_plot(pop_error, xlim, store +'/pop_error'+ str(args.epsilon) + 'same', 'error')
+        pkl.dump(xlim, open(store + '/xlim'+ str(args.epsilon)+'.pkl', 'wb'))
+        pkl.dump(pop_error, open(store+'/pop_error'+ str(args.epsilon)+ '.pkl', 'wb'))
+        create_plot(pop_error, xlim, store +'/pop_error'+ str(args.epsilon), 'error')
 
-        report(compute_avg(acceptance_r), args.epsilon, store+'/acceptance_ratio' + 'same')
-        report_variablitity(variability, store+'/acceptance_ratio' + 'same')
-        plot_dist(output_post, output_true, store +'/dist'+ str(args.epsilon) + 'same')
+        report(compute_avg(acceptance_r), args.epsilon, store+'/acceptance_ratio')
+        report_variablitity(variability, store+'/acceptance_ratio')
+        plot_dist(output_post, output_true, store +'/dist'+ str(args.epsilon))
 
 
 

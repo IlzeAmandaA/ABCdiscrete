@@ -182,7 +182,7 @@ def plot_dist(dict_res, dict_true, location):
 
         ax.errorbar(x, y, yerr = std, label = selection,
                     fmt = 'o', color = format[selection][0], ecolor = format[selection][1],
-                    elinewidth=3, capsize=0)
+                    elinewidth=1, capsize=0)
 
     x = [int(k) for k in od_true.keys()]
     ax.scatter(x, [v for v in od_true.values()], color='magenta', label='true posterior')
