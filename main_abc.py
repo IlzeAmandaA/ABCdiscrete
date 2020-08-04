@@ -20,7 +20,7 @@ parser.add_argument('--pflip', type=float, default=0.01, metavar='float',
                     help='bitflip probability') #0.1
 parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
-parser.add_argument('--eval', type=int, default=40, metavar='int',
+parser.add_argument('--eval', type=int, default=10, metavar='int',
                     help = 'number of evaluations')
 parser.add_argument('--exp', type=str, default='abc', metavar='str',
                     help='proposal selection')
@@ -44,6 +44,10 @@ def run(run_seed, simulation):
     run_var = []
     chains = {}
 
+    global output_post
+    output_post[str(run_seed)] = {}
+
+
 
     '''
     For every run initialize the chains with different initial  distribution
@@ -60,15 +64,27 @@ def run(run_seed, simulation):
 
     #loop over possible proposal methods
     for method in simulation.settings:
+        output_post[str(run_seed)][method] = {}
         error, x_pos, ac_ratio, population = simulation.run_abc(method, args.steps)
         pop[method] = error
         x[method] = x_pos
         ratio[method] = ac_ratio
         chains[method] = population
 
-    report_posterior(simulation, run_seed, chains, store+'/posterior' +str(args.epsilon))
+    post_method, true_post=report_posterior(simulation, run_seed, chains, store+'/posterior' +str(args.epsilon))
+
+    for key in post_method:
+        output_post[str(run_seed)][key] = post_method[key]
+
+    global output_true
+    output_true[str(run_seed)] = true_post
 
     print('for run {} time ---- {} minutes ---'.format(run_seed, (time.time() - start_time) / 60))
+    print('output post')
+    print(output_post)
+    print('output true')
+    print(output_true)
+
     return (pop, x, ratio, run_var)
 
 
@@ -179,6 +195,8 @@ if __name__ == '__main__':
     xlim = {}
     acceptance_r ={}
     variability = []
+    output_post = {}
+    output_true = {}
 
     if args.sequential:
         sequential(set_proposals)
@@ -191,6 +209,7 @@ if __name__ == '__main__':
             pop_error[prop] = []
             xlim[prop]=[]
             acceptance_r[prop] = []
+
 
         parallel(set_proposals)
         pkl.dump(xlim, open(store + '/xlim'+ str(args.epsilon)+'.pkl', 'wb'))
