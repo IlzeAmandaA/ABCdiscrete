@@ -58,13 +58,10 @@ def run(run_seed, simulation):
     simulation.model.generate_data(n=10) #sample findings for the generated instance
     run_var.append(compute_variability(simulation.model.data))
 
-
-
     simulation.initialize_chains()
 
     #loop over possible proposal methods
     for method in simulation.settings:
-        output_post[str(run_seed)][method] = {}
         error, x_pos, ac_ratio, population = simulation.run_abc(method, args.steps)
         pop[method] = error
         x[method] = x_pos
@@ -72,6 +69,8 @@ def run(run_seed, simulation):
         chains[method] = population
 
     post_method, true_post=report_posterior(simulation, run_seed, chains, store+'/posterior' +str(args.epsilon))
+    print(post_method)
+    print(true_post)
 
     for key in post_method:
         output_post[str(run_seed)][key] = post_method[key]
