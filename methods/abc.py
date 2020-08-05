@@ -19,8 +19,8 @@ class ABC_Discrete():
         self.proposals = Proposals(pflip, pcross)
         self.settings =  settings
 
-        self.population = None #list of nparray
-        self.epsilon = epsilon #9.25 #1.5
+        self.population = None
+        self.epsilon = epsilon
 
 
     def initialize_chains(self):
@@ -60,7 +60,7 @@ class ABC_Discrete():
                 if n >= sample:
                     error.append(self.pop_error(population))
                     xlim.append(n)
-                    sample += 500
+                    sample += 1000
 
 
         acceptence_ratio = (acceptence_ratio/10000)*100
