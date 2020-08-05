@@ -48,8 +48,8 @@ class ABC_Discrete():
                 theta_ = self.proposal(population, i, method)
                 x=self.model.simulate(theta_)
 
-                #if self.distance(x)<=self.epsilon:
-                if self.distance(x) <= self.exp_epsilon():
+                if self.distance(x)<=self.epsilon:
+               # if self.distance(x) <= self.exp_epsilon():
                     alpha = self.metropolis(theta_,population[i])
                     acceptence_ratio += 1 if n <= 10000 else 0
 
