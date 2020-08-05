@@ -184,7 +184,7 @@ def plot_dist(dict_res, dict_true, location):
                     elinewidth=1, capsize=1)
 
     x = [int(k) for k in od_true.keys()]
-    ax.scatter(x, [v for v in od_true.values()], color='magenta', label='true posterior', fmt='^')
+    ax.scatter(x, [v for v in od_true.values()], color='magenta', label='true posterior', marker='*')
 
     # Set plot title and axes labels
     ax.set(xlabel="Run",
