@@ -60,7 +60,7 @@ class ABC_Discrete():
                 if n >= sample:
                     error.append(self.pop_error(population))
                     xlim.append(n)
-                    sample += 1000
+                    sample += 1500
 
 
         acceptence_ratio = (acceptence_ratio/10000)*100
