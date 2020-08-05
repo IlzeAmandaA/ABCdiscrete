@@ -191,7 +191,7 @@ def plot_dist(dict_res, dict_true, location):
            ylabel="Posterior")
 
     plt.xticks(x, [str(id) for id in x])
-    #plt.ylim(-0.02, 0.15)
+    plt.ylim(-25, 15)
     plt.legend()
     plt.savefig(location + '.png')
 
