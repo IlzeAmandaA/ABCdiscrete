@@ -65,14 +65,13 @@ def report_posterior(sim, run, pops, store):
         textfile.write('Method: {} \n'.format(method))
         posterior_list = []
         for chain in population:
-            posterior_list.append(sim.model.posterior_abc(chain))
+            posterior_list.append(sim.model.log_posterior_abc(chain))
         post_avg = np.mean(np.asarray(posterior_list))
         post_std = np.std(np.asarray(posterior_list))
         post[method] = [post_avg,post_std]
-        # sim.output_post[str(run)][method] = [post_avg,post_std]
         textfile.write('avg post : {}  (std {})  \n'.format(post_avg, post_std))
 
-    true_post = sim.model.posterior_abc(sim.model.b_truth)
+    true_post = sim.model.log_posterior_abc(sim.model.b_truth)
     # sim.output_true[str(run)] = true_post
     textfile.write('true post : {}  '.format(true_post))
     textfile.write('--------------------- \n\n')
@@ -159,11 +158,11 @@ def plot_single(results, points, name, location):
     plt.savefig(location+ '.png')
 
 def plot_dist(dict_res, dict_true, location):
-    format = {'mut+xor':['green','lightgreen'], 'de-mc':['blue','lightblue']}
+    format = {'mut+xor':['o','green','lightgreen'], 'de-mc':['v','blue','lightblue']}
     od_res = collections.OrderedDict(sorted(dict_res.items()))
     od_true = collections.OrderedDict(sorted(dict_true.items()))
 
-    move = 0.01
+    move = 0.08
 
     fig, ax = plt.subplots(figsize=(16, 6))
 
@@ -181,11 +180,11 @@ def plot_dist(dict_res, dict_true, location):
                 x.append(float(id)-move)
 
         ax.errorbar(x, y, yerr = std, label = selection,
-                    fmt = 'o', color = format[selection][0], ecolor = format[selection][1],
-                    elinewidth=1, capsize=0)
+                    fmt = format[selection][0], color = format[selection][1], ecolor = format[selection][2],
+                    elinewidth=1, capsize=1)
 
     x = [int(k) for k in od_true.keys()]
-    ax.scatter(x, [v for v in od_true.values()], color='magenta', label='true posterior')
+    ax.scatter(x, [v for v in od_true.values()], color='magenta', label='true posterior', fmt='^')
 
     # Set plot title and axes labels
     ax.set(xlabel="Run",
