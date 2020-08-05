@@ -20,11 +20,11 @@ parser.add_argument('--pflip', type=float, default=0.01, metavar='float',
                     help='bitflip probability') #0.1
 parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
-parser.add_argument('--eval', type=int, default=100, metavar='int',
+parser.add_argument('--eval', type=int, default=40, metavar='int',
                     help = 'number of evaluations')
 parser.add_argument('--exp', type=str, default='abc', metavar='str',
                     help='proposal selection')
-parser.add_argument('--epsilon', type=float, default=1, metavar='float',
+parser.add_argument('--epsilon', type=float, default=1.5, metavar='float',
                     help='distance threshold')
 
 
@@ -183,8 +183,6 @@ if __name__ == '__main__':
     '''
     np.random.seed(SEED_MODEL)
     simulation = ABC_Discrete(QMR_DT(),args.pflip, args.pcross, settings=set_proposals, info=args.exp, epsilon=args.epsilon, nchains=args.N)
-    simulation.model.generate_parameters() #create b truth
-    simulation.model.generate_data(n=10) #sample findings for the generated instance
 
     if args.sequential:
         sequential(set_proposals)
