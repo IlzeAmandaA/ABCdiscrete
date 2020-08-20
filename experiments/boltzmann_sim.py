@@ -15,6 +15,8 @@ class Bolztmann_Net():
         self.b = self.bern(0., D * D, 1).squeeze()
         self.parameters= None
         self.data = None
+        self.MAP = {}
+
 
 
     def bern(self, p, D1, D2):
@@ -63,13 +65,17 @@ class Bolztmann_Net():
     def generate_parameters(self):
         self.parameters = self.bern2(0.5, self.D**2, self.D**2)
 
-    def generate_data(self, n):
+    def generate_data(self, run,n):
         X = 2. * self.generate_all_x(self.D * self.D) - 1
         E_exp, E_exp_sum = self.compute_energy(X, self.parameters, self.b)
         P = E_exp / E_exp_sum
         indexes = np.random.choice(np.arange(X.shape[0]), size=n, replace=True, p=P)
 
         self.data =  X[indexes]
+
+        self.MAP[str(run)] = P[np.argmax(P)]
+
+
 
     def generate_population(self, N):
         population = []
@@ -108,6 +114,18 @@ class Bolztmann_Net():
     def log_prior(self, J):
         #a uniform prior (not really informative)
         return 1/2**(J.shape[0]*J.shape[1])
+
+
+
+    def log_posterior_abc(self, J): #its not the log post
+        E_exp, E_exp_sum = self.compute_energy(self.data, J, self.b)
+        P = E_exp/E_exp_sum
+        return P[np.argmax(P)]
+
+
+
+
+
 
 
 

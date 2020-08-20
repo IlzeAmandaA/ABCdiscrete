@@ -71,9 +71,8 @@ def report_posterior(sim, run, pops, store):
         post[method] = [post_avg,post_std]
         textfile.write('avg post : {}  (std {})  \n'.format(post_avg, post_std))
 
-    true_post = sim.model.log_posterior_abc(sim.model.parameters)
-    # sim.output_true[str(run)] = true_post
-    textfile.write('true post : {}  '.format(true_post))
+    true_post = sim.model.MAP[str(run)]
+    textfile.write('MAP : {}  '.format(true_post))
     textfile.write('--------------------- \n\n')
     return (post, true_post)
 
@@ -191,7 +190,7 @@ def plot_dist(dict_res, dict_true, location):
            ylabel="Posterior")
 
     plt.xticks(x, [str(id) for id in x])
-    plt.ylim(-25, 15)
+    #plt.ylim(-25, 15)
     plt.legend()
     plt.savefig(location + '.png')
 

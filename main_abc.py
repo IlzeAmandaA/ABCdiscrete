@@ -59,7 +59,7 @@ def run(run_seed, simulation):
     '''
     np.random.seed(run_seed)
     simulation.model.generate_parameters() #create underlying true parameters
-    simulation.model.generate_data(n=10) #sample K data for the given parameter settings
+    simulation.model.generate_data(run_seed, n=10) #sample K data for the given parameter settings
     run_var.append(compute_variability(simulation.model.data))
 
     simulation.initialize_chains()
@@ -67,6 +67,7 @@ def run(run_seed, simulation):
     #loop over possible proposal methods
     for method in simulation.settings:
         error, x_pos, ac_ratio, population = simulation.run_abc(method, args.steps)
+
         pop[method] = error
         x[method] = x_pos
         ratio[method] = ac_ratio
@@ -83,7 +84,7 @@ def run(run_seed, simulation):
 def parallel(simulation):
     print('settings {} & running python in parallel mode with seed {}'.format(args.exp,args.seed))
 
-    pool = mp.Pool(processes=15)
+    pool = mp.Pool(processes=3) #15
 
     for k in range(args.eval):
         pool.apply_async(run, (k,simulation), callback=collect_result)
