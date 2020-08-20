@@ -9,9 +9,10 @@ class Proposals():
 
     #Strens
     def bit_flip(self, chain):
-        new = chain.copy()
+        new = chain.copy().flatten()
         for id, bit in enumerate(chain):
             new[id] = self.flip(bit)
+        new = np.reshape(new, chain.shape)
         return new
 
     def crossover(self, chain_i, chain_j):
@@ -33,9 +34,11 @@ class Proposals():
 
 
     #Braak discrete
-    def de_mc(self, chain_i, chain_j, chain_k):
-        bf_diff=self.bit_flip(np.logical_xor(chain_j, chain_k).astype(int))
-        return np.logical_xor(chain_i,bf_diff).astype(int)
+    def de_mc(self, i, j, k):
+        diff = np.logical_xor(j, k).astype(int)
+        mut_diff = self.bit_flip(diff)
+        return np.logical_xor(i, mut_diff).astype(int)
+
 
     def de_mc1(self, chain_i, chain_j, chain_k):
         xor=np.logical_xor(chain_i, np.logical_xor(chain_j, chain_k).astype(int))

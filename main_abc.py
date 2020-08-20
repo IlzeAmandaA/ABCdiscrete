@@ -1,6 +1,8 @@
 import argparse
-from experiments.QMR_DT.benchmark import QMR_DT
+from experiments.qmr_dt import QMR_DT
+from experiments.boltzmann_sim import Bolztmann_Net
 from methods.abc import ABC_Discrete
+from methods.mcmc import DDE_MC
 from utils.func_support import *
 import multiprocessing as mp
 import pickle as pkl
@@ -24,8 +26,15 @@ parser.add_argument('--eval', type=int, default=80, metavar='int',
                     help = 'number of evaluations')
 parser.add_argument('--exp', type=str, default='abc', metavar='str',
                     help='proposal selection')
+
 parser.add_argument('--epsilon', type=float, default=1, metavar='float',
                     help='distance threshold')
+
+parser.add_argument('--alg', type=str, default = 'mcmc', metvar='str',
+                    help = 'algorithm specification, options mcmc or abc')
+
+parser.add_argument('--t_case', type=str, default='QMR-DT', metavar='str',
+                    help ='test case to use for the experiment, options QMR-DT or Boltz')
 
 
 args = parser.parse_args()
@@ -45,13 +54,12 @@ def run(run_seed, simulation):
     chains = {}
 
 
-
     '''
     For every run initialize the chains with different initial  distribution
     '''
     np.random.seed(run_seed)
-    simulation.model.generate_parameters() #create b truth
-    simulation.model.generate_data(n=10) #sample findings for the generated instance
+    simulation.model.generate_parameters() #create underlying true parameters
+    simulation.model.generate_data(n=10) #sample K data for the given parameter settings
     run_var.append(compute_variability(simulation.model.data))
 
     simulation.initialize_chains()
@@ -74,9 +82,6 @@ def run(run_seed, simulation):
 
 def parallel(simulation):
     print('settings {} & running python in parallel mode with seed {}'.format(args.exp,args.seed))
-
-
-    #old location for parameters
 
     pool = mp.Pool(processes=15)
 
@@ -120,7 +125,7 @@ def compute_variability(matrix):
         null=0
         ones=0
         for row_id in range(matrix.shape[0]):
-            if matrix[row_id,col_id] == 0:
+            if matrix[row_id,col_id] == 0 or matrix[row_id,col_id] == -1:
                 null+=1
             else:
                 ones+=1
@@ -142,7 +147,7 @@ def sequential(settings):
 
     np.random.seed(args.seed)
     simulation.model.generate_parameters() #create the true underlying parameter settings
-    print('true model parameters {}'.format(simulation.model.b_truth))
+    print('true model parameters {}'.format(simulation.model.parameters))
     simulation.model.generate_data(n=10) #generate 10 true data points
     print('data points')
     print(simulation.model.data)
@@ -182,15 +187,28 @@ if __name__ == '__main__':
     keep the underlying model same across all experiments with Seed_model
     '''
     np.random.seed(SEED_MODEL)
-    simulation = ABC_Discrete(QMR_DT(),args.pflip, args.pcross, settings=set_proposals, info=args.exp, epsilon=args.epsilon, nchains=args.N)
+
+    use_case=None
+    if args.t_case == 'QMR-DT':
+        use_case = QMR_DT()
+    elif  args.t_case == 'Boltz':
+        use_case = Bolztmann_Net()
+    else:
+        os.error('Invalid use-case selected')
+
+
+    if args.alg == 'mcmc':
+        simulation = DDE_MC(use_case, args.pflip, args.pcross, settings=set_proposals, info=args.exp, nchains=args.N)
+    elif args.alg == 'abc':
+        simulation = ABC_Discrete(use_case,args.pflip, args.pcross, settings=set_proposals, info=args.exp, epsilon=args.epsilon, nchains=args.N)
+
+
 
     if args.sequential:
         sequential(set_proposals)
         plot_single(pop_error, xlim, 'error', store + '/pop_error')
 
-
     else:
-
         for prop in set_proposals:
             pop_error[prop] = []
             xlim[prop]=[]

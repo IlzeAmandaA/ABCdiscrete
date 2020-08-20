@@ -9,7 +9,7 @@ Implementation of Metropolis algorithm
 
 STRENS=False
 
-class EvolutionaryMC():
+class DDE_MC():
 
     def __init__(self, model, pflip, pcross, settings, info, nchains=12): #12 #24
         self.model = model

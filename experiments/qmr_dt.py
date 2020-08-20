@@ -1,23 +1,23 @@
 import numpy as np
 
 """
-QMR-DT sample problem
+QMR-DT Network
 """
 
 
 class QMR_DT():
 
-    def __init__(self):
+    def __init__(self, m=10, f=20, a_p = 0.9):
 
-        self.m = 10
-        self.f = 20
-        self.association_prob = 0.9
-        self.p_l = np.random.beta(0.15, 0.15, self.m)  # disease prior
+        self.D = m
+        self.f = f
+        self.association_prob = a_p
+        self.p_l = np.random.beta(0.15, 0.15, self.D)  # disease prior
         self.q_i0 = np.random.beta(0.15, 0.15, self.f)  # leak probability
         self.q_il = self.association()  # association between disease l and finding i (finding, disease)
 
 
-        self.b_truth = None #sample b_truth from disease prior
+        self.parameters = None #sample b_truth from disease prior
         self.data = None #generate multipl findings given b_truth
 
 
@@ -28,8 +28,8 @@ class QMR_DT():
         """
         q_il = []
         for f in range(self.f):
-            f_association=np.zeros(self.m)
-            for b in range(self.m):
+            f_association=np.zeros(self.D)
+            for b in range(self.D):
                 if np.random.uniform(0,1) >= self.association_prob:
                     f_association[b] = np.random.beta(0.15,0.15)
             q_il.append(f_association)
@@ -41,18 +41,26 @@ class QMR_DT():
         Function to generate test cases based on the disease prior p_l
         :return: b_truth's
         """
-        self.b_truth = np.zeros(self.m)
-        for l in range(self.m):
+        self.parameters = np.zeros(self.D)
+        for l in range(self.D):
             if self.p_l[l] >= np.random.uniform(0,1):
-                self.b_truth[l] = 1
+                self.parameters[l] = 1
 
 
     def generate_data(self, n=1):
         self.data = np.zeros(shape=(n,self.f))
         for row in range(self.data.shape[0]):
             for idx in range(self.data.shape[1]):
-                if (1-np.exp(self.llh(self.b_truth, idx)))>= np.random.uniform(0,1):
+                if (1-np.exp(self.llh(self.parameters, idx)))>= np.random.uniform(0,1):
                     self.data[row,idx]=1
+
+
+    def generate_population(self, N):
+        population = []
+        for i in range(N):
+            population.append(np.random.binomial(1, 0.5, (self.D,1)).squeeze())
+
+        return population
 
 
     def simulate(self, b):
@@ -159,7 +167,7 @@ class QMR_DT():
         """
         distance = 0.
         for idx,bl in enumerate(b):
-            if bl != self.b_truth[idx]:
+            if bl != self.parameters[idx]:
                 distance+=1
         return distance
 

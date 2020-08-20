@@ -11,7 +11,7 @@ Implementation of Metropolis algorithm
 
 class ABC_Discrete():
 
-    def __init__(self, model, pflip, pcross, settings, info, epsilon, nchains): #12 #24
+    def __init__(self, model, pflip, pcross, settings, info, epsilon, nchains, ep_set='exp'): #12 #24
         self.model = model
         self.N = nchains
 
@@ -20,15 +20,15 @@ class ABC_Discrete():
         self.settings =  settings
 
         self.population = None
-        self.epsilon = epsilon
+        self.tolerance = np.random.exponential(epsilon) if ep_set == 'exp' else epsilon
 
 
     def initialize_chains(self):
-        self.population = [self.sample_chain() for n in range(self.N)]
+        self.population = self.model.generate_population(self.N)
 
 
     def sample_chain(self):
-        return np.random.binomial(1, .5, self.model.m)
+        return np.random.binomial(1, .5, self.model.D)
 
 
     def run_abc(self, method, steps):
@@ -48,8 +48,8 @@ class ABC_Discrete():
                 theta_ = self.proposal(population, i, method)
                 x=self.model.simulate(theta_)
 
-                if self.distance(x)<=self.epsilon:
-               # if self.distance(x) <= self.exp_epsilon():
+
+                if self.distance(x)<=self.tolerance:
                     alpha = self.metropolis(theta_,population[i])
                     acceptence_ratio += 1 if n <= 10000 else 0
 
@@ -67,15 +67,19 @@ class ABC_Discrete():
 
         return error, xlim, acceptence_ratio, population
 
-    def exp_epsilon(self):
-        return np.random.exponential(self.epsilon)
 
-    def distance(self, f):
-        avg=0
-        for x in self.model.data:
-            avg += self.hamming(f,x)
-        avg /= len(self.model.data)
-        return avg
+    def distance(self, y):
+        avg_d=0
+        for y0 in self.model.data:
+            avg_d += self.hamming(y,y0)
+        return avg_d * 1/self.model.data.shape[0]
+
+    def hamming(self, y, y0):
+        d = 0.
+        for idx,yi  in enumerate(y):
+            if yi != y0[idx]:
+                d += 1
+        return d
 
 
     def pop_error(self, chains):
@@ -86,12 +90,7 @@ class ABC_Discrete():
         error /= len(chains)
         return error
 
-    def hamming(self, x, x0):
-        distance = 0.
-        for idx,xi  in enumerate(x):
-            if xi != x0[idx]:
-                distance += 1
-        return distance
+
 
     def metropolis(self, theta_, theta):
         return min(1, np.exp(self.model.log_prior(theta_)-self.model.log_prior(theta)))
@@ -103,12 +102,12 @@ class ABC_Discrete():
             if self.settings[method] >= np.random.uniform(0, 1):
                 iprime = self.proposals.bit_flip(population[i])
             else:
-                j, k = self.sample(i, len(population), 2)
+                j, k = self.sample_idx(i, len(population), 2)
                 assert j != k, 'Check proposal xor method {} {}'.format(j, k)
                 iprime = self.proposals.xor(population[i], population[j], population[k])
 
         elif method == 'de-mc':
-            j, k = self.sample(i, len(population), 2)
+            j, k = self.sample_idx(i, len(population), 2)
             assert j != k, 'Check proposal xor method {} {}'.format(j, k)
             iprime = self.proposals.de_mc(population[i], population[j], population[k])
 
@@ -117,6 +116,6 @@ class ABC_Discrete():
 
         return iprime
 
-    def sample(self, i, max, size=1):
+    def sample_idx(self, i, max, size=1):
         return np.random.choice([x for x in range(1, max) if x != i], size=size, replace=False)
 
