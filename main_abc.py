@@ -84,7 +84,7 @@ def run(run_seed, simulation):
 def parallel(simulation):
     print('settings {} & running python in parallel mode with seed {}'.format(args.exp,args.seed))
 
-    pool = mp.Pool(processes=3) #15
+    pool = mp.Pool(processes=15)
 
     for k in range(args.eval):
         pool.apply_async(run, (k,simulation), callback=collect_result)
