@@ -10,7 +10,7 @@ import os
 import time
 
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
-parser.add_argument('--sequential', default=False, action='store_true',
+parser.add_argument('--seq', default=False, action='store_true',
                     help='Flag to run the simulation in parallel processing')
 parser.add_argument('--steps', type=int, default=100000, metavar='int',
                     help='evaluation steps') #600000
@@ -24,16 +24,16 @@ parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
 parser.add_argument('--eval', type=int, default=80, metavar='int',
                     help = 'number of evaluations')
-parser.add_argument('--exp', type=str, default='abc', metavar='str',
+parser.add_argument('--exp', type=str, default='dde-mc', metavar='str',
                     help='proposal selection')
 
 parser.add_argument('--epsilon', type=float, default=1, metavar='float',
                     help='distance threshold')
 
-parser.add_argument('--alg', type=str, default = 'mcmc', metvar='str',
+parser.add_argument('--alg', type=str, default = 'mcmc', metavar='str',
                     help = 'algorithm specification, options mcmc or abc')
 
-parser.add_argument('--t_case', type=str, default='QMR-DT', metavar='str',
+parser.add_argument('--tcase', type=str, default='QMR-DT', metavar='str',
                     help ='test case to use for the experiment, options QMR-DT or Boltz')
 
 
@@ -135,45 +135,43 @@ def compute_variability(matrix):
 
 
 
-def sequential(settings):
+def sequential(simulation):
     print('running python in sequential mode')
 
-
-    np.random.seed(SEED_MODEL)
-    global simulation
-    simulation = ABC_Discrete(QMR_DT(), args.pflip, args.pcross, settings=settings, info=args.exp, epsilon=args.epsilon, nchains=args.N)
 
     #initialize goal parameters and the corresponing data
 
     np.random.seed(args.seed)
     simulation.model.generate_parameters() #create the true underlying parameter settings
-    print('true model parameters {}'.format(simulation.model.parameters))
     simulation.model.generate_data(n=10) #generate 10 true data points
-    print('data points')
-    print(simulation.model.data)
-
-    np.random.seed(SEED_MODEL)
     simulation.initialize_chains()
 
     #loop over possible proposal methods
     for method in simulation.settings:
         print('Proposal: {}'.format(method))
 
-        error, x, ratio = simulation.run_abc(method, args.steps)
-        print('Acceptance ratio : {}'.format(ratio))
+        error, x_pos, ac_ratio, population = simulation.run_abc(method, args.steps)
+        print('Acceptance ratio : {}'.format(ac_ratio))
 
         global pop_error
         pop_error[method] = error
 
         global xlim
-        xlim[method] = x
+        xlim[method] = x_pos
 
 
 
 if __name__ == '__main__':
 
     set_proposals = {'de-mc':None, 'mut+xor':0.5}
-    store = 'results/abc'
+    store = 'results/' + args.alg + '/' + args.tcase
+    if not os.path.exists(store):
+        os.makedirs(store)
+        if args.alg == 'mcmc':
+            store += '/' + args.exp
+            if not os.path.exists(store):
+                os.makedirs(store)
+
 
     pop_error = {}
     xlim = {}
@@ -189,14 +187,14 @@ if __name__ == '__main__':
     np.random.seed(SEED_MODEL)
 
     use_case=None
-    if args.t_case == 'QMR-DT':
+    if args.tcase == 'QMR-DT':
         use_case = QMR_DT()
-    elif  args.t_case == 'Boltz':
+    elif  args.tcase == 'Boltz':
         use_case = Bolztmann_Net()
     else:
         os.error('Invalid use-case selected')
 
-
+    simulation=None
     if args.alg == 'mcmc':
         simulation = DDE_MC(use_case, args.pflip, args.pcross, settings=set_proposals, info=args.exp, nchains=args.N)
     elif args.alg == 'abc':
@@ -204,8 +202,8 @@ if __name__ == '__main__':
 
 
 
-    if args.sequential:
-        sequential(set_proposals)
+    if args.seq:
+        sequential(simulation)
         plot_single(pop_error, xlim, 'error', store + '/pop_error')
 
     else:

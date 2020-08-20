@@ -9,10 +9,11 @@ class Proposals():
 
     #Strens
     def bit_flip(self, chain):
+        shape = chain.shape
         new = chain.copy().flatten()
-        for id, bit in enumerate(chain):
+        for id, bit in enumerate(chain.flatten()):
             new[id] = self.flip(bit)
-        new = np.reshape(new, chain.shape)
+        new = np.reshape(new, shape)
         return new
 
     def crossover(self, chain_i, chain_j):

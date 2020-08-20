@@ -11,7 +11,7 @@ Implementation of Metropolis algorithm
 
 class ABC_Discrete():
 
-    def __init__(self, model, pflip, pcross, settings, info, epsilon, nchains, ep_set='exp'): #12 #24
+    def __init__(self, model, pflip, pcross, settings, info, epsilon, nchains): #12 #24
         self.model = model
         self.N = nchains
 
@@ -20,7 +20,7 @@ class ABC_Discrete():
         self.settings =  settings
 
         self.population = None
-        self.tolerance = np.random.exponential(epsilon) if ep_set == 'exp' else epsilon
+        self.tolerance = epsilon
 
 
     def initialize_chains(self):
@@ -49,7 +49,7 @@ class ABC_Discrete():
                 x=self.model.simulate(theta_)
 
 
-                if self.distance(x)<=self.tolerance:
+                if self.distance(x)<=np.random.exponential(self.tolerance):
                     alpha = self.metropolis(theta_,population[i])
                     acceptence_ratio += 1 if n <= 10000 else 0
 
