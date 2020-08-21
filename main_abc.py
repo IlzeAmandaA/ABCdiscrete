@@ -59,7 +59,7 @@ def run(run_seed, simulation):
     '''
     np.random.seed(run_seed)
     simulation.model.generate_parameters() #create underlying true parameters
-    simulation.model.generate_data(run_seed, n=10) #sample K data for the given parameter settings
+    simulation.model.generate_data(n=10) #sample K data for the given parameter settings
     run_var.append(compute_variability(simulation.model.data))
 
     simulation.initialize_chains()

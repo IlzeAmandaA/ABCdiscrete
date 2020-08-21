@@ -49,6 +49,7 @@ class ABC_Discrete():
                 x=self.model.simulate(theta_)
 
 
+
                 if self.distance(x)<=np.random.exponential(self.tolerance):
                     alpha = self.metropolis(theta_,population[i])
                     acceptence_ratio += 1 if n <= 10000 else 0

@@ -15,7 +15,8 @@ class Bolztmann_Net():
         self.b = self.bern(0., D * D, 1).squeeze()
         self.parameters= None
         self.data = None
-        self.MAP = {}
+        self.MAP = None
+        self.Z = None
 
 
 
@@ -65,7 +66,7 @@ class Bolztmann_Net():
     def generate_parameters(self):
         self.parameters = self.bern2(0.5, self.D**2, self.D**2)
 
-    def generate_data(self, run,n):
+    def generate_data(self, n):
         X = 2. * self.generate_all_x(self.D * self.D) - 1
         E_exp, E_exp_sum = self.compute_energy(X, self.parameters, self.b)
         P = E_exp / E_exp_sum
@@ -73,7 +74,8 @@ class Bolztmann_Net():
 
         self.data =  X[indexes]
 
-        self.MAP[str(run)] = P[np.argmax(P)]
+        self.MAP = P[np.argmax(P)]
+        self.Z = E_exp_sum
 
 
 
@@ -117,10 +119,10 @@ class Bolztmann_Net():
 
 
 
-    def log_posterior_abc(self, J): #its not the log post
-        E_exp, E_exp_sum = self.compute_energy(self.data, J, self.b)
-        P = E_exp/E_exp_sum
-        return P[np.argmax(P)]
+    def log_posterior_abc(self, J, Z): #its not the log post
+        E_exp, E_exp_sum = self.compute_energy(self.data, J, self.b) #not correct
+        P = E_exp/Z
+        return P[np.argmax(P)] #return the prob based on the partion value of true J
 
 
 
