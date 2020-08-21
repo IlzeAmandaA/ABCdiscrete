@@ -22,7 +22,7 @@ parser.add_argument('--pflip', type=float, default=0.01, metavar='float',
                     help='bitflip probability') #0.1
 parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
-parser.add_argument('--eval', type=int, default=80, metavar='int',
+parser.add_argument('--eval', type=int, default=15, metavar='int',
                     help = 'number of evaluations')
 parser.add_argument('--exp', type=str, default='dde-mc', metavar='str',
                     help='proposal selection')
@@ -58,8 +58,8 @@ def run(run_seed, simulation):
     For every run initialize the chains with different initial  distribution
     '''
     np.random.seed(run_seed)
-    simulation.model.generate_parameters() #create underlying true parameters
-    simulation.model.generate_data(n=10) #sample K data for the given parameter settings
+    # simulation.model.generate_parameters() #create underlying true parameters
+    # simulation.model.generate_data(n=10) #sample K data for the given parameter settings
     run_var.append(compute_variability(simulation.model.data))
 
     simulation.initialize_chains()
@@ -200,6 +200,10 @@ if __name__ == '__main__':
         simulation = DDE_MC(use_case, args.pflip, args.pcross, settings=set_proposals, info=args.exp, nchains=args.N)
     elif args.alg == 'abc':
         simulation = ABC_Discrete(use_case,args.pflip, args.pcross, settings=set_proposals, info=args.exp, epsilon=args.epsilon, nchains=args.N)
+
+    simulation.model.generate_parameters() #create underlying true parameters
+    simulation.model.generate_data(n=10) #sample K data for the given parameter settings
+
 
 
 
