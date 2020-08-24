@@ -13,9 +13,9 @@ import time
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
 parser.add_argument('--seq', default=False, action='store_true',
                     help='Flag to run the simulation in parallel processing')
-parser.add_argument('--steps', type=int, default=100000, metavar='int',
+parser.add_argument('--steps', type=int, default=20000, metavar='int',
                     help='evaluation steps') #600000
-parser.add_argument('--seed', type=int, default=10, metavar='int',
+parser.add_argument('--seed', type=int, default=0, metavar='int',
                     help='seed')
 parser.add_argument('--N', type=int, default=24, metavar='int',
                     help='seed')
@@ -28,7 +28,7 @@ parser.add_argument('--eval', type=int, default=15, metavar='int',
 parser.add_argument('--exp', type=str, default='dde-mc', metavar='str',
                     help='proposal selection')
 
-parser.add_argument('--epsilon', type=float, default=0.3, metavar='float',
+parser.add_argument('--epsilon', type=float, default=0.05, metavar='float',
                     help='distance threshold')
 
 parser.add_argument('--alg', type=str, default = 'abc', metavar='str',
@@ -59,11 +59,6 @@ def run(run_seed, simulation):
     For every run initialize the chains with different initial  distribution
     '''
     np.random.seed(run_seed)
-    # simulation.model.generate_parameters() #create underlying true parameters
-    # simulation.model.generate_data(n=10) #sample K data for the given parameter settings
-    run_var.append(compute_variability(simulation.model.data))
-
-    simulation.initialize_chains()
 
     #loop over possible proposal methods
     for method in simulation.settings:
@@ -74,7 +69,8 @@ def run(run_seed, simulation):
         ratio[method] = ac_ratio
         chains[method] = population
 
-    post = report_posterior(simulation, run_seed, chains, store+'/posterior' +str(args.epsilon))
+  #  post = report_posterior(simulation, run_seed, chains, store+'/posterior' +str(args.epsilon))
+    post=0
 
     print('for run {} time ---- {} minutes ---'.format(run_seed, (time.time() - start_time) / 60))
 
@@ -197,20 +193,33 @@ if __name__ == '__main__':
     alg = ABC_Discrete(use_case,args.pflip, args.pcross, settings=set_proposals, info=args.exp, epsilon=args.epsilon, nchains=args.N)
 
     np.random.seed(args.seed)
-    print(alg.population.shape)
 
- #   loop over possible proposal methods
-    for method in alg.settings:
-        print('Proposal: {}'.format(method))
+    for prop in set_proposals:
+        pop_error[prop] = []
+        xlim[prop]=[]
+        acceptance_r[prop] = []
 
-        error, x_pos, ac_ratio, population = alg.run_abc(method, args.steps)
-        print('Acceptance ratio : {}'.format(ac_ratio))
+        parallel(alg)
+        pkl.dump(xlim, open(store + '/xlim'+ str(args.epsilon)+'.pkl', 'wb'))
+        pkl.dump(pop_error, open(store+'/pop_error'+ str(args.epsilon)+ '.pkl', 'wb'))
+        create_plot(pop_error, xlim, store +'/pop_error'+ str(args.epsilon), 'error')
 
-        pop_error[method] = error
-        xlim[method] = x_pos
+        report(compute_avg(acceptance_r), args.epsilon, store+'/acceptance_ratio')
+        # report_variablitity(variability, store+'/acceptance_ratio')
+        # plot_dist(output_post, output_true, store +'/dist'+ str(args.epsilon))
+        # pkl.dump(output_post, open(store+'/dist_post'+ str(args.epsilon)+ '.pkl', 'wb'))
+        # pkl.dump(output_true, open(store + '/dist_true' + str(args.epsilon) + '.pkl', 'wb'))
 
-    create_plot(pop_error, xlim, store +'/pop_error'+ str(args.epsilon), 'error')
 
+    #   loop over possible proposal methods
+    # for method in alg.settings:
+    #     print('Proposal: {}'.format(method))
+    #
+    #     error, x_pos, ac_ratio, population = alg.run_abc(method, args.steps)
+    #     print('Acceptance ratio : {}'.format(ac_ratio))
+    #
+    #     pop_error[method] = error
+    #     xlim[method] = x_pos
 
     # use_case=None
     # if args.tcase == 'QMR-DT':

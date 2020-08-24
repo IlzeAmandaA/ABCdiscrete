@@ -44,6 +44,7 @@ class ABC_Discrete():
         acceptence_ratio=0.
 
         while n < steps:
+
             for i in range(len(population)):
                 theta_ = self.proposal(population, i, method)
                 x=self.model.simulate(theta_)
