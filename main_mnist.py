@@ -107,14 +107,14 @@ def collect_result(outcome):
     for key,value in r.items():
         acceptance_r[key].append(value)
 
-    global variability
-    variability = var
-
-    global output_post
-    output_post[run_id+1] = post[0]
-
-    global output_true
-    output_true[run_id+1] = post[1]
+    # global variability
+    # variability = var
+    #
+    # global output_post
+    # output_post[run_id+1] = post[0]
+    #
+    # global output_true
+    # output_true[run_id+1] = post[1]
 
 
 def compute_variability(matrix):
@@ -210,6 +210,7 @@ if __name__ == '__main__':
         # pkl.dump(output_post, open(store+'/dist_post'+ str(args.epsilon)+ '.pkl', 'wb'))
         # pkl.dump(output_true, open(store + '/dist_true' + str(args.epsilon) + '.pkl', 'wb'))
 
+    print('Finished')
 
     #   loop over possible proposal methods
     # for method in alg.settings:
