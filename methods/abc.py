@@ -19,7 +19,7 @@ class ABC_Discrete():
         self.proposals = Proposals(pflip, pcross)
         self.settings =  settings
 
-        self.population = None
+        self.population = self.model.initialize_pop(self.N)
         self.tolerance = epsilon
 
 
@@ -48,10 +48,9 @@ class ABC_Discrete():
                 theta_ = self.proposal(population, i, method)
                 x=self.model.simulate(theta_)
 
-
-
-                if self.distance(x)<=np.random.exponential(self.tolerance):
-                    alpha = self.metropolis(theta_,population[i])
+                #print(self.model.distance(x))
+                if self.model.distance(x)<=np.random.exponential(self.tolerance):
+                    alpha = self.metropolis(theta_, population[i])
                     acceptence_ratio += 1 if n <= 10000 else 0
 
                     if alpha >= np.random.uniform(0,1):
@@ -86,14 +85,15 @@ class ABC_Discrete():
         error = 0.
         for chain in chains:
             x = self.model.simulate(chain)
-            error += self.distance(x)
+            error += self.model.distance(x)
         error /= len(chains)
         return error
 
 
 
     def metropolis(self, theta_, theta):
-        return min(1, np.exp(self.model.log_prior(theta_)-self.model.log_prior(theta)))
+        return min(1, self.model.prior(theta_)/self.model.prior(theta))
+    #    return min(1, np.exp(self.model.log_prior(theta_)-self.model.log_prior(theta)))
 
 
     def proposal(self, population, i, method):

@@ -122,7 +122,7 @@ class Bolztmann_Net():
     def log_posterior_abc(self, J, Z): #its not the log post
         E_exp, E_exp_sum = self.compute_energy(self.data, J, self.b) #not correct
         P = E_exp/Z
-        return P[np.argmax(P)] #return the prob based on the partion value of true J
+        return np.mean(P) #P[np.argmax(P)] #return the prob based on the partion value of true J
 
 
 
