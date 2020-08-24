@@ -59,7 +59,6 @@ class ABC_Discrete():
                 n += 1
 
                 if n >= sample:
-                    print(n)
                     error.append(self.pop_error(population))
                     xlim.append(n)
                     sample += 1500
