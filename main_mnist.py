@@ -13,7 +13,7 @@ import time
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
 parser.add_argument('--seq', default=False, action='store_true',
                     help='Flag to run the simulation in parallel processing')
-parser.add_argument('--steps', type=int, default=20000, metavar='int',
+parser.add_argument('--steps', type=int, default=100000, metavar='int',
                     help='evaluation steps') #600000
 parser.add_argument('--seed', type=int, default=0, metavar='int',
                     help='seed')
@@ -28,7 +28,7 @@ parser.add_argument('--eval', type=int, default=15, metavar='int',
 parser.add_argument('--exp', type=str, default='dde-mc', metavar='str',
                     help='proposal selection')
 
-parser.add_argument('--epsilon', type=float, default=0.05, metavar='float',
+parser.add_argument('--epsilon', type=float, default=0.1, metavar='float',
                     help='distance threshold')
 
 parser.add_argument('--alg', type=str, default = 'abc', metavar='str',
@@ -74,7 +74,7 @@ def run(run_seed, simulation):
 
     print('for run {} time ---- {} minutes ---'.format(run_seed, (time.time() - start_time) / 60))
 
-    return (pop, x, ratio, run_var, run_seed, post)
+    return (pop, x, ratio, run_var, run_seed, chains)
 
 
 
@@ -106,6 +106,10 @@ def collect_result(outcome):
     global acceptance_r
     for key,value in r.items():
         acceptance_r[key].append(value)
+
+    global pop_c
+    for key,value in post.items():
+        pop_c[key].append(value)
 
     # global variability
     # variability = var
@@ -176,6 +180,7 @@ if __name__ == '__main__':
     variability = []
     output_post = {}
     output_true = {}
+    pop_c ={}
 
 
     '''
@@ -198,12 +203,15 @@ if __name__ == '__main__':
         pop_error[prop] = []
         xlim[prop]=[]
         acceptance_r[prop] = []
+        pop_c[prop] =[]
 
     parallel(alg)
     print('finihsed parallel computing')
     pkl.dump(xlim, open(store + '/xlim'+ str(args.epsilon)+'.pkl', 'wb'))
     pkl.dump(pop_error, open(store+'/pop_error'+ str(args.epsilon)+ '.pkl', 'wb'))
+    pkl.dump(pop_c,open(store+'/pop_c'+ str(args.epsilon)+ '.pkl', 'wb'))
     create_plot(pop_error, xlim, store +'/pop_error'+ str(args.epsilon), 'error')
+
 
     report(compute_avg(acceptance_r), args.epsilon, store+'/acceptance_ratio')
     # report_variablitity(variability, store+'/acceptance_ratio')
