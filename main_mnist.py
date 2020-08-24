@@ -13,7 +13,7 @@ import time
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
 parser.add_argument('--seq', default=False, action='store_true',
                     help='Flag to run the simulation in parallel processing')
-parser.add_argument('--steps', type=int, default=20000, metavar='int',
+parser.add_argument('--steps', type=int, default=5000, metavar='int',
                     help='evaluation steps') #600000
 parser.add_argument('--seed', type=int, default=0, metavar='int',
                     help='seed')
@@ -200,6 +200,7 @@ if __name__ == '__main__':
         acceptance_r[prop] = []
 
         parallel(alg)
+        print('finihsed parallel computing')
         pkl.dump(xlim, open(store + '/xlim'+ str(args.epsilon)+'.pkl', 'wb'))
         pkl.dump(pop_error, open(store+'/pop_error'+ str(args.epsilon)+ '.pkl', 'wb'))
         create_plot(pop_error, xlim, store +'/pop_error'+ str(args.epsilon), 'error')
