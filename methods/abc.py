@@ -31,7 +31,7 @@ class ABC_Discrete():
 
 
     def run_abc(self, method, steps):
-        print('Started the algorhtm')
+        print('Started the algorihtm')
 
         #initialize the population
         population = self.population.copy()
@@ -47,6 +47,9 @@ class ABC_Discrete():
 
             for i in range(len(population)):
                 theta_ = self.proposal(population, i, method)
+                print('proposal obtined')
+                print('theta shape {}'.format(theta_.shape))
+                print('values of theta {}'.format(set(theta_)))
                 x=self.model.simulate(theta_)
                 print('simulated x')
 

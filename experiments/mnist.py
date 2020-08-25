@@ -24,11 +24,12 @@ def transform_polar(image):
     # return image
 
 class MNIST():
-    def __init__(self, l1=0, l2=1, H=20, name='mnist', image_size=(14, 14), batch_size=1000, train_size=5000):
+    def __init__(self, l1=0, l2=1, H=20, name='mnist', image_size=(14, 14), batch_size=1000):
         super().__init__()
         self.name = name
         self.image_size = image_size
         self.H=H
+        self.batch_size = batch_size
 
         if not(os.path.isfile(PYTHONPATH + '/data/' + 'mnist.pkl')):
             self.download_mnist(location=PYTHONPATH + '/data/')
@@ -163,10 +164,11 @@ class MNIST():
         data[data==0]=-1
 
 
-    def simulate(self, w_orig, *args): #objective
+    def simulate(self, w_orig): #objective
         #change 0 to -1
         w = np.copy(w_orig)
         w[w==0]=-1
+        print('updated theta values {}'.format(set(w)))
 
         im_shape = self.image_size[0] * self.image_size[1]
         data_x = self.x_train
@@ -175,6 +177,7 @@ class MNIST():
         y_pred = np.zeros((data_y.shape[0],))
 
         for i in range(data_x.shape[0] // self.batch_size):
+            print(i)
             w1 = w[0: im_shape * self.H]
             w2 = w[im_shape * self.H:]
 
