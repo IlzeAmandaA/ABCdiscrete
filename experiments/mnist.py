@@ -141,20 +141,24 @@ class MNIST():
         D=self.image_size[0] * self.image_size[1] * self.H + self.H * 2
         return self.bern(0.5,N,D)
 
+    def hardtanh(self,data):
+        data[data > 1] = 1
+        data[data < -1] = -1
+
+    def binary_hardtanh(self,data):
+        self.hardtanh(data)
+        data[data>0]=1
+        data[data==0]=-1
+
+
     def simulate(self, w_orig, *args): #objective
         #change 0 to -1
         w = np.copy(w_orig)
         w[w==0]=-1
-       # hidden_units = args[0]['hidden_units']
-        # image_size = args[0]['image_size']
-        im_shape = self.image_size[0] * self.image_size[1]
 
-        # if args[0]['evaluate'] is False:
+        im_shape = self.image_size[0] * self.image_size[1]
         data_x = self.x_train
         data_y = self.y_train
-        # else:
-        #     data_x = self.x_test
-        #     data_y = self.y_test
 
         y_pred = np.zeros((data_y.shape[0],))
 
@@ -167,19 +171,15 @@ class MNIST():
 
           #  First layer
             h = np.dot(data_x[i * self.batch_size: (i + 1) * self.batch_size], W1)
-            # ReLU
-            h = np.maximum(h, 0.)
-            h = self.binarize(h)
-
-             # Second layer
+            # tanh
+            self.binary_hardtanh(h)
+            # Second layer
             logits = np.dot(h, W2)
-             # Softmax
-           # prob = softmax(logits, -1)
+             # sigmoid
             prob = expit(logits)
 
             y_pred[i * self.batch_size: (i + 1) * self.batch_size] = np.argmax(prob, -1)
 
-        # class_error = 1. - np.mean(data_y == y_pred)
         return y_pred
 
     def binarize(self, x):
@@ -188,6 +188,8 @@ class MNIST():
         return x.astype(int)
 
     def distance(self, y):
+        print(y)
+        print(self.y_train)
         return 1/self.y_train.shape[0] * sum(np.invert(np.logical_xor(self.y_train, y)))
 
     def prior(self, theta):
