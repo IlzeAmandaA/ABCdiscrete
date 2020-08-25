@@ -184,6 +184,7 @@ class MNIST():
 
             y_pred[i * self.batch_size: (i + 1) * self.batch_size] = np.argmax(prob, -1)
 
+        sys.exit()
         return y_pred
 
     def binarize(self, x):
