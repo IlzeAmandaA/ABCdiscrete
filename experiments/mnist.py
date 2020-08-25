@@ -171,12 +171,16 @@ class MNIST():
 
           #  First layer
             h = np.dot(data_x[i * self.batch_size: (i + 1) * self.batch_size], W1)
+            print('h', h)
             # tanh
             self.binary_hardtanh(h)
+            print('h tanh', h)
             # Second layer
             logits = np.dot(h, W2)
+            print(logits)
              # sigmoid
             prob = expit(logits)
+            print(prob)
 
             y_pred[i * self.batch_size: (i + 1) * self.batch_size] = np.argmax(prob, -1)
 
