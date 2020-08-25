@@ -1,7 +1,6 @@
 import numpy as np
 from methods.proposals import Proposals
 import sys
-from tqdm import tqdm
 
 
 """

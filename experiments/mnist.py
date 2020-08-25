@@ -133,12 +133,18 @@ class MNIST():
     def bern2(self, p, D1, D2):
         return 2. * np.random.binomial(1, p, (D1, D2)) - 1.
 
+    def bern(self, p, D1, D2):
+        return np.random.binomial(1, p, (D1, D2))
+
 
     def initialize_pop(self, N):
         D=self.image_size[0] * self.image_size[1] * self.H + self.H * 2
-        return self.bern2(0.5,N,D)
+        return self.bern(0.5,N,D)
 
-    def simulate(self, w, *args): #objective
+    def simulate(self, w_orig, *args): #objective
+        #change 0 to -1
+        w = np.copy(w_orig)
+        w[w==0]=-1
        # hidden_units = args[0]['hidden_units']
         # image_size = args[0]['image_size']
         im_shape = self.image_size[0] * self.image_size[1]
@@ -185,8 +191,6 @@ class MNIST():
         return 1/self.y_train.shape[0] * sum(np.invert(np.logical_xor(self.y_train, y)))
 
     def prior(self, theta):
-        #define a bolztman distribution
-        temp = np.copy(theta)
-        temp[temp==-1]=0
-        return np.exp(np.mean(temp))
+        #define a pseduo-bolztman distribution
+        return np.exp(-np.mean(theta))
 

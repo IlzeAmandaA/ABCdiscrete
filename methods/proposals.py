@@ -26,6 +26,7 @@ class Proposals():
         return c1, c2
 
     def xor(self, chain_i, chain_j, chain_k):
+
         return np.logical_xor(chain_i,np.logical_xor(chain_j,chain_k)).astype(int)
 
 
