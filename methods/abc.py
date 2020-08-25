@@ -31,6 +31,7 @@ class ABC_Discrete():
 
 
     def run_abc(self, method, steps):
+        print('Started the algorhtm')
 
         #initialize the population
         population = self.population.copy()
@@ -47,6 +48,7 @@ class ABC_Discrete():
             for i in range(len(population)):
                 theta_ = self.proposal(population, i, method)
                 x=self.model.simulate(theta_)
+                print('simulated x')
 
                 #print(self.model.distance(x))
                 if self.model.distance(x)<=np.random.exponential(self.tolerance):
