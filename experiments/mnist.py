@@ -207,8 +207,9 @@ class MNIST():
         return x.astype(int)
 
     def distance(self, y):
-        print(y)
+        print(int(y))
         print(self.y_train)
+        sys.exit()
         return 1/self.y_train.shape[0] * sum(np.invert(np.logical_xor(self.y_train, y)))
 
     def prior(self, theta):
