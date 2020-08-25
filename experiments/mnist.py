@@ -168,7 +168,7 @@ class MNIST():
         #change 0 to -1
         w = np.copy(w_orig)
         w[w==0]=-1
-        print('updated theta values {}'.format(set(w)))
+        # print('updated theta values {}'.format(set(w)))
 
         im_shape = self.image_size[0] * self.image_size[1]
         data_x = self.x_train
@@ -177,7 +177,7 @@ class MNIST():
         y_pred = np.zeros((data_y.shape[0],))
 
         for i in range(data_x.shape[0] // self.batch_size):
-            print(i)
+            # print(i)
             w1 = w[0: im_shape * self.H]
             w2 = w[im_shape * self.H:]
 
@@ -186,20 +186,19 @@ class MNIST():
 
           #  First layer
             h = np.dot(data_x[i * self.batch_size: (i + 1) * self.batch_size], W1)
-            print('h', h)
+            # print('h', h)
             # tanh
             self.binary_hardtanh(h)
-            print('h tanh', h)
+            # print('h tanh', h)
             # Second layer
             logits = np.dot(h, W2)
-            print(logits)
+            # print(logits)
              # sigmoid
             prob = expit(logits)
-            print(prob)
+            # print(prob)
 
             y_pred[i * self.batch_size: (i + 1) * self.batch_size] = np.argmax(prob, -1)
 
-        sys.exit()
         return y_pred
 
     def binarize(self, x):
