@@ -31,7 +31,7 @@ class ABC_Discrete():
 
 
     def run_abc(self, method, steps):
-        print('Started the algorihtm')
+        # print('Started the algorihtm')
 
         #initialize the population
         population = self.population.copy()
@@ -63,7 +63,7 @@ class ABC_Discrete():
                 n += 1
 
                 if n >= sample:
-                    print(n)
+                    # print(n)
                     error.append(self.pop_error(population))
                     xlim.append(n)
                     sample += 1500
