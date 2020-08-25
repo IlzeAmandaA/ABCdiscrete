@@ -47,11 +47,11 @@ class ABC_Discrete():
 
             for i in range(len(population)):
                 theta_ = self.proposal(population, i, method)
-                print('proposal obtined')
-                print('theta shape {}'.format(theta_.shape))
-                print('values of theta {}'.format(set(theta_)))
+                # print('proposal obtined')
+                # print('theta shape {}'.format(theta_.shape))
+                # print('values of theta {}'.format(set(theta_)))
                 x=self.model.simulate(theta_)
-                print('simulated x')
+                # print('simulated x')
 
                 #print(self.model.distance(x))
                 if self.model.distance(x)<=np.random.exponential(self.tolerance):
@@ -63,6 +63,7 @@ class ABC_Discrete():
                 n += 1
 
                 if n >= sample:
+                    print(n)
                     error.append(self.pop_error(population))
                     xlim.append(n)
                     sample += 1500
