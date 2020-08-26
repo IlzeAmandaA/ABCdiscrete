@@ -180,11 +180,13 @@ class MNIST():
             print(prob.shape)
             # print(prob)
             if i == (batch_count - 1):
-                y_pred[i * batch_size: data_x.shape[0]] = np.rint(prob) #np.argmax(prob, -1)
+                y_pred[i * batch_size: data_x.shape[0]] = np.rint(np.squeeze(prob)) #np.argmax(prob, -1)
             else:
-                y_pred[i * batch_size: (i + 1) * batch_size] = np.rint(prob) # np.argmax(prob, -1)
+                y_pred[i * batch_size: (i + 1) * batch_size] = np.rint(np.squeeze(prob))  # np.argmax(prob, -1)
 
         print(set(y_pred))
+        print(y_pred.shape)
+        print(self.y_train.shape)
 
         return y_pred.astype(int)
 
