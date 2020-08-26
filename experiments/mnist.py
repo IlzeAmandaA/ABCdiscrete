@@ -179,8 +179,10 @@ class MNIST():
             print('prob')
             print(prob.shape)
             # print(prob)
-
-            y_pred[i * batch_size: (i + 1) * batch_size] = np.argmax(prob, -1)
+            if i == (batch_count - 1):
+                y_pred[i * batch_size: data_x.shape[0]] = np.argmax(prob, -1)
+            else:
+                y_pred[i * batch_size: (i + 1) * batch_size] = np.argmax(prob, -1)
 
         print(y_pred)
         return y_pred
