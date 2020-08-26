@@ -153,51 +153,34 @@ class MNIST():
         W1 = np.reshape(w1, (im_shape, self.H))
         W2 = np.reshape(w2, (self.H, 1))
 
-        h = np.dot(data_x, W1)
-        # print('h', h)
-        # tanh
-        self.binary_hardtanh(h)
-        # print('h tanh', h)
-        # Second layer
-        logits = np.dot(h, W2)
-        print('logts')
-        print(logits.shape)
-        # print(logits)
-        # sigmoid
-        prob = expit(logits)
-        print('prob')
-        print(prob.shape)
+        #select batch size
+        batch_count=5
+        batch_size = int(data_x.shape[0]/batch_count)
 
-        y_pred = np.argmax(prob, -1)
 
-        #
-        #
-        # for i in range(data_x.shape[0] // self.batch_size):
-        #     # print(i)
-        #     w1 = w[0: im_shape * self.H]
-        #     w2 = w[im_shape * self.H:]
-        #
-        #     W1 = np.reshape(w1, (im_shape, self.H))
-        #     W2 = np.reshape(w2, (self.H, 1))
-        #
-        #   #  First layer
-        #     h = np.dot(data_x[i * self.batch_size: (i + 1) * self.batch_size], W1)
-        #     # print('h', h)
-        #     # tanh
-        #     self.binary_hardtanh(h)
-        #     # print('h tanh', h)
-        #     # Second layer
-        #     logits = np.dot(h, W2)
-        #     print('logts')
-        #     print(logits.shape)
-        #     # print(logits)
-        #      # sigmoid
-        #     prob = expit(logits)
-        #     print('prob')
-        #     print(prob.shape)
-        #     # print(prob)
-        #
-        #     y_pred[i * self.batch_size: (i + 1) * self.batch_size] = np.argmax(prob, -1)
+        for i in range(batch_count): # range(data_x.shape[0] // self.batch_size):
+          #  First layer
+            if i==(batch_count-1):
+                h = np.dot(data_x[i * batch_size: data_x.shape[0]], W1)
+            else:
+                h = np.dot(data_x[i * batch_size: (i+1)*batch_size], W1)
+            print('h', h.shape)
+            # print('h', h)
+            # tanh
+            self.binary_hardtanh(h)
+            # print('h tanh', h)
+            # Second layer
+            logits = np.dot(h, W2)
+            print('logts')
+            print(logits.shape)
+            # print(logits)
+             # sigmoid
+            prob = expit(logits)
+            print('prob')
+            print(prob.shape)
+            # print(prob)
+
+            y_pred[i * batch_size: (i + 1) * batch_size] = np.argmax(prob, -1)
 
         print(y_pred)
         return y_pred
