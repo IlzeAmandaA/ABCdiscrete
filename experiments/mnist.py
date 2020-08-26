@@ -113,35 +113,6 @@ class MNIST():
         self.x_test[self.x_test < 0.5] = -1
         self.x_test[self.x_test > 0.5] = 1
 
-    #
-    # def visualize(self, mode='train', size_x=5, size_y=5, file_name='mnist_images'):
-    #     fig = plt.figure(figsize=(size_x, size_y))
-    #     gs = gridspec.GridSpec(size_x, size_y)
-    #     gs.update(wspace=0.05, hspace=0.05)
-    #
-    #     if mode == 'train':
-    #         x_sample = self.x_train[0:size_x * size_y]
-    #     elif mode == 'test':
-    #         x_sample = self.x_test[0:size_x * size_y]
-    #     else:
-    #         raise ValueError('Mode could be train OR test, nothing else!')
-    #
-    #     for i, sample in enumerate(x_sample):
-    #         ax = plt.subplot(gs[i])
-    #         plt.axis('off')
-    #         ax.set_xticklabels([])
-    #         ax.set_yticklabels([])
-    #         ax.set_aspect('equal')
-    #         sample = np.expand_dims(sample, 0)
-    #         sample = sample.reshape((1, self.image_size[0], self.image_size[1]))
-    #         sample = sample.swapaxes(0, 2)
-    #         sample = sample.swapaxes(0, 1)
-    #         sample = sample[:, :, 0]
-    #         plt.imshow(sample, cmap='gray')
-    #
-    #     plt.savefig(file_name + '_' + mode + '.pdf', bbox_inches='tight')
-    #     plt.close(fig)
-    #
 
     def bern2(self, p, D1, D2):
         return 2. * np.random.binomial(1, p, (D1, D2)) - 1.

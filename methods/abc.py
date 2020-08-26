@@ -1,6 +1,7 @@
 import numpy as np
 from methods.proposals import Proposals
 import sys
+import time
 
 
 """
@@ -34,7 +35,7 @@ class ABC_Discrete():
         # print('Started the algorihtm')
 
         #initialize the population
-        population = self.population.copy()
+        population = self.population.copy() #{0,1}
 
         error = []
         xlim=[]
@@ -50,7 +51,9 @@ class ABC_Discrete():
                 # print('proposal obtined')
                 # print('theta shape {}'.format(theta_.shape))
                 # print('values of theta {}'.format(set(theta_)))
+                start_time = time.time()
                 x=self.model.simulate(theta_)
+                print('for run sim time ---- {} minutes ---'.format((time.time() - start_time) / 60))
                 # print('simulated x')
 
                 #print(self.model.distance(x))
@@ -66,7 +69,7 @@ class ABC_Discrete():
                     # print(n)
                     error.append(self.pop_error(population))
                     xlim.append(n)
-                    sample += 1500
+                    sample += 1000 #1500
 
 
         acceptence_ratio = (acceptence_ratio/10000)*100
