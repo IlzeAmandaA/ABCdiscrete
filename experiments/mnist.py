@@ -153,7 +153,7 @@ class MNIST():
             w2 = w[im_shape * self.H:]
 
             W1 = np.reshape(w1, (im_shape, self.H))
-            W2 = np.reshape(w2, (self.H, 2))
+            W2 = np.reshape(w2, (self.H, 1))
 
           #  First layer
             h = np.dot(data_x[i * self.batch_size: (i + 1) * self.batch_size], W1)
@@ -163,13 +163,18 @@ class MNIST():
             # print('h tanh', h)
             # Second layer
             logits = np.dot(h, W2)
+            print('logts')
+            print(logits.shape)
             # print(logits)
              # sigmoid
             prob = expit(logits)
+            print('prob')
+            print(prob.shape)
             # print(prob)
 
             y_pred[i * self.batch_size: (i + 1) * self.batch_size] = np.argmax(prob, -1)
 
+        print(y_pred)
         return y_pred
 
     def binarize(self, x):
