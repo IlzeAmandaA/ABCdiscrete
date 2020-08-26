@@ -164,29 +164,29 @@ class MNIST():
                 h = np.dot(data_x[i * batch_size: data_x.shape[0]], W1)
             else:
                 h = np.dot(data_x[i * batch_size: (i+1)*batch_size], W1)
-            print('h', h.shape)
-            # print('h', h)
+            # print('h', h.shape)
+
             # tanh
             self.binary_hardtanh(h)
-            # print('h tanh', h)
+
             # Second layer
             logits = np.dot(h, W2)
-            print('logts')
-            print(logits.shape)
-            # print(logits)
+            # print('logts')
+            # print(logits.shape)
+
              # sigmoid
             prob = expit(logits)
-            print('prob')
-            print(prob.shape)
-            # print(prob)
+            # print('prob')
+            # print(prob.shape)
+
             if i == (batch_count - 1):
                 y_pred[i * batch_size: data_x.shape[0]] = np.rint(np.squeeze(prob)) #np.argmax(prob, -1)
             else:
                 y_pred[i * batch_size: (i + 1) * batch_size] = np.rint(np.squeeze(prob))  # np.argmax(prob, -1)
-
-        print(set(y_pred))
-        print(y_pred.shape)
-        print(self.y_train.shape)
+        #
+        # print(set(y_pred))
+        # print(y_pred.shape)
+        # print(self.y_train.shape)
 
         return y_pred.astype(int)
 

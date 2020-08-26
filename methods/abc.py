@@ -51,11 +51,10 @@ class ABC_Discrete():
                 # print('proposal obtined')
                 # print('theta shape {}'.format(theta_.shape))
                 # print('values of theta {}'.format(set(theta_)))
-                start_time = time.time()
+                # start_time = time.time()
                 x=self.model.simulate(theta_)
-                print('for run sim time ---- {} minutes ---'.format((time.time() - start_time) / 60))
-                sys.exit()
-                # print('simulated x')
+                # print('for run sim time ---- {} minutes ---'.format((time.time() - start_time) / 60))
+                # sys.exit()
 
                 #print(self.model.distance(x))
                 if self.model.distance(x)<=np.random.exponential(self.tolerance):
