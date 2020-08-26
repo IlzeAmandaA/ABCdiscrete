@@ -124,6 +124,10 @@ for epoch in range(1,epochs+1):
         break
 
 print(weights)
+w = np.concatenate((weights[0].flatten(), weights[1].flatten()), axis=None)
+print(len(w))
+print(np.mean(w))
+
 
 #TO DO's
 #CHANGE NETWORK SIM OF DE-MC
