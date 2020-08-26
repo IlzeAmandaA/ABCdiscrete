@@ -154,7 +154,7 @@ class MNIST():
         W2 = np.reshape(w2, (self.H, 1))
 
         #select batch size
-        batch_count=12
+        batch_count=15
         batch_size = int(data_x.shape[0]/batch_count)
 
 
