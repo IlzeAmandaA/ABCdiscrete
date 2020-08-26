@@ -154,7 +154,7 @@ class MNIST():
         W2 = np.reshape(w2, (self.H, 1))
 
         #select batch size
-        batch_count=15
+        batch_count=12
         batch_size = int(data_x.shape[0]/batch_count)
 
 
@@ -180,12 +180,13 @@ class MNIST():
             print(prob.shape)
             # print(prob)
             if i == (batch_count - 1):
-                y_pred[i * batch_size: data_x.shape[0]] = np.argmax(prob, -1)
+                y_pred[i * batch_size: data_x.shape[0]] = np.rint(prob) #np.argmax(prob, -1)
             else:
-                y_pred[i * batch_size: (i + 1) * batch_size] = np.argmax(prob, -1)
+                y_pred[i * batch_size: (i + 1) * batch_size] = np.rint(prob) # np.argmax(prob, -1)
 
-        print(y_pred)
-        return y_pred
+        print(set(y_pred))
+
+        return y_pred.astype(int)
 
     def binarize(self, x):
         x[x>0]=1
@@ -193,7 +194,6 @@ class MNIST():
         return x.astype(int)
 
     def distance(self, y):
-        y = y.astype(int)
         return 1/self.y_train.shape[0] * sum(np.invert(np.logical_xor(self.y_train, y)))
 
     def prior(self, theta):
