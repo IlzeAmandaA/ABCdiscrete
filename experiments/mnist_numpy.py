@@ -9,7 +9,7 @@ from scipy.special import expit
 import sys
 from skimage.transform import resize
 
-PYTHONPATH = '/home/iaa510/'
+PYTHONPATH = '/home/iaa510'
 
 filename = [
 ["training_images","train-images-idx3-ubyte.gz"],

@@ -1,7 +1,15 @@
+
+from utils.func_support import *
+import pickle as pkl
+from torch.utils.data import DataLoader
+import torch.utils.data
+import torch.optim as optim
+import numpy as np
+
+
 import argparse
-from experiments.mnist import MNIST
-from experiments.qmr_dt import QMR_DT
-from experiments.boltzmann_sim import Bolztmann_Net
+from experiments.mnist_torch import HighDim
+
 from methods.abc import ABC_Discrete
 from methods.mcmc import DDE_MC
 from utils.func_support import *
@@ -13,7 +21,7 @@ import time
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
 parser.add_argument('--seq', default=False, action='store_true',
                     help='Flag to run the simulation in parallel processing')
-parser.add_argument('--steps', type=int, default=1000000, metavar='int',
+parser.add_argument('--steps', type=int, default=20000, metavar='int',
                     help='evaluation steps') #600000
 parser.add_argument('--seed', type=int, default=0, metavar='int',
                     help='seed')
@@ -166,13 +174,9 @@ def sequential(simulation):
 if __name__ == '__main__':
 
     set_proposals = {'de-mc':None, 'mut+xor':0.5}
-    store = 'results/' + args.alg + '/' + args.tcase
+    store = 'results/' + args.alg + '/' + 'bcnn_mnist'
     if not os.path.exists(store):
         os.makedirs(store)
-        if args.alg == 'mcmc':
-            store += '/' + args.exp
-            if not os.path.exists(store):
-                os.makedirs(store)
 
     pop_error = {}
     xlim = {}
@@ -192,7 +196,7 @@ if __name__ == '__main__':
     hidden_units = 20
 
     labels = [0,1]
-    use_case = MNIST(l1=labels[0], l2=labels[1], image_size=image_size, H=hidden_units)
+    use_case = HighDim()
 
 
     alg = ABC_Discrete(use_case,args.pflip, args.pcross, settings=set_proposals, info=args.exp, epsilon=args.epsilon, nchains=args.N)
@@ -220,62 +224,6 @@ if __name__ == '__main__':
         # pkl.dump(output_true, open(store + '/dist_true' + str(args.epsilon) + '.pkl', 'wb'))
 
     print('Finished')
-
-    #   loop over possible proposal methods
-    # for method in alg.settings:
-    #     print('Proposal: {}'.format(method))
-    #
-    #     error, x_pos, ac_ratio, population = alg.run_abc(method, args.steps)
-    #     print('Acceptance ratio : {}'.format(ac_ratio))
-    #
-    #     pop_error[method] = error
-    #     xlim[method] = x_pos
-
-    # use_case=None
-    # if args.tcase == 'QMR-DT':
-    #     use_case = QMR_DT()
-    # elif  args.tcase == 'Boltz':
-    #     use_case = Bolztmann_Net()
-    # else:
-    #     os.error('Invalid use-case selected')
-    #
-    # simulation=None
-    # if args.alg == 'mcmc':
-    #     simulation = DDE_MC(use_case, args.pflip, args.pcross, settings=set_proposals, info=args.exp, nchains=args.N)
-    # elif args.alg == 'abc':
-    #     simulation = ABC_Discrete(use_case,args.pflip, args.pcross, settings=set_proposals, info=args.exp, epsilon=args.epsilon, nchains=args.N)
-    #
-    # simulation.model.generate_parameters() #create underlying true parameters
-    # simulation.model.generate_data(n=10) #sample K data for the given parameter settings
-    #
-    #
-    #
-    #
-    # if args.seq:
-    #     sequential(simulation)
-    #     plot_single(pop_error, xlim, 'error', store + '/pop_error')
-    #
-    # else:
-    #     for prop in set_proposals:
-    #         pop_error[prop] = []
-    #         xlim[prop]=[]
-    #         acceptance_r[prop] = []
-    #
-    #
-    #     parallel(simulation)
-    #     pkl.dump(xlim, open(store + '/xlim'+ str(args.epsilon)+'.pkl', 'wb'))
-    #     pkl.dump(pop_error, open(store+'/pop_error'+ str(args.epsilon)+ '.pkl', 'wb'))
-    #     create_plot(pop_error, xlim, store +'/pop_error'+ str(args.epsilon), 'error')
-    #
-    #     report(compute_avg(acceptance_r), args.epsilon, store+'/acceptance_ratio')
-    #     report_variablitity(variability, store+'/acceptance_ratio')
-    #     plot_dist(output_post, output_true, store +'/dist'+ str(args.epsilon))
-    #     pkl.dump(output_post, open(store+'/dist_post'+ str(args.epsilon)+ '.pkl', 'wb'))
-    #     pkl.dump(output_true, open(store + '/dist_true' + str(args.epsilon) + '.pkl', 'wb'))
-    #
-    #
-    #
-
 
 
 

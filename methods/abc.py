@@ -43,8 +43,13 @@ class ABC_Discrete():
 
         n=0
         acceptence_ratio=0.
+        start_time = time.time()
 
         while n < steps:
+
+            if n % 10000==0:
+                print('for run sim time ---- {} minutes ---'.format((time.time() - start_time) / 60))
+
 
             for i in range(len(population)):
                 theta_ = self.proposal(population, i, method)
@@ -53,6 +58,7 @@ class ABC_Discrete():
                 # print('values of theta {}'.format(set(theta_)))
                 # start_time = time.time()
                 x=self.model.simulate(theta_)
+
                 # print('for run sim time ---- {} minutes ---'.format((time.time() - start_time) / 60))
                 # sys.exit()
 
@@ -76,18 +82,18 @@ class ABC_Discrete():
         return error, xlim, acceptence_ratio, population
 
 
-    def distance(self, y):
-        avg_d=0
-        for y0 in self.model.data:
-            avg_d += self.hamming(y,y0)
-        return avg_d * 1/self.model.data.shape[0]
+    # def distance(self, y):
+    #     avg_d=0
+    #     for y0 in self.model.data:
+    #         avg_d += self.hamming(y,y0)
+    #     return avg_d * 1/self.model.data.shape[0]
 
-    def hamming(self, y, y0):
-        d = 0.
-        for idx,yi  in enumerate(y):
-            if yi != y0[idx]:
-                d += 1
-        return d
+    # def hamming(self, y, y0):
+    #     d = 0.
+    #     for idx,yi  in enumerate(y):
+    #         if yi != y0[idx]:
+    #             d += 1
+    #     return d
 
 
     def pop_error(self, chains):

@@ -39,6 +39,11 @@ def text_output(method, iter, solution, simulation, store):
     textfile.write('\n best likelihood {} '.format(simulation.model.product_lh(solution)))
     textfile.write('\n\n')
 
+def report_weight(list_avg, loc):
+    textfile = open(loc + '.txt', 'a+')
+    textfile.write('Percentage of active wegihts: {} (std {}) \n'.format(np.mean(list_avg), np.std(list_avg)))
+
+
 def report(dict,epsilon, store):
     textfile = open(store + '.txt', 'a+')
     textfile.write('epsilon value: {} \n'.format(epsilon))
@@ -133,6 +138,32 @@ def plot(avg_dict, location, yaxis, ylim, xlim, length=16, height=6):
     plt.savefig(location + '.png')
     # plt.show()
 
+def plot_bnn(list, location, yaxis, ylim=None, xlim=None, length=16, height=6):
+    plt.figure(figsize=(length, height))
+
+    y = np.mean(np.asarray(list), axis=0)
+    std = np.std(np.asarray(list), axis=0)
+    x = [i for i in range(1, len(list[0])+1)]
+    y_min=y-std
+    y_plus=y+std
+    assert len(x) == len(y) == len(std), 'The number of instances fo not match, check create plot function'
+
+    plt.plot(x,y, ':^g', color='#004577', label = 'test error')
+    plt.fill_between(x, y_min, y_plus,
+                     alpha=0.5, edgecolor='#004577', facecolor='#95d0fc')
+
+    if ylim is not None:
+        a,b=ylim
+        plt.ylim(a, b)
+    if xlim is not None:
+        a,b = xlim
+        plt.xlim(a,b)
+    plt.xlabel('epochs')
+    plt.ylabel(yaxis)
+    plt.grid(True)
+    plt.legend(loc=0)
+    plt.savefig(location + '.png')
+    # plt.show()
 
 def plot_single(results, points, name, location):
 
