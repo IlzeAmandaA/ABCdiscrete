@@ -203,6 +203,8 @@ class HighDim():
 
             avg_error = np.mean(np.array(tb_error))
             self.distancev= avg_error
+            print('Sim suc')
+            print(self.distancev)
 
             return None
 
