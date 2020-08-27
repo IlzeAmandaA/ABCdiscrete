@@ -23,17 +23,12 @@ class Network_CNN(nn.Module):
 
     def forward(self, x):
         out = self.conv1(x)
-        print('con1', out.shape)
         out = self.mp(out)
         out = self.conv2(out)
-        print('con2', out.shape)
         out = self.mp(out)
         out = self.fc(out.reshape(out.shape[0],4*4*1))
-        print('fc', out.shape)
         prob = self.soft(out)
-        print('prob', prob.shape)
         y_hat = torch.argmax(prob, dim=1)
-        print('yhay', y_hat.shape)
 
         return y_hat
 
