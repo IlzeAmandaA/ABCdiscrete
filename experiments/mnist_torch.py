@@ -170,7 +170,6 @@ class HighDim():
         self.clf.eval()
 
         with torch.no_grad():
-            print('set to no grad')
             w = np.copy(w_orig)
             w[w == 0] = -1
 
@@ -190,10 +189,8 @@ class HighDim():
             self.clf.conv2.weight.copy_(W2)
             self.clf.fc.weight.copy_(W3)
             tb_error = []
-            print('set weights')
 
             for batch_idx, (inputs, targets) in enumerate(self.trainloader):
-                print('batch idx,',batch_idx)
                 # inputs = inputs.type(torch.FloatTensor)
                 if self.cuda_available:
                     inputs, targets = inputs.cuda(), targets.cuda()
@@ -206,8 +203,6 @@ class HighDim():
 
             avg_error = np.mean(np.array(tb_error))
             self.distancev= avg_error
-            print('Sim suc')
-            print(self.distancev)
 
             return None
 
