@@ -158,7 +158,7 @@ class HighDim():
     def initialize_pop(self, N):
         D = self.clf.inD*self.clf.F*self.clf.F*self.clf.K1+\
         self.clf.K1*self.clf.F*self.clf.F*self.clf.K2 + \
-        4*4*self.clf.K2 * self.outD
+        4*4*self.clf.K2 * self.clf.outD
         return self.bern(0.5, N, D)
 
     def bern(self, p, D1, D2):
