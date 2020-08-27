@@ -28,7 +28,7 @@ class Network_CNN(nn.Module):
         out = self.conv2(out)
         print('con2', out.shape)
         out = self.mp(out)
-        out = self.fc(out)
+        out = self.fc(out.reshape(out.shape[0],4*4*1))
         print('fc', out.shape)
         prob = self.soft(out)
         print('prob', prob.shape)
