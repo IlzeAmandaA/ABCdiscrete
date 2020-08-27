@@ -39,8 +39,8 @@ class Network_CNN(nn.Module):
 
 
     def calculate_classification_error(self, X,Y):
-        print(X.shape)
-        print('calculating error')
+        # print(X.shape)
+        X = torch.reshape(X, (X.shape[0], 1, X.shape[1], X.shape[2]))
         Y_hat = self.forward(X)
         error = 1. - Y_hat.eq(Y).cpu().float().mean().item()
         return error, Y_hat
