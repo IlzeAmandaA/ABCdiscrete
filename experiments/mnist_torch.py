@@ -152,6 +152,9 @@ class HighDim():
 
         self.clf = Network_CNN(inD,outD)
 
+        if self.cuda_available:
+            self.clf = self.clf.cuda()
+
         self.distancev  = None
 
 
@@ -165,7 +168,6 @@ class HighDim():
         return np.random.binomial(1, p, (D1, D2))
 
     def simulate(self, w_orig):  # objective
-
 
         self.clf.eval()
 

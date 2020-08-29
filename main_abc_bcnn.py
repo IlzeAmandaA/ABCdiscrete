@@ -199,6 +199,9 @@ if __name__ == '__main__':
     labels = [0,1]
     use_case = HighDim()
 
+    if use_case.cuda_available:
+        torch.cuda.manual_seed(0)
+        print('running on GPU')
 
     alg = ABC_Discrete(use_case,args.pflip, args.pcross, settings=set_proposals, info=args.exp, epsilon=args.epsilon, nchains=args.N)
 
