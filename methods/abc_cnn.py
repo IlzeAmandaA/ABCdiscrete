@@ -44,12 +44,13 @@ class ABC_Discrete():
         n=0
         acceptence_ratio=0.
         start_time = time.time()
+        print_t = 5000
 
         while n < steps:
 
-            if n % 10000==0:
+            if n >= print_t:
                 print('for run {} sim time ---- {} minutes ---'.format(n,(time.time() - start_time) / 60))
-
+                print_t += 5000
 
             for i in range(len(population)):
                 theta_ = self.proposal(population, i, method)
