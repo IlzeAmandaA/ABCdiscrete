@@ -69,13 +69,8 @@ class Network_CNN(nn.Module):
         X = torch.reshape(X, (X.shape[0], 1, X.shape[1], X.shape[2]))
         Y_hat = self.forward(X)
         Y = Y.int()
-        print(Y[0:10])
-        print(Y.shape)
-        print(Y_hat[0:10])
-        print(Y_hat.shape)
         error = 1. - Y_hat.eq(Y).cpu().float().mean().item()
         print(error)
-        sys.exit()
         return error, Y_hat
 
 
