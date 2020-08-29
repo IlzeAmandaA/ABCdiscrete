@@ -31,7 +31,7 @@ class ABC_Discrete():
         return np.random.binomial(1, .5, self.model.D)
 
 
-    def run_abc(self, method, steps):
+    def run_abc(self, method, steps, seed):
         # print('Started the algorihtm')
 
         #initialize the population
@@ -47,11 +47,9 @@ class ABC_Discrete():
         print_t = 5000
 
         while n < steps:
-            print(n)
+            if seed == 0:
+                print(n)
 
-            if n >= print_t:
-                print('for run {} sim time ---- {} minutes ---'.format(n,(time.time() - start_time) / 60))
-                print_t += 5000
 
             for i in range(len(population)):
                 theta_ = self.proposal(population, i, method)

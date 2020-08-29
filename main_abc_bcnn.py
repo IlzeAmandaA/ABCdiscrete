@@ -71,7 +71,7 @@ def run(run_seed, simulation):
 
     #loop over possible proposal methods
     for method in simulation.settings:
-        error, x_pos, ac_ratio, population = simulation.run_abc(method, args.steps)
+        error, x_pos, ac_ratio, population = simulation.run_abc(method, args.steps, run_seed)
 
         pop[method] = error
         x[method] = x_pos
