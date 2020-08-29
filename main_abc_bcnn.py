@@ -67,6 +67,7 @@ def run(run_seed, simulation):
     '''
     np.random.seed(run_seed)
 
+
     #loop over possible proposal methods
     for method in simulation.settings:
         error, x_pos, ac_ratio, population = simulation.run_abc(method, args.steps)
