@@ -47,19 +47,23 @@ class ABC_Discrete():
         print_t = 5000
 
         while n < steps:
+            start_time_n = time.time()
             if seed == 0:
                 print(n)
-
+                print('for run pop time ---- {} minutes ---'.format((time.time() - start_time_n) / 60))
 
             for i in range(len(population)):
                 theta_ = self.proposal(population, i, method)
                 # print('proposal obtined')
                 # print('theta shape {}'.format(theta_.shape))
                 # print('values of theta {}'.format(set(theta_)))
-                # start_time = time.time()
+                start_time = time.time()
                 x=self.model.simulate(theta_)
 
-                # print('for run sim time ---- {} minutes ---'.format((time.time() - start_time) / 60))
+                if seed ==0:
+                    print('for run simu time ---- {} minutes ---'.format((time.time() - start_time) / 60))
+
+
                 # sys.exit()
                 tolerance = np.random.exponential(self.tolerance)
                 if self.model.distance(x)<=tolerance:
