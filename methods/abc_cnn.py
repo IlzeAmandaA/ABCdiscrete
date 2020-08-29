@@ -44,24 +44,26 @@ class ABC_Discrete():
         n=0
         acceptence_ratio=0.
         start_time = time.time()
-        print_t = 5000
+        print_t = 500
 
         while n < steps:
-            start_time_n = time.time()
-            if seed == 0:
+
+            if seed == 0 and n>=print_t:
                 print(n)
-                print('for run pop time ---- {} minutes ---'.format((time.time() - start_time_n) / 60))
+                print('for run pop time ---- {} minutes ---'.format((time.time() - start_time) / 60))
+                print_t += 500
+                start_time = time.time()
 
             for i in range(len(population)):
                 theta_ = self.proposal(population, i, method)
                 # print('proposal obtined')
                 # print('theta shape {}'.format(theta_.shape))
                 # print('values of theta {}'.format(set(theta_)))
-                start_time = time.time()
+                # start_time = time.time()
                 x=self.model.simulate(theta_)
 
-                if seed ==0:
-                    print('for run simu time ---- {} minutes ---'.format((time.time() - start_time) / 60))
+                # if seed ==0:
+                #     print('for run simu time ---- {} minutes ---'.format((time.time() - start_time) / 60))
 
 
                 # sys.exit()
