@@ -198,6 +198,7 @@ if __name__ == '__main__':
 
     labels = [0,1]
     use_case = HighDim()
+    print('cude', use_case.cuda_available)
 
     if use_case.cuda_available:
         torch.cuda.manual_seed(0)
