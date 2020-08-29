@@ -184,6 +184,7 @@ class HighDim():
             W1 = torch.from_numpy(W1)
             W2 = torch.from_numpy(W2)
             W3 = torch.from_numpy(W3)
+            print(W1[0:10])
 
             self.clf.conv1.weight.copy_(W1)
             self.clf.conv2.weight.copy_(W2)

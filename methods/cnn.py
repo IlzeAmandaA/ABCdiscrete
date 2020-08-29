@@ -52,6 +52,8 @@ class Network_CNN(nn.Module):
 
     def forward(self, x):
         out = self.conv1(x)
+        print('conv1 w')
+        print(self.conv1.weight.data[0:10])
         out = self.mp(out)
         out = self.btanh(out)
         out = self.conv2(out)
