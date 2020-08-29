@@ -10,8 +10,7 @@ import numpy as np
 import argparse
 from experiments.mnist_torch import HighDim
 
-from methods.abc import ABC_Discrete
-from methods.mcmc import DDE_MC
+from methods.abc_cnn import ABC_Discrete
 from utils.func_support import *
 import multiprocessing as mp
 import pickle as pkl
