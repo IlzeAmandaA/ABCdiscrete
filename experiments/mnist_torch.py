@@ -154,6 +154,8 @@ class HighDim():
 
         if self.cuda_available:
             self.clf = self.clf.cuda()
+            torch.cuda.manual_seed(0)
+            print('running on GPU')
 
         self.distancev  = None
 

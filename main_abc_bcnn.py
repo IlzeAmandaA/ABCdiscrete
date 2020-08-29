@@ -1,12 +1,3 @@
-
-from utils.func_support import *
-import pickle as pkl
-from torch.utils.data import DataLoader
-import torch.utils.data
-import torch.optim as optim
-import numpy as np
-
-
 import argparse
 from experiments.mnist_torch import HighDim
 
@@ -198,11 +189,7 @@ if __name__ == '__main__':
 
     labels = [0,1]
     use_case = HighDim()
-    print('cude', use_case.cuda_available)
 
-    if use_case.cuda_available:
-        torch.cuda.manual_seed(0)
-        print('running on GPU')
 
     alg = ABC_Discrete(use_case,args.pflip, args.pcross, settings=set_proposals, info=args.exp, epsilon=args.epsilon, nchains=args.N)
 
