@@ -19,12 +19,12 @@ class ABC_Discrete():
         self.proposals = Proposals(pflip, pcross)
         self.settings =  settings
 
-        # self.population = self.model.initialize_pop(self.N)
+        self.population = None
         self.tolerance = epsilon
 
 
     def initialize_chains(self):
-        self.population = self.model.generate_population(self.N)
+        self.population = self.model.initialize_pop(self.N)
 
 
     def sample_chain(self):
@@ -35,7 +35,7 @@ class ABC_Discrete():
         # print('Started the algorihtm')
 
         #initialize the population
-        population = self.model.initialize_pop(self.N) #self.population.copy() #{0,1}
+        population = self.population.copy() #{0,1}
 
         error = []
         xlim=[]
