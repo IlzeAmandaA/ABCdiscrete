@@ -72,7 +72,7 @@ class Network_CNN(nn.Module):
         Y_hat = self.forward(X)
         Y = Y.int()
         error = 1. - Y_hat.eq(Y).cpu().float().mean().item()
-        print(error)
+        # print(error)
         return error, Y_hat
 
 
