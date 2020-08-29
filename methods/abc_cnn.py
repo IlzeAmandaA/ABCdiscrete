@@ -61,13 +61,13 @@ class ABC_Discrete():
 
                 # print('for run sim time ---- {} minutes ---'.format((time.time() - start_time) / 60))
                 # sys.exit()
-                print('---------------------------')
-                print(self.model.distance(x))
                 tolerance = np.random.exponential(self.tolerance)
-                print(tolerance)
                 if self.model.distance(x)<=tolerance:
+                    print('---------------------------')
                     print(self.model.distancev)
+                    print(tolerance)
                     print('got here')
+                    print('---------------------------')
                     alpha = self.metropolis(theta_, population[i])
                     acceptence_ratio += 1 if n <= 10000 else 0
 
