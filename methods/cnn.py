@@ -53,7 +53,7 @@ class Network_CNN(nn.Module):
     def forward(self, x):
         out = self.conv1(x)
         print('conv1 w')
-        print(self.conv1.weight.data[0:10])
+        print(self.conv1.weight.data[0:2])
         out = self.mp(out)
         out = self.btanh(out)
         out = self.conv2(out)
@@ -62,6 +62,7 @@ class Network_CNN(nn.Module):
         out = self.fc(out.view(-1,4*4*1))
         prob = self.soft(out)
         y_hat = torch.argmax(prob, dim=1)
+        sys.exit()
 
         return y_hat
 
