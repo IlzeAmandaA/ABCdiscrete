@@ -63,11 +63,11 @@ class ABC_Discrete():
                 # sys.exit()
                 tolerance = np.random.exponential(self.tolerance)
                 if self.model.distance(x)<=tolerance:
-                    print('---------------------------')
-                    print(self.model.distancev)
-                    print(tolerance)
-                    print('got here')
-                    print('---------------------------')
+                    # print('---------------------------')
+                    # print(self.model.distancev)
+                    # print(tolerance)
+                    # print('got here')
+                    # print('---------------------------')
                     alpha = self.metropolis(theta_, population[i])
                     acceptence_ratio += 1 if n <= 10000 else 0
 
