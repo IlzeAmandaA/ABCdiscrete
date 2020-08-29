@@ -143,6 +143,10 @@ class HighDim():
 
     def __init__(self, inD=1, outD=10, rescale=14):
 
+        print('cuda count', torch.cuda.device_count())
+        print('cuda name', torch.cuda.get_device_name(0))
+        print(' avail', torch.cuda.is_available())
+
         self.cuda_available = torch.cuda.is_available()
 
         self.trainloader = DataLoader(MNIST(image_size=(rescale, rescale), train=True, binary=False),
