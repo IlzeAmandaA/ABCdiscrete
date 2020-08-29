@@ -36,6 +36,7 @@ class ABC_Discrete():
 
         #initialize the population
         population = self.population.copy() #{0,1}
+        print(population[0])
 
         error = []
         xlim=[]
