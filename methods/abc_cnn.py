@@ -52,7 +52,6 @@ class ABC_Discrete():
 
 
             for i in range(len(population)):
-                print(i)
                 theta_ = self.proposal(population, i, method)
                 # print('proposal obtined')
                 # print('theta shape {}'.format(theta_.shape))
@@ -65,6 +64,7 @@ class ABC_Discrete():
 
                 #print(self.model.distance(x))
                 if self.model.distance(x)<=np.random.exponential(self.tolerance):
+                    print(self.model.distancev)
                     print('got here')
                     alpha = self.metropolis(theta_, population[i])
                     acceptence_ratio += 1 if n <= 10000 else 0
