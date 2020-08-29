@@ -47,6 +47,7 @@ class ABC_Discrete():
         print_t = 5000
 
         while n < steps:
+            print(n)
 
             if n >= print_t:
                 print('for run {} sim time ---- {} minutes ---'.format(n,(time.time() - start_time) / 60))
