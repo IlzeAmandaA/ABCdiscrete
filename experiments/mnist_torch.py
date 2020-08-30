@@ -13,8 +13,8 @@ from methods.cnn import Forward_CNN
 
 
 
-# PYTHONPATH = '/home/iaa510'
-PYTHONPATH = '/home/ilze/MasterThesis/mnist'
+PYTHONPATH = '/home/iaa510'
+#PYTHONPATH = '/home/ilze/MasterThesis/mnist'
 
 filename = [
 ["training_images","train-images-idx3-ubyte.gz"],
