@@ -9,11 +9,12 @@ from skimage.transform import resize
 import torch
 import torch.utils.data
 from torch.utils.data import Dataset
-from methods.cnn import Network_CNN
+from methods.cnn import Forward_CNN
 
 
 
-PYTHONPATH = '/home/iaa510'
+# PYTHONPATH = '/home/iaa510'
+PYTHONPATH = '/home/ilze/MasterThesis/mnist'
 
 filename = [
 ["training_images","train-images-idx3-ubyte.gz"],
@@ -53,21 +54,31 @@ class MNIST(Dataset):
 
         if self.train:
             if self.binary:
-            # TRAIN DATA
+                # TRAIN DATA
                 idx_l1 = np.where(y_train == l1)[0]
                 idx_l2 = np.where(y_train == l2)[0]
                 idx = np.sort(np.concatenate((idx_l1, idx_l2), axis=None))
                 self.train_size = len(idx)
                 x_train = np.reshape(x_train[idx], (self.train_size, 28, 28))
+                self.x_train = np.zeros((x_train.shape[0], image_size[0], image_size[1]))
+                self.x_train = np.zeros((x_train.shape[0], image_size[0], image_size[1]))
+                for i in range(x_train.shape[0]):
+                    self.x_train[i] = resize(x_train[i], image_size, anti_aliasing=True)
+
+                self.x_train = np.reshape(self.x_train, (train_size, image_size[0] * image_size[1]))
                 self.y_train = y_train[idx]
+
+
             else:
                 x_train = np.reshape(x_train[0:self.train_size], (self.train_size, 28, 28))
+                self.x_train = np.zeros((x_train.shape[0], image_size[0], image_size[1]))
+                for i in range(x_train.shape[0]):
+                    self.x_train[i] = resize(x_train[i], image_size, anti_aliasing=True)
+
                 self.y_train = y_train[0:self.train_size]
 
-            self.x_train = np.zeros((x_train.shape[0], image_size[0], image_size[1]))
-            for i in range(x_train.shape[0]):
-                self.x_train[i] = resize(x_train[i], image_size, anti_aliasing=True)
             assert self.x_train.shape[0] == self.y_train.shape[0], 'incorrect dim xtrain and ytrain'
+
             transform_polar(self.x_train)
             print('Shape of train data {}'.format(self.x_train.shape))
 
@@ -78,17 +89,21 @@ class MNIST(Dataset):
                 idx_l2 = np.where(y_test == l2)[0]
                 idx = np.sort(np.concatenate((idx_l1, idx_l2), axis=None))
                 x_test = np.reshape(x_test[idx], (len(idx), 28, 28))
+                self.x_test = np.zeros((x_test.shape[0], image_size[0], image_size[1]))
+                for i in range(x_test.shape[0]):
+                    self.x_test[i] = resize(x_test[i], image_size, anti_aliasing=True)
+                self.x_test = np.reshape(self.x_test, (self.x_test.shape[0], image_size[0] * image_size[1]))
                 self.y_test = y_test[idx]
 
             else:
                 x_test = np.reshape(x_test, (x_test.shape[0], 28, 28))
+                self.x_test = np.zeros((x_test.shape[0], image_size[0], image_size[1]))
+                for i in range(x_test.shape[0]):
+                    self.x_test[i] = resize(x_test[i], image_size, anti_aliasing=True)
                 self.y_test = y_test
 
-            self.x_test = np.zeros((x_test.shape[0], image_size[0], image_size[1]))
-            for i in range(x_test.shape[0]):
-                self.x_test[i] = resize(x_test[i], image_size, anti_aliasing=True)
-            self.x_test = np.reshape(self.x_test, (self.x_test.shape[0], image_size[0] * image_size[1]))
             assert self.x_test.shape[0] == self.y_test.shape[0], 'incorrect dim xtest and ytest'
+
             transform_polar(self.x_test)
             print('Shape of test data {}'.format(self.x_test.shape))
 
@@ -151,7 +166,7 @@ class HighDim():
         # self.testloader = DataLoader(MNIST(l1=0, l2=1, image_size=(rescale, rescale), train=False),
         #                         batch_size=128, shuffle=True)
 
-        self.clf = Network_CNN(inD,outD)
+        self.clf = Forward_CNN(inD,outD)
 
         if self.cuda_available:
             self.clf = self.clf.cuda()
@@ -182,17 +197,17 @@ class HighDim():
             w2 = w[(self.clf.F * self.clf.F * self.clf.K1):(self.clf.F * self.clf.F * self.clf.K1) * 2]
             w3 = w[(self.clf.F * self.clf.F * self.clf.K1) * 2:]
 
-            W1 = np.reshape(w1, (self.clf.K1, self.clf.inD, self.clf.F, self.clf.F))
-            W2 = np.reshape(w2, (self.clf.K2, self.clf.K1, self.clf.F, self.clf.F))
-            W3 = np.reshape(w3, (self.clf.outD, 4 * 4 * 1))
+            w1 = np.reshape(w1, (self.clf.K1, self.clf.inD, self.clf.F, self.clf.F))
+            w2 = np.reshape(w2, (self.clf.K2, self.clf.K1, self.clf.F, self.clf.F))
+            w3 = np.reshape(w3, (self.clf.outD, 4 * 4 * 1))
 
-            W1 = torch.from_numpy(W1)
-            W2 = torch.from_numpy(W2)
-            W3 = torch.from_numpy(W3)
+            w1 = torch.from_numpy(w1)
+            w2 = torch.from_numpy(w2)
+            w3 = torch.from_numpy(w3)
 
-            self.clf.conv1.weight.copy_(W1)
-            self.clf.conv2.weight.copy_(W2)
-            self.clf.fc.weight.copy_(W3)
+            # self.clf.conv1.weight.copy_(W1)
+            # self.clf.conv2.weight.copy_(W2)
+            # self.clf.fc.weight.copy_(W3)
             tb_error = []
 
             for batch_idx, (inputs, targets) in enumerate(self.trainloader):
@@ -203,7 +218,7 @@ class HighDim():
                 inputs = inputs.type(torch.FloatTensor)
                 targets = targets.type(torch.FloatTensor)
 
-                error, predicted = self.clf.calculate_classification_error(inputs, targets)
+                error, predicted = self.clf.calculate_classification_error(inputs, targets, (w1,w2,w3))
                 tb_error.append(error)
 
             avg_error = np.mean(np.array(tb_error))
