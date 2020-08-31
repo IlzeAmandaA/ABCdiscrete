@@ -132,12 +132,29 @@ class Binary_CNN(nn.Module):
             # nn.BatchNorm2d(32, momentum=args.momentum, eps=args.eps),
             nn.MaxPool2d(2, ceil_mode=True),
             BinaryTanh())
-        # self.fc = BinaryLinear(4 * 4 * 32, 10)
 
-        self.fc1 = nn.Sequential(BinaryLinear(4 * 4 * 32, 100, bias=False),
-                                 BinaryTanh()
-                                 )
-        self.fc2 = BinaryLinear(100, 10, bias=False)
+        self.fc = BinaryLinear(4 * 4 * 32, 10)
+
+        # 14 smaller net
+        self.layer1 = nn.Sequential(
+            BinaryConv2d(1, 6, kernel_size=5, padding=2),
+            # nn.BatchNorm2d(16, momentum=args.momentum, eps=args.eps),
+            nn.MaxPool2d(2),
+            BinaryTanh())
+        self.layer2 = nn.Sequential(
+            BinaryConv2d(6, 16, kernel_size=5, padding=2),
+            # nn.BatchNorm2d(32, momentum=args.momentum, eps=args.eps),
+            nn.MaxPool2d(2, ceil_mode=True),
+            BinaryTanh())
+
+        self.fc = BinaryLinear(4 * 4 * 32, 10)
+
+        #
+        #
+        # self.fc1 = nn.Sequential(BinaryLinear(4 * 4 * 32, 100, bias=False),
+        #                          BinaryTanh()
+        #                          )
+        # self.fc2 = BinaryLinear(100, 10, bias=False)
 
         #28
         # self.layer1 = nn.Seque   ntial(
@@ -203,8 +220,8 @@ class Binary_CNN(nn.Module):
         # print(out.shape)
         out = self.layer2(out)
        # print(out.shape)
-        out = self.fc1(out.view(out.size(0),-1))
-        out = self.fc2(out)
+        out = self.fc(out.view(out.size(0),-1))
+        # out = self.fc2(out)
         return out
 
 
