@@ -159,9 +159,9 @@ class Binary_CNN(nn.Module):
         )
 
         self.layer2 = nn.Sequential(
-            BinaryLinear(7*7*32, 100, bias=False),
+            BinaryLinear(7*7*32, 20, bias=False),
             BinaryTanh(),
-            BinaryLinear(100, 10, bias=False)
+            BinaryLinear(20, 10, bias=False)
         )
 
 
