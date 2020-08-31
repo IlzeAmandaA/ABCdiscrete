@@ -71,10 +71,10 @@ class MNIST(Dataset):
 
             else:
                 x_train = np.reshape(x_train[0:self.train_size], (self.train_size, 28, 28))
-                # self.x_train = np.zeros((x_train.shape[0], image_size[0], image_size[1]))
-                # for i in range(x_train.shape[0]):
-                #     self.x_train[i] = resize(x_train[i], image_size, anti_aliasing=True)
-                self.x_train = x_train
+                self.x_train = np.zeros((x_train.shape[0], image_size[0], image_size[1]))
+                for i in range(x_train.shape[0]):
+                    self.x_train[i] = resize(x_train[i], image_size, anti_aliasing=True)
+                # self.x_train = x_train
                 self.y_train = y_train[0:self.train_size]
 
             assert self.x_train.shape[0] == self.y_train.shape[0], 'incorrect dim xtrain and ytrain'
@@ -97,10 +97,10 @@ class MNIST(Dataset):
 
             else:
                 x_test = np.reshape(x_test, (x_test.shape[0], 28, 28))
-                # self.x_test = np.zeros((x_test.shape[0], image_size[0], image_size[1]))
-                # for i in range(x_test.shape[0]):
-                #     self.x_test[i] = resize(x_test[i], image_size, anti_aliasing=True)
-                self.x_test = x_test
+                self.x_test = np.zeros((x_test.shape[0], image_size[0], image_size[1]))
+                for i in range(x_test.shape[0]):
+                    self.x_test[i] = resize(x_test[i], image_size, anti_aliasing=True)
+                # self.x_test = x_test
                 self.y_test = y_test
 
             assert self.x_test.shape[0] == self.y_test.shape[0], 'incorrect dim xtest and ytest'
