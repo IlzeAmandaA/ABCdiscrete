@@ -9,6 +9,7 @@ import numpy as np
 import torch.nn as nn
 import os
 import argparse
+import time
 
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
 parser.add_argument('--lr', type=float, default=0.01, metavar='float',
@@ -23,6 +24,8 @@ args = parser.parse_args()
 def train(epoch):
     batch_loss = []
     clf.train()
+    if epoch==0:
+        start_time = time.time
     for batch_idx, (inputs,targets) in enumerate(trainloader):
         if cuda_available:
             inputs, targets = inputs.cuda(), targets.cuda()
@@ -51,6 +54,8 @@ def train(epoch):
     avg_loss = np.mean(batch_loss)
     train_loss.append(avg_loss)
 
+    if epoch ==0:
+        print('sim time ---- {} minutes ---'.format((time.time() - start_time)))
     # if epoch%5==0:
     print('Train Epoch: %d Training Loss %.3f' % (epoch,  avg_loss))
 # print('Training Loss : %.3f Time : %.3f seconds ' % (np.mean(avg_loss)), end - start))
