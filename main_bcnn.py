@@ -25,7 +25,7 @@ def train(epoch):
     batch_loss = []
     clf.train()
     if epoch==1:
-        start_time = time.time
+        start_time = time.time()
     for batch_idx, (inputs,targets) in enumerate(trainloader):
         if cuda_available:
             inputs, targets = inputs.cuda(), targets.cuda()
