@@ -149,7 +149,7 @@ class Binary_CNN(nn.Module):
             BinaryTanh()
             )
 
-        self.fc = BinaryLinear(4 * 4 * 16, 10)
+        self.fc = BinaryLinear(4 * 4 * 32, 10)
 
 
         #simple cnn plus fnn
