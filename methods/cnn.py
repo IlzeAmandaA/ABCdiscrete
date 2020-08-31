@@ -143,7 +143,7 @@ class Binary_CNN(nn.Module):
             BinaryTanh()
             )
         self.layer2 = nn.Sequential(
-            BinaryConv2d(4, 16, kernel_size=3, padding=1),
+            BinaryConv2d(4, 32, kernel_size=3, padding=1),
             # nn.BatchNorm2d(32, momentum=args.momentum, eps=args.eps),
             nn.MaxPool2d(2, ceil_mode=True),
             BinaryTanh()
