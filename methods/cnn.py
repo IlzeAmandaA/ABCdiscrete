@@ -137,13 +137,13 @@ class Binary_CNN(nn.Module):
 
         # 14 smaller net
         self.layer1 = nn.Sequential(
-            BinaryConv2d(1, 8, kernel_size=5, padding=2),
+            BinaryConv2d(1, 4, kernel_size=5, padding=2),
             # nn.BatchNorm2d(16, momentum=args.momentum, eps=args.eps),
             nn.MaxPool2d(2),
             BinaryTanh()
             )
         self.layer2 = nn.Sequential(
-            BinaryConv2d(8, 16, kernel_size=3, padding=1),
+            BinaryConv2d(4, 16, kernel_size=3, padding=1),
             # nn.BatchNorm2d(32, momentum=args.momentum, eps=args.eps),
             nn.MaxPool2d(2, ceil_mode=True),
             BinaryTanh()
