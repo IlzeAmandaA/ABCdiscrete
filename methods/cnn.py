@@ -147,14 +147,14 @@ class Binary_CNN(nn.Module):
             nn.MaxPool2d(2, ceil_mode=True),
             BinaryTanh())
 
-        self.fc = BinaryLinear(4 * 4 * 16, 10)
+        # self.fc = BinaryLinear(4 * 4 * 16, 10)
 
         #
         #
-        # self.fc1 = nn.Sequential(BinaryLinear(4 * 4 * 32, 100, bias=False),
-        #                          BinaryTanh()
-        #                          )
-        # self.fc2 = BinaryLinear(100, 10, bias=False)
+        self.fc1 = nn.Sequential(BinaryLinear(4 * 4 * 16, 20, bias=False),
+                                 BinaryTanh()
+                                 )
+        self.fc2 = BinaryLinear(20, 10, bias=False)
 
         #28
         # self.layer1 = nn.Seque   ntial(
@@ -220,8 +220,8 @@ class Binary_CNN(nn.Module):
         # print(out.shape)
         out = self.layer2(out)
        # print(out.shape)
-        out = self.fc(out.view(out.size(0),-1))
-        # out = self.fc2(out)
+        out = self.fc1(out.view(out.size(0),-1))
+        out = self.fc2(out)
         return out
 
 
