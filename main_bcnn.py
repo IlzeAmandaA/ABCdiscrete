@@ -102,7 +102,8 @@ def content(data):
 print('Loading Data')
 rescale = 14
 
-trainloader = DataLoader(MNIST(l1=0, l2=1, image_size=(rescale, rescale), train=True,  binary=False, train_size=args.N),
+
+trainloader = DataLoader(MNIST(l1=0, l2=1, image_size=(rescale, rescale), train=True,  binary=False, train_size=int(args.N)),
                          batch_size=64, shuffle=True)
 testloader = DataLoader(MNIST(l1=0, l2=1, image_size=(rescale, rescale), train=False,  binary=False),
                         batch_size=64, shuffle=True)
