@@ -112,7 +112,7 @@ class BinaryConv2d(nn.Conv2d):
 
 
 class Binary_CNN(nn.Module):
-    def __init__(self, in_features, out_features, K1=32, K2=1, F=3):
+    def __init__(self, in_features, out_features, K1=6, K2=16, F=5):
         super(Binary_CNN, self).__init__()
 
         self.F = F
@@ -122,23 +122,69 @@ class Binary_CNN(nn.Module):
         self.K2 = K2
 
         self.layer1 = nn.Sequential(
-            BinaryConv2d(self.inD, self.K1, kernel_size=self.F, padding=1, bias=False),
+            BinaryConv2d(1, 16, kernel_size=5, padding=2),
+            # nn.BatchNorm2d(16, momentum=args.momentum, eps=args.eps),
             nn.MaxPool2d(2),
-            BinaryTanh()
-        )
+            BinaryTanh())
         self.layer2 = nn.Sequential(
-            BinaryConv2d(self.K1, self.K2, kernel_size=self.F, padding=2, bias=False),
-            nn.MaxPool2d(2),
-            BinaryTanh()
-        )
+            BinaryConv2d(16, 32, kernel_size=5, padding=2),
+            # nn.BatchNorm2d(32, momentum=args.momentum, eps=args.eps),
+            nn.MaxPool2d(2, ceil_mode=True),
+            BinaryTanh())
+        self.fc = BinaryLinear(4 * 4 * 32, 10)
 
-        self.fc = BinaryLinear(4 * 4 * 1, self.outD, bias=False)
+        # self.layer1 = nn.Sequential(
+        #     BinaryConv2d(self.inD, self.K1, kernel_size=3, stride=1, padding=1),
+        #     BinaryTanh(),
+        #     nn.MaxPool2d(2)
+        # )
+        #
+        # self.layer2 = nn.Sequential(
+        #     BinaryConv2d(self.K1, self.K2, kernel_size=3, stride=1, padding=1),
+        #     BinaryTanh(),
+        #     nn.MaxPool2d(2, ceil_mode=True)
+        # )
+        #
+        # self.layer3 = nn.Sequential(
+        #     BinaryLinear(4 * 4 * self.K2, 64, bias=False), #2x2
+        #     BinaryTanh(),
+        #     # BinaryLinear(120, 84, bias=False),
+        #     # BinaryTanh(),
+        #     BinaryLinear(64, self.outD, bias=False)
+        # )
+
+
+        # self.layer1 = nn.Sequential(
+        #     BinaryConv2d(self.inD, self.K1, kernel_size=5, padding=2, bias=False),
+        #     BinaryTanh(),
+        #     BinaryConv2d(self.K1, 1, kernel_size=1, padding=0, bias=False),
+        #     BinaryTanh(),
+        #     nn.MaxPool2d(2)
+        #   #
+        # )
+        # self.layer2 = nn.Sequential(
+        #     BinaryConv2d(1, self.K2, kernel_size=3, padding=1, bias=False),
+        #     # BinaryConv2d(self.K2, 1, kernel_size=1, padding=0, bias=False),
+        #     BinaryTanh(),
+        #     nn.MaxPool2d(2, ceil_mode=True)
+        # )
+        # self.layer2 = nn.Sequential(
+        #     BinaryConv2d(self.K1, self.K2, kernel_size=3, padding=1, bias=False),
+        #     BinaryTanh(),
+        #     nn.MaxPool2d(2),
+        #     BinaryTanh()
+        # )
+
+        # self.fc = BinaryLinear(3 * 3 * self.K2, self.outD, bias=False)
 
     def forward(self, x):
         x = torch.reshape(x, (x.shape[0], 1, x.shape[1], x.shape[2]))
+        # print(x.shape)
         out = self.layer1(x)
+        # print(out.shape)
         out = self.layer2(out)
-        out = self.fc(out.view(-1,4*4*1))
+       # print(out.shape)
+        out = self.fc(out.view(out.size(0),-1))
         return out
 
 

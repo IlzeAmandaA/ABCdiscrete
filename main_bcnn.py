@@ -11,7 +11,7 @@ import os
 import argparse
 
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
-parser.add_argument('--lr', type=float, default=0.001, metavar='float',
+parser.add_argument('--lr', type=float, default=0.01, metavar='float',
                     help='evaluation steps') #600000
 
 args = parser.parse_args()
@@ -48,8 +48,8 @@ def train(epoch):
     avg_loss = np.mean(batch_loss)
     train_loss.append(avg_loss)
 
-    if epoch%5==0:
-        print('Train Epoch: %d Training Loss %.3f' % (epoch,  avg_loss))
+    # if epoch%5==0:
+    print('Train Epoch: %d Training Loss %.3f' % (epoch,  avg_loss))
 # print('Training Loss : %.3f Time : %.3f seconds ' % (np.mean(avg_loss)), end - start))
 
 def test(epoch):
@@ -73,10 +73,10 @@ def test(epoch):
         avg_error = np.mean(np.array(test_error))
         avg_loss = np.mean(np.array(test_loss))
 
-        if epoch % 10 == 0:
-            print('Test Error: %.3f' % (avg_error))
-            print('Test Loss: %.3f' % (avg_loss))
-            print('--------------------------------------------------------------')
+        # if epoch % 10 == 0:
+        print('Test Error: %.3f' % (avg_error))
+        print('Test Loss: %.3f' % (avg_loss))
+        print('--------------------------------------------------------------')
 
     return avg_error
 
@@ -94,13 +94,13 @@ def content(data):
 print('Loading Data')
 rescale = 14
 
-trainloader = DataLoader(MNIST(l1=0, l2=1, image_size=(rescale, rescale), train=True,  binary=False),
-                         batch_size=128, shuffle=True)
+trainloader = DataLoader(MNIST(l1=0, l2=1, image_size=(rescale, rescale), train=True,  binary=False, train_size=60000),
+                         batch_size=64, shuffle=True)
 testloader = DataLoader(MNIST(l1=0, l2=1, image_size=(rescale, rescale), train=False,  binary=False),
-                        batch_size=128, shuffle=True)
+                        batch_size=64, shuffle=True)
 
 evaluate = 1
-epochs = 1000
+epochs = 100
 cross_tr_loss = []
 cross_te_loss = []
 cross_w = []
@@ -113,9 +113,6 @@ for eval in range(evaluate):
         torch.cuda.manual_seed(0)
         print('running on GPU')
 
-    hidden_units = 20
-    output = 1
-
     clf = Binary_CNN(1,10)
 
     if cuda_available:
@@ -125,7 +122,7 @@ for eval in range(evaluate):
     optimizer = optim.Adam(clf.parameters(), lr=args.lr)
 
     min_loss = np.inf
-    n_epochs_stop = 10
+    n_epochs_stop = 5
     epochs_no_improve = 0
     best_params = None
     early_stop = False
