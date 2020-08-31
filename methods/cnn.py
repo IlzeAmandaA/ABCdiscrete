@@ -136,33 +136,33 @@ class Binary_CNN(nn.Module):
         # self.fc = BinaryLinear(4 * 4 * 32, 10)
 
         # 14 smaller net
-        # self.layer1 = nn.Sequential(
-        #     BinaryConv2d(1, 6, kernel_size=5, padding=2),
-        #     # nn.BatchNorm2d(16, momentum=args.momentum, eps=args.eps),
-        #     nn.MaxPool2d(2),
-        #     BinaryTanh())
-        # self.layer2 = nn.Sequential(
-        #     BinaryConv2d(6, 16, kernel_size=5, padding=2),
-        #     # nn.BatchNorm2d(32, momentum=args.momentum, eps=args.eps),
-        #     nn.MaxPool2d(2, ceil_mode=True),
-        #     BinaryTanh())
-        #
-        # self.fc = BinaryLinear(4 * 4 * 16, 10)
-        #
-
-        #simple cnn plus fnn
         self.layer1 = nn.Sequential(
-            BinaryConv2d(1, 32, kernel_size=3, padding=1),
+            BinaryConv2d(1, 6, kernel_size=5, padding=2),
             # nn.BatchNorm2d(16, momentum=args.momentum, eps=args.eps),
             nn.MaxPool2d(2),
-            BinaryTanh()
-        )
-
+            BinaryTanh())
         self.layer2 = nn.Sequential(
-            BinaryLinear(7*7*32, 20, bias=False),
-            BinaryTanh(),
-            BinaryLinear(20, 10, bias=False)
-        )
+            BinaryConv2d(6, 16, kernel_size=3, padding=1),
+            # nn.BatchNorm2d(32, momentum=args.momentum, eps=args.eps),
+            nn.MaxPool2d(2, ceil_mode=True),
+            BinaryTanh())
+
+        self.fc = BinaryLinear(4 * 4 * 16, 10)
+
+
+        #simple cnn plus fnn
+        # self.layer1 = nn.Sequential(
+        #     BinaryConv2d(1, 32, kernel_size=3, padding=1),
+        #     # nn.BatchNorm2d(16, momentum=args.momentum, eps=args.eps),
+        #     nn.MaxPool2d(2),
+        #     BinaryTanh()
+        # )
+        #
+        # self.layer2 = nn.Sequential(
+        #     BinaryLinear(7*7*32, 20, bias=False),
+        #     BinaryTanh(),
+        #     BinaryLinear(20, 10, bias=False)
+        # )
 
 
         # self.fc1 = nn.Sequential(BinaryLinear(4 * 4 * 16, 20, bias=False),
@@ -232,10 +232,10 @@ class Binary_CNN(nn.Module):
         # print(x.shape)
         out = self.layer1(x)
         # print(out.shape)
-       # out = self.layer2(out)
-        out = self.layer2(out.view(out.size(0),-1))
+        out = self.layer2(out)
+        #out = self.layer2(out.view(out.size(0),-1))
        # print(out.shape)
-       #  out = self.fc1(out.view(out.size(0),-1))
+        out = self.fc1(out.view(out.size(0),-1))
        #  out = self.fc2(out)
         return out
 
