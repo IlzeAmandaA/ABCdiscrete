@@ -235,7 +235,7 @@ class Binary_CNN(nn.Module):
         out = self.layer2(out)
         #out = self.layer2(out.view(out.size(0),-1))
        # print(out.shape)
-        out = self.fc1(out.view(out.size(0),-1))
+        out = self.fc(out.view(out.size(0),-1))
        #  out = self.fc2(out)
         return out
 
