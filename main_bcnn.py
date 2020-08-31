@@ -13,6 +13,9 @@ import argparse
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
 parser.add_argument('--lr', type=float, default=0.01, metavar='float',
                     help='evaluation steps') #600000
+parser.add_argument('--N', type=float, default=60000, metavar='float',
+                    help='evaluation steps') #600000
+
 
 args = parser.parse_args()
 
@@ -94,7 +97,7 @@ def content(data):
 print('Loading Data')
 rescale = 14
 
-trainloader = DataLoader(MNIST(l1=0, l2=1, image_size=(rescale, rescale), train=True,  binary=False, train_size=60000),
+trainloader = DataLoader(MNIST(l1=0, l2=1, image_size=(rescale, rescale), train=True,  binary=False, train_size=args.N),
                          batch_size=64, shuffle=True)
 testloader = DataLoader(MNIST(l1=0, l2=1, image_size=(rescale, rescale), train=False,  binary=False),
                         batch_size=64, shuffle=True)
@@ -125,7 +128,7 @@ for eval in range(evaluate):
     n_epochs_stop = 5
     epochs_no_improve = 0
     best_params = None
-    early_stop = False
+    early_stop = True
 
     # e=[]
     train_loss = []
