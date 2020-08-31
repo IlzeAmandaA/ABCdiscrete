@@ -96,7 +96,7 @@ class MNIST(Dataset):
                 self.y_test = y_test[idx]
 
             else:
-                # x_test = np.reshape(x_test, (x_test.shape[0], 28, 28))
+                x_test = np.reshape(x_test, (x_test.shape[0], 28, 28))
                 # self.x_test = np.zeros((x_test.shape[0], image_size[0], image_size[1]))
                 # for i in range(x_test.shape[0]):
                 #     self.x_test[i] = resize(x_test[i], image_size, anti_aliasing=True)
