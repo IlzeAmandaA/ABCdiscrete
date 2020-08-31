@@ -24,7 +24,7 @@ args = parser.parse_args()
 def train(epoch):
     batch_loss = []
     clf.train()
-    if epoch==0:
+    if epoch==1:
         start_time = time.time
     for batch_idx, (inputs,targets) in enumerate(trainloader):
         if cuda_available:
@@ -54,7 +54,7 @@ def train(epoch):
     avg_loss = np.mean(batch_loss)
     train_loss.append(avg_loss)
 
-    if epoch ==0:
+    if epoch ==1:
         print('sim time ---- {} minutes ---'.format((time.time() - start_time)))
     # if epoch%5==0:
     print('Train Epoch: %d Training Loss %.3f' % (epoch,  avg_loss))
