@@ -14,7 +14,7 @@ import time
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
 parser.add_argument('--lr', type=float, default=0.01, metavar='float',
                     help='evaluation steps') #600000
-parser.add_argument('--N', type=float, default=60000, metavar='float',
+parser.add_argument('--N', type=float, default=60000, metavar='int',
                     help='evaluation steps') #600000
 
 
