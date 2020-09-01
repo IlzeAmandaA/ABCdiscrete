@@ -54,10 +54,13 @@ class RandomKitchenSinks():
 
         with torch.no_grad():
             w = np.copy(w_orig)
+            print(len(w))
             w[w == 0] = -1
 
             w1 = w[0: (self.f1 * self.f1 * self.c1)]
             w2 = w[(self.f1 * self.f1 * self.c1):]
+            print('w1 ', len(w1))
+            print('w2', len(w2))
 
             w1 = np.reshape(w1, (self.clf.K1, self.clf.inD, self.clf.F, self.clf.F))
             w2 = np.reshape(w2, (self.clf.K2, self.clf.K1, self.clf.F, self.clf.F))
@@ -80,7 +83,9 @@ class RandomKitchenSinks():
                 y_true.append(targets.type(torch.LongTensor))
                 z.append(self.cnn(inputs,(w1,w2)))
 
+            print(len(z))
             z = torch.cat(z, dim=0)
+            print(z.shape)
             y_true = torch.cat(y_true, dim=0)
 
             return (z, y_true)
