@@ -153,7 +153,7 @@ class Binary_CNN(nn.Module):
 
         # 14 net with add cnn layer + fnn
         self.layer1 = nn.Sequential(
-            BinaryConv2d(1, 64, kernel_size=5, padding=2),
+            BinaryConv2d(1, 128, kernel_size=5, padding=2),
             # nn.BatchNorm2d(16, momentum=args.momentum, eps=args.eps),
             nn.MaxPool2d(2),
             BinaryTanh()
@@ -168,7 +168,7 @@ class Binary_CNN(nn.Module):
         # )
 
         self.fc = nn.Sequential(
-            BinaryLinear(7*7*64, 32, bias=False),
+            BinaryLinear(7*7*128, 32, bias=False),
             BinaryTanh(),
             BinaryLinear(32, 10, bias=False)
         )
