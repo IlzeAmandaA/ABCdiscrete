@@ -48,11 +48,11 @@ class Forward_CNN(nn.Module):
 
     def forward(self, x, W):
         w1, w2 = W
-        out = F.conv2d(x, w1, padding=1, bias=None)
+        out = F.conv2d(x, w1, padding=2, bias=None)
         out = F.max_pool2d(out, kernel_size=2)
         out = F.hardtanh(out)
         out = binarize(out)
-        out = F.conv2d(out,w2, padding=2, bias=None)
+        out = F.conv2d(out,w2, padding=1, bias=None)
         out = F.max_pool2d(out, kernel_size=2)
         out = F.hardtanh(out)
         out = binarize(out)

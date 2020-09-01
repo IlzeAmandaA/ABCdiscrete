@@ -79,9 +79,13 @@ class RandomKitchenSinks():
                     inputs, targets = inputs.cuda(), targets.cuda()
 
                 inputs = inputs.type(torch.FloatTensor)
+                print('input', inputs.shape)
 
                 y_true.append(targets.type(torch.LongTensor))
+                print('yru',len(y_true))
                 z.append(self.cnn(inputs,(w1,w2)))
+                print('run cnn')
+
 
             print(len(z))
             z = torch.cat(z, dim=0)
