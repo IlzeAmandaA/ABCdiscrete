@@ -9,7 +9,7 @@ from scipy.special import expit
 import sys
 from skimage.transform import resize
 
-PYTHONPATH = '/home/iaa510'
+
 
 filename = [
 ["training_images","train-images-idx3-ubyte.gz"],
@@ -24,12 +24,20 @@ def transform_polar(image):
     # return image
 
 class MNIST():
-    def __init__(self, l1=0, l2=1, H=20, name='mnist', image_size=(14, 14), batch_size=1000):
+    def __init__(self, l1=0, l2=1, H=20, name='mnist', image_size=(14, 14), batch_size=1000, path='external'):
         super().__init__()
         self.name = name
         self.image_size = image_size
         self.H=H
         self.batch_size = batch_size
+
+        if path=='external':
+            PYTHONPATH = '/home/iaa510'
+        elif path=='internal':
+            PYTHONPATH = '/home/ilze/MasterThesis/mnist'
+        else:
+            print('Invalid python path selection')
+            sys.exit()
 
         if not(os.path.isfile(PYTHONPATH + '/data/' + 'mnist.pkl')):
             self.download_mnist(location=PYTHONPATH + '/data/')
@@ -135,15 +143,20 @@ class MNIST():
         data[data==0]=-1
 
 
-    def simulate(self, w_orig): #objective
+    def simulate(self, w_orig, eval=False): #objective
         #change 0 to -1
         w = np.copy(w_orig)
         w[w==0]=-1
         # print('updated theta values {}'.format(set(w)))
 
         im_shape = self.image_size[0] * self.image_size[1]
-        data_x = self.x_train
-        data_y = self.y_train
+
+        if eval:
+            data_x = self.x_test
+            data_y = self.y_test
+        else:
+            data_x = self.x_train
+            data_y = self.y_train
 
         y_pred = np.zeros((data_y.shape[0],))
 
@@ -164,29 +177,20 @@ class MNIST():
                 h = np.dot(data_x[i * batch_size: data_x.shape[0]], W1)
             else:
                 h = np.dot(data_x[i * batch_size: (i+1)*batch_size], W1)
-            # print('h', h.shape)
 
             # tanh
             self.binary_hardtanh(h)
 
             # Second layer
             logits = np.dot(h, W2)
-            # print('logts')
-            # print(logits.shape)
 
              # sigmoid
             prob = expit(logits)
-            # print('prob')
-            # print(prob.shape)
 
             if i == (batch_count - 1):
                 y_pred[i * batch_size: data_x.shape[0]] = np.rint(np.squeeze(prob)) #np.argmax(prob, -1)
             else:
                 y_pred[i * batch_size: (i + 1) * batch_size] = np.rint(np.squeeze(prob))  # np.argmax(prob, -1)
-        #
-        # print(set(y_pred))
-        # print(y_pred.shape)
-        # print(self.y_train.shape)
 
         return y_pred.astype(int)
 
@@ -195,8 +199,12 @@ class MNIST():
         x[x<=0]=-1
         return x.astype(int)
 
-    def distance(self, y):
-        return 1/self.y_train.shape[0] * sum(np.logical_xor(self.y_train, y))
+    def distance(self, y, eval=False):
+        if eval:
+            er = 1 / self.y_test.shape[0] * sum(np.logical_xor(self.y_test, y))
+        else:
+            er = 1 / self.y_train.shape[0] * sum(np.logical_xor(self.y_train, y))
+        return er
 
     def prior(self, theta):
         #define a pseduo-bolztman distribution

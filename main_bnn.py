@@ -76,13 +76,14 @@ def content(data):
 
 print('Loading Data')
 rescale = 14
-trainloader = DataLoader(MNIST(l1=0, l2=1, image_size=(rescale, rescale), train=True),
+trainloader = DataLoader(MNIST(l1=0, l2=1, image_size=(rescale, rescale), train=True,path='internal'),
                          batch_size=128, shuffle=True)
-testloader = DataLoader(MNIST(l1=0, l2=1, image_size=(rescale, rescale), train=False),
+testloader = DataLoader(MNIST(l1=0, l2=1, image_size=(rescale, rescale), train=False,path='internal'),
                         batch_size=128, shuffle=True)
 
-evaluate = 10
+evaluate = 5
 epochs = 50
+early_stop = False
 cross_tr_loss = []
 cross_te_loss = []
 cross_w = []
@@ -107,7 +108,6 @@ for eval in range(evaluate):
     n_epochs_stop = 10
     epochs_no_improve = 0
     best_params = None
-    early_stop = False
 
     # e=[]
     train_loss = []
@@ -143,12 +143,13 @@ store = 'results/' + 'bnn'
 if not os.path.exists(store):
     os.makedirs(store)
 
-plot_bnn(cross_te_loss, store + '/test', 'error')
-plot_bnn(cross_tr_loss, store + '/train', 'loss')
-report_weight(cross_w, store + '/weight')
-pkl.dump(cross_te_loss, open(store + '/test' + '.pkl', 'wb'))
-pkl.dump(cross_tr_loss, open(store + '/train'  + '.pkl', 'wb'))
-pkl.dump(cross_w, open(store + '/avg_w' + '.pkl', 'wb'))
+if not early_stop:
+    plot_bnn(cross_te_loss, store + '/test', 'error')
+    plot_bnn(cross_tr_loss, store + '/train', 'loss')
+    report_weight(cross_w, store + '/weight')
+    pkl.dump(cross_te_loss, open(store + '/test' + '.pkl', 'wb'))
+    pkl.dump(cross_tr_loss, open(store + '/train'  + '.pkl', 'wb'))
+    pkl.dump(cross_w, open(store + '/avg_w' + '.pkl', 'wb'))
 
 
 

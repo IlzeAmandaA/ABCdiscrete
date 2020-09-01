@@ -12,10 +12,6 @@ from torch.utils.data import Dataset
 from methods.cnn import Forward_CNN
 
 
-
-PYTHONPATH = '/home/iaa510'
-#PYTHONPATH = '/home/ilze/MasterThesis/mnist'
-
 filename = [
 ["training_images","train-images-idx3-ubyte.gz"],
 ["test_images","t10k-images-idx3-ubyte.gz"],
@@ -36,12 +32,20 @@ def transform_binary(data):
 
 class MNIST(Dataset):
 
-    def __init__(self, l1=0, l2=1, image_size=(14, 14), train=True, binary=True, train_size=5000):
+    def __init__(self, l1=0, l2=1, image_size=(14, 14), train=True, binary=True, train_size=5000, path='external'):
        # train_size = 5000
 
         self.train=train
         self.train_size = train_size
         self.binary = binary
+
+        if path == 'external':
+            PYTHONPATH = '/home/iaa510'
+        elif path == 'internal':
+            PYTHONPATH = '/home/ilze/MasterThesis/mnist'
+        else:
+            print('Invalid python path selection')
+            sys.exit()
 
         if not(os.path.isfile(PYTHONPATH + '/data/' + 'mnist.pkl')):
             self.download_mnist(location=PYTHONPATH + '/data/')
@@ -59,13 +63,13 @@ class MNIST(Dataset):
                 idx_l2 = np.where(y_train == l2)[0]
                 idx = np.sort(np.concatenate((idx_l1, idx_l2), axis=None))
                 self.train_size = len(idx)
-                x_train = np.reshape(x_train[idx], (self.train_size, 28, 28))
-                self.x_train = np.zeros((x_train.shape[0], image_size[0], image_size[1]))
-                self.x_train = np.zeros((x_train.shape[0], image_size[0], image_size[1]))
-                for i in range(x_train.shape[0]):
+
+                x_train = np.reshape(x_train[idx], (self.train_size, 28, 28)) #select data points
+                self.x_train = np.zeros((x_train.shape[0], image_size[0], image_size[1])) #create an empty matrix
+                for i in range(x_train.shape[0]): #fill the matrix with compressed images
                     self.x_train[i] = resize(x_train[i], image_size, anti_aliasing=True)
 
-                self.x_train = np.reshape(self.x_train, (train_size, image_size[0] * image_size[1]))
+                self.x_train = np.reshape(self.x_train, (self.train_size, image_size[0] * image_size[1])) #flatten the image
                 self.y_train = y_train[idx]
 
 
@@ -73,7 +77,7 @@ class MNIST(Dataset):
                 x_train = np.reshape(x_train[0:self.train_size], (self.train_size, 28, 28))
                 self.x_train = np.zeros((x_train.shape[0], image_size[0], image_size[1]))
                 for i in range(x_train.shape[0]):
-                    self.x_train[i] = resize(x_train[i], image_size, anti_aliasing=True)
+                    self.x_train[i] = resize(x_train[i], image_size, anti_aliasing=True) #keep 2d image
                 # self.x_train = x_train
                 self.y_train = y_train[0:self.train_size]
 
