@@ -175,12 +175,12 @@ if __name__ == '__main__':
     '''
     Run the algortihm in parallel mode
     '''
-    alg.initialize_population()
-
-    # loop over possible proposal methods
-    for method in alg.settings:
-        error, x_pos, ac_ratio, population = alg.run(method, args.steps, 0)
-    # parallel(alg)
+    # alg.initialize_population()
+    #
+    # # loop over possible proposal methods
+    # for method in alg.settings:
+    #     error, x_pos, ac_ratio, population = alg.run(method, args.steps, 0)
+    parallel(alg)
 
 
     '''
