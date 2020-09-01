@@ -50,7 +50,6 @@ class ABC_Discrete():
         while n < steps:
 
             if seed == 0 and n >= print_t:
-                print(n)
                 print('for run at {} pop time ---- {} minutes ---'.format(n,(time.time() - start_time) / 60))
                 print_t += 1000
                 start_time = time.time()
@@ -60,12 +59,9 @@ class ABC_Discrete():
                 # print('proposal obtined')
                 # print('theta shape {}'.format(theta_.shape))
                 # print('values of theta {}'.format(set(theta_)))
-                # start_time = time.time()
+                start_time = time.time()
                 x=self.simulator.simulate(theta_)
-                print('simulation succes')
-                print('sim x', x[0].shape)
-
-                # print('for run sim time ---- {} minutes ---'.format((time.time() - start_time) / 60))
+                print('for run sim time ---- {} minutes ---'.format((time.time() - start_time) / 60))
                 # sys.exit()
 
                 #print(self.model.distance(x))
@@ -86,20 +82,6 @@ class ABC_Discrete():
 
         acceptence_ratio = (acceptence_ratio/10000)*100
         return error, xlim, acceptence_ratio, population
-
-
-    # def distance(self, y):
-    #     avg_d=0
-    #     for y0 in self.model.data:
-    #         avg_d += self.hamming(y,y0)
-    #     return avg_d * 1/self.model.data.shape[0]
-
-    # def hamming(self, y, y0):
-    #     d = 0.
-    #     for idx,yi  in enumerate(y):
-    #         if yi != y0[idx]:
-    #             d += 1
-    #     return d
 
 
     def pop_error(self, chains):

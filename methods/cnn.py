@@ -49,8 +49,6 @@ class Forward_CNN(nn.Module):
     def forward(self, x, W):
         x = torch.reshape(x, (x.shape[0], 1, x.shape[1], x.shape[2]))
         w1, w2 = W
-        print(x.shape)
-        print(w1.shape)
         out = F.conv2d(x, w1, padding=2, bias=None)
         out = F.max_pool2d(out, kernel_size=2)
         out = F.hardtanh(out)
@@ -80,15 +78,6 @@ class FFNN(nn.Module):
         error = 1. - Y_hat.eq(Y).cpu().float().mean().item()
         return a, error
 
-
-    # def calculate_classification_error(self, X,Y,W):
-    #     # print(X.shape)
-    #     X = torch.reshape(X, (X.shape[0], 1, X.shape[1], X.shape[2]))
-    #     Y_hat = self.forward(X, W)
-    #     Y = Y.int()
-    #     error = 1. - Y_hat.eq(Y).cpu().float().mean().item()
-    #     # print(error)
-    #     return error, Y_hat
 
 """""
 """""

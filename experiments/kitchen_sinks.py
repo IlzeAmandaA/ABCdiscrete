@@ -54,13 +54,10 @@ class RandomKitchenSinks():
 
         with torch.no_grad():
             w = np.copy(w_orig)
-            print(len(w))
             w[w == 0] = -1
 
             w1 = w[0: (self.f1 * self.f1 * self.c1)]
             w2 = w[(self.f1 * self.f1 * self.c1):]
-            print('w1 ', len(w1))
-            print('w2', len(w2))
 
             w1 = np.reshape(w1, (self.c1, self.inD, self.f1, self.f1))
             w2 = np.reshape(w2, (self.c2, self.c1, self.f2, self.f2))
@@ -68,11 +65,6 @@ class RandomKitchenSinks():
             w1 = torch.from_numpy(w1).type(torch.float32)
             w2 = torch.from_numpy(w2).type(torch.float32)
 
-            print(w1.shape)
-            print(w2.shape)
-
-            # self.clf.conv1.weight.copy_(W1)
-            # self.clf.conv2.weight.copy_(W2)
             z = []
             y_true = []
 
@@ -82,19 +74,11 @@ class RandomKitchenSinks():
                     inputs, targets = inputs.cuda(), targets.cuda()
 
                 inputs = inputs.type(torch.float32)
-                print('input', inputs.shape)
 
                 y_true.append(targets.type(torch.LongTensor))
-                print('yru',len(y_true))
-
-                print(inputs.shape)
                 z.append(self.cnn(inputs,(w1,w2)))
-                print('run cnn')
 
-
-            print(len(z))
             z = torch.cat(z, dim=0)
-            print(z.shape)
             y_true = torch.cat(y_true, dim=0)
 
             return (z, y_true)
