@@ -86,6 +86,8 @@ class RandomKitchenSinks():
 
                 y_true.append(targets.type(torch.LongTensor))
                 print('yru',len(y_true))
+
+                print(inputs.shape)
                 z.append(self.cnn(inputs,(w1,w2)))
                 print('run cnn')
 
