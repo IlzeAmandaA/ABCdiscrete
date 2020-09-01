@@ -65,8 +65,8 @@ class RandomKitchenSinks():
             w1 = np.reshape(w1, (self.c1, self.inD, self.f1, self.f1))
             w2 = np.reshape(w2, (self.c2, self.c1, self.f2, self.f2))
 
-            w1 = torch.from_numpy(w1)
-            w2 = torch.from_numpy(w2)
+            w1 = torch.from_numpy(w1).type(torch.int8)
+            w2 = torch.from_numpy(w2).type(torch.int8)
 
             print(w1.shape)
             print(w2.shape)
@@ -81,7 +81,7 @@ class RandomKitchenSinks():
                 if self.cuda_available:
                     inputs, targets = inputs.cuda(), targets.cuda()
 
-                inputs = inputs.type(torch.FloatTensor)
+                inputs = inputs.type(torch.int8)
                 print('input', inputs.shape)
 
                 y_true.append(targets.type(torch.LongTensor))
