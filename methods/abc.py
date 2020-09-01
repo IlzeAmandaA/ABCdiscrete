@@ -66,6 +66,8 @@ class ABC_Discrete():
 
                 error = self.simulator.distance(x)
                 tol = np.random.exponential(self.tolerance)
+                if n%10==0:
+                    print(n, error)
                 if error <=tol:
                     print('error {} and tol {}'.format(error, tol))
                     alpha = self.metropolis(theta_, population[i])
