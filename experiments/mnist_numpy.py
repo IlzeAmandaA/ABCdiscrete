@@ -2,8 +2,6 @@ import os
 import gzip
 import pickle
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
 from urllib import request
 from scipy.special import expit
 import sys

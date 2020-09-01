@@ -1,7 +1,6 @@
 import argparse
-from experiments.mnist_torch import HighDim
-
-from methods.abc_cnn import ABC_Discrete
+from experiments.kitchen_sinks import RandomKitchenSinks
+from methods.abc import ABC_Discrete
 from utils.func_support import *
 import multiprocessing as mp
 import pickle as pkl
@@ -188,7 +187,7 @@ if __name__ == '__main__':
     hidden_units = 20
 
     labels = [0,1]
-    use_case = HighDim()
+    use_case = RandomKitchenSinks()
 
 
     alg = ABC_Discrete(use_case,args.pflip, args.pcross, settings=set_proposals, info=args.exp, epsilon=args.epsilon, nchains=args.N)

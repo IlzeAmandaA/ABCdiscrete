@@ -23,15 +23,15 @@ class ABC_Discrete():
         self.tolerance = epsilon
 
 
-    def initialize_chains(self):
-        self.population = self.model.generate_population(self.N)
+    # def initialize_chains(self):
+    #     self.population = self.model.generate_population(self.N)
+    #
 
+    # def sample_chain(self):
+    #     return np.random.binomial(1, .5, self.model.D)
+    #
 
-    def sample_chain(self):
-        return np.random.binomial(1, .5, self.model.D)
-
-
-    def run_abc(self, method, steps):
+    def run_abc(self, method, steps, seed):
         # print('Started the algorihtm')
 
         #initialize the population
@@ -44,12 +44,15 @@ class ABC_Discrete():
         n=0
         acceptence_ratio=0.
         start_time = time.time()
+        print_t = 500
 
         while n < steps:
 
-            if n % 10000==0:
-                print('for run {} sim time ---- {} minutes ---'.format(n,(time.time() - start_time) / 60))
-
+            if seed == 0 and n >= print_t:
+                print(n)
+                print('for run at {} pop time ---- {} minutes ---'.format(n,(time.time() - start_time) / 60))
+                print_t += 1000
+                start_time = time.time()
 
             for i in range(len(population)):
                 theta_ = self.proposal(population, i, method)

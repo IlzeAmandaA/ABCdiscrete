@@ -2,14 +2,10 @@ import os
 import gzip
 import pickle
 import numpy as np
-from torch.utils.data import DataLoader
 from urllib import request
-import sys
 from skimage.transform import resize
-import torch
-import torch.utils.data
 from torch.utils.data import Dataset
-from methods.cnn import Forward_CNN
+import sys
 
 
 filename = [
@@ -33,7 +29,6 @@ def transform_binary(data):
 class MNIST(Dataset):
 
     def __init__(self, l1=0, l2=1, image_size=(14, 14), train=True, binary=True, train_size=5000, path='external'):
-       # train_size = 5000
 
         self.train=train
         self.train_size = train_size
@@ -157,87 +152,5 @@ class MNIST(Dataset):
         with open(location + "mnist.pkl", 'rb') as f:
             mnist = pickle.load(f)
         return mnist["training_images"], mnist["training_labels"], mnist["test_images"], mnist["test_labels"]
-
-
-class HighDim():
-
-    def __init__(self, inD=1, outD=10, rescale=14):
-
-
-        self.cuda_available = torch.cuda.is_available()
-
-        self.trainloader = DataLoader(MNIST(image_size=(rescale, rescale), train=True, binary=False),
-                                 batch_size=1000, shuffle=True)
-        # self.testloader = DataLoader(MNIST(l1=0, l2=1, image_size=(rescale, rescale), train=False),
-        #                         batch_size=128, shuffle=True)
-
-        self.clf = Forward_CNN(inD,outD)
-
-        if self.cuda_available:
-            self.clf = self.clf.cuda()
-            torch.cuda.manual_seed(0)
-            print('running on GPU')
-
-        self.distancev  = None
-
-
-    def initialize_pop(self, N):
-        D = self.clf.inD*self.clf.F*self.clf.F*self.clf.K1+\
-        self.clf.K1*self.clf.F*self.clf.F*self.clf.K2 + \
-        4*4*self.clf.K2 * self.clf.outD
-        return self.bern(0.5, N, D)
-
-    def bern(self, p, D1, D2):
-        return np.random.binomial(1, p, (D1, D2))
-
-    def simulate(self, w_orig):  # objective
-
-        self.clf.eval()
-
-        with torch.no_grad():
-            w = np.copy(w_orig)
-            w[w == 0] = -1
-
-            w1 = w[0: (self.clf.F * self.clf.F * self.clf.K1)]
-            w2 = w[(self.clf.F * self.clf.F * self.clf.K1):(self.clf.F * self.clf.F * self.clf.K1) * 2]
-            w3 = w[(self.clf.F * self.clf.F * self.clf.K1) * 2:]
-
-            w1 = np.reshape(w1, (self.clf.K1, self.clf.inD, self.clf.F, self.clf.F))
-            w2 = np.reshape(w2, (self.clf.K2, self.clf.K1, self.clf.F, self.clf.F))
-            w3 = np.reshape(w3, (self.clf.outD, 4 * 4 * 1))
-
-            w1 = torch.from_numpy(w1)
-            w2 = torch.from_numpy(w2)
-            w3 = torch.from_numpy(w3)
-
-            # self.clf.conv1.weight.copy_(W1)
-            # self.clf.conv2.weight.copy_(W2)
-            # self.clf.fc.weight.copy_(W3)
-            tb_error = []
-
-            for batch_idx, (inputs, targets) in enumerate(self.trainloader):
-                # inputs = inputs.type(torch.FloatTensor)
-                if self.cuda_available:
-                    inputs, targets = inputs.cuda(), targets.cuda()
-
-                inputs = inputs.type(torch.FloatTensor)
-                targets = targets.type(torch.FloatTensor)
-
-                error, predicted = self.clf.calculate_classification_error(inputs, targets, (w1,w2,w3))
-                tb_error.append(error)
-
-            avg_error = np.mean(np.array(tb_error))
-            self.distancev= avg_error
-
-            return None
-
-    def distance(self, fake):
-        return self.distancev
-
-    def prior(self,theta):
-        return np.exp(-np.mean(theta))
-
-
-
 
 
