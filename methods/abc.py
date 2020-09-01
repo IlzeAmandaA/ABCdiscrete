@@ -38,7 +38,7 @@ class ABC_Discrete():
         #initialize the population
         population = self.population.copy() #{0,1}
 
-        error = []
+        error_pop = []
         xlim=[]
         sample = 250
 
@@ -77,7 +77,7 @@ class ABC_Discrete():
 
                 if n >= sample:
                     # print(n)
-                    error.append(self.pop_error(population))
+                    error_pop.append(self.pop_error(population))
                     xlim.append(n)
                     sample += 1000 #1500
 
