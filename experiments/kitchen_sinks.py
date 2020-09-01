@@ -8,7 +8,9 @@ import sys
 
 class RandomKitchenSinks():
 
-    def __init__(self, inD=1, outD=10, C1=6, C2=32, F1=5, F2=3, rescale=14, N_data=20000, path = 'external'):
+    def __init__(self, inD=1, outD=10, C1=6, C2=32, F1=5, F2=3,
+                 rescale=14, N_data=20000, lr=0.01,
+                 path = 'external'):
 
         self.inD= inD
         self.c1=C1
@@ -29,17 +31,15 @@ class RandomKitchenSinks():
         self.cnn = Forward_CNN()
         self.nn = FFNN(self.c2, self.outD)
         self.criterion = nn.CrossEntropyLoss()
-        self.optimizer = optim.Adam(self.nn.parameters(), lr=0.01)
+        self.optimizer = optim.Adam(self.nn.parameters(), lr=lr)
 
         if self.cuda_available:
             self.clf = self.clf.cuda()
             torch.cuda.manual_seed(0)
             print('running on GPU')
 
-        self.distancev  = None
 
-
-    def initialize_pop(self, N):
+    def initialize(self, N):
         D = self.inD*self.f1*self.f1*self.c1+\
         self.c1*self.f2*self.f2*self.c2
         # 4*4*self.c2 * self.outD

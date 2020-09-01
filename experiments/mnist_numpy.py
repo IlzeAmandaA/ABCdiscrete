@@ -127,7 +127,7 @@ class MNIST():
         return np.random.binomial(1, p, (D1, D2))
 
 
-    def initialize_pop(self, N):
+    def initialize(self, N):
         D=self.image_size[0] * self.image_size[1] * self.H + self.H * 1
         return self.bern(0.5,N,D)
 

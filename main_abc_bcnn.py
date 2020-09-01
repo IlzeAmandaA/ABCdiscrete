@@ -22,6 +22,7 @@ parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
 parser.add_argument('--eval', type=int, default=15, metavar='int',
                     help = 'number of evaluations')
+
 parser.add_argument('--exp', type=str, default='dde-mc', metavar='str',
                     help='proposal selection')
 
@@ -31,8 +32,12 @@ parser.add_argument('--epsilon', type=float, default=0.1, metavar='float',
 parser.add_argument('--alg', type=str, default = 'abc', metavar='str',
                     help = 'algorithm specification, options mcmc or abc')
 
-parser.add_argument('--tcase', type=str, default='MNIST', metavar='str',
-                    help ='test case to use for the experiment, options QMR-DT or Boltz')
+
+parser.add_argument('--dataN', type=int, default=20000, metavar='int',
+                    help = 'number of data points')
+
+parser.add_argument('--lr', type=float, default=0.01, metavar='float',
+                    help='learning rate') #0.1
 
 
 args = parser.parse_args()
@@ -41,14 +46,13 @@ SEED_MODEL=1
 
 
 
-def run(run_seed, simulation):
+def process(run_seed, algorithm):
     print(run_seed)
     start_time = time.time()
 
     pop={}
     x={}
     ratio={}
-    run_var = []
     chains = {}
 
 
@@ -56,34 +60,31 @@ def run(run_seed, simulation):
     For every run initialize the chains with different initial  distribution
     '''
     np.random.seed(run_seed)
-    simulation.initialize_chains()
+    algorithm.initialize_population()
 
 
     #loop over possible proposal methods
-    for method in simulation.settings:
-        error, x_pos, ac_ratio, population = simulation.run_abc(method, args.steps, run_seed)
+    for method in algorithm.settings:
+        error, x_pos, ac_ratio, population = algorithm.run(method, args.steps, run_seed)
 
         pop[method] = error
         x[method] = x_pos
         ratio[method] = ac_ratio
         chains[method] = population
 
-  #  post = report_posterior(simulation, run_seed, chains, store+'/posterior' +str(args.epsilon))
-    post=0
-
     print('for run {} time ---- {} minutes ---'.format(run_seed, (time.time() - start_time) / 60))
 
-    return (pop, x, ratio, run_var, run_seed, chains)
+    return (pop, x, ratio, chains)
 
 
 
-def parallel(simulation):
+def parallel(algorithm):
     print('settings {} & running python in parallel mode with seed {}'.format(args.exp,args.seed))
 
     pool = mp.Pool(processes=15)
 
     for k in range(args.eval):
-        pool.apply_async(run, (k,simulation), callback=collect_result)
+        pool.apply_async(process, (k,algorithm), callback=collect_result)
 
     pool.close()
     pool.join()
@@ -92,7 +93,7 @@ def parallel(simulation):
 
 def collect_result(outcome):
     # for result in result_list:
-    pop, x, r, var, run_id, post = outcome
+    pop, x, r, chains = outcome
 
     global pop_error
     for key, value in pop.items():
@@ -107,17 +108,9 @@ def collect_result(outcome):
         acceptance_r[key].append(value)
 
     global pop_c
-    for key,value in post.items():
+    for key,value in chains.items():
         pop_c[key].append(value)
 
-    # global variability
-    # variability = var
-    #
-    # global output_post
-    # output_post[run_id+1] = post[0]
-    #
-    # global output_true
-    # output_true[run_id+1] = post[1]
 
 
 def compute_variability(matrix):
@@ -136,49 +129,32 @@ def compute_variability(matrix):
 
 
 
-def sequential(simulation):
-    print('running python in sequential mode')
-
-
-    #initialize goal parameters and the corresponing data
-
-    np.random.seed(args.seed)
-    # simulation.model.generate_parameters() #create the true underlying parameter settings
-    # simulation.model.generate_data(n=10) #generate 10 true data points
-    simulation.initialize_chains()
-
-    #loop over possible proposal methods
-    for method in simulation.settings:
-        print('Proposal: {}'.format(method))
-
-        error, x_pos, ac_ratio, population = simulation.run_abc(method, args.steps)
-        print('Acceptance ratio : {}'.format(ac_ratio))
-
-        global pop_error
-        pop_error[method] = error
-
-        global xlim
-        xlim[method] = x_pos
-
-
-
 if __name__ == '__main__':
 
-    set_proposals = {'de-mc':None, 'mut+xor':0.5}
+    set_proposals = {'de-mc':1., 'mut+xor':0.5}
+
+    #create dict where to store the results
     store = 'results/' + args.alg + '/' + 'bcnn_mnist'
     if not os.path.exists(store):
         os.makedirs(store)
 
+
+    #objects to store the results in
     pop_error = {}
     xlim = {}
     acceptance_r ={}
-    variability = []
-    output_post = {}
-    output_true = {}
     pop_c ={}
+
+    for prop in set_proposals:
+        pop_error[prop] = []
+        xlim[prop]=[]
+        acceptance_r[prop] = []
+        pop_c[prop] =[]
+
 
 
     '''
+    Initialze the algorithm and select the use case
     keep the underlying model same across all experiments with Seed_model
     '''
     np.random.seed(SEED_MODEL)
@@ -187,20 +163,25 @@ if __name__ == '__main__':
     hidden_units = 20
 
     labels = [0,1]
-    use_case = RandomKitchenSinks()
+    use_case = RandomKitchenSinks(N_data=args.dataN, lr=args.lr)
 
 
-    alg = ABC_Discrete(use_case,args.pflip, args.pcross, settings=set_proposals, info=args.exp, epsilon=args.epsilon, nchains=args.N)
+    alg = ABC_Discrete(use_case, args.pflip, args.pcross, settings=set_proposals,
+                       epsilon=args.epsilon, nchains=args.N)
 
     np.random.seed(args.seed)
 
-    for prop in set_proposals:
-        pop_error[prop] = []
-        xlim[prop]=[]
-        acceptance_r[prop] = []
-        pop_c[prop] =[]
 
+    '''
+    Run the algortihm in parallel mode
+    '''
     parallel(alg)
+
+
+    '''
+    Report the results 
+    '''
+
     print('finihsed parallel computing')
     pkl.dump(xlim, open(store + '/xlim'+ str(args.epsilon)+'.pkl', 'wb'))
     pkl.dump(pop_error, open(store+'/pop_error'+ str(args.epsilon)+ '.pkl', 'wb'))
@@ -209,11 +190,6 @@ if __name__ == '__main__':
 
 
     report(compute_avg(acceptance_r), args.epsilon, store+'/acceptance_ratio')
-    # report_variablitity(variability, store+'/acceptance_ratio')
-        # plot_dist(output_post, output_true, store +'/dist'+ str(args.epsilon))
-        # pkl.dump(output_post, open(store+'/dist_post'+ str(args.epsilon)+ '.pkl', 'wb'))
-        # pkl.dump(output_true, open(store + '/dist_true' + str(args.epsilon) + '.pkl', 'wb'))
-
     print('Finished')
 
 

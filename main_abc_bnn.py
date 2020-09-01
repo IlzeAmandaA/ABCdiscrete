@@ -34,9 +34,6 @@ parser.add_argument('--epsilon', type=float, default=0.1, metavar='float',
 parser.add_argument('--alg', type=str, default = 'abc', metavar='str',
                     help = 'algorithm specification, options mcmc or abc')
 
-parser.add_argument('--tcase', type=str, default='bnn_mnist', metavar='str',
-                    help ='test case to use for the experiment, options QMR-DT or Boltz')
-
 
 args = parser.parse_args()
 
@@ -166,7 +163,8 @@ def sequential(simulation):
 if __name__ == '__main__':
 
     set_proposals = {'de-mc':None, 'mut+xor':0.5}
-    store = 'results/' + args.alg + '/' + args.tcase
+
+    store = 'results/' + args.alg + '/' + 'bnn_mnist'
     if not os.path.exists(store):
         os.makedirs(store)
 
@@ -174,15 +172,20 @@ if __name__ == '__main__':
     pop_error = {}
     xlim = {}
     acceptance_r ={}
-    variability = []
-    output_post = {}
-    output_true = {}
     pop_c ={}
 
+    for prop in set_proposals:
+        pop_error[prop] = []
+        xlim[prop]=[]
+        acceptance_r[prop] = []
+        pop_c[prop] =[]
+
 
     '''
+    Initialze the algorithm and select the use case
     keep the underlying model same across all experiments with Seed_model
     '''
+
     np.random.seed(SEED_MODEL)
 
     image_size = (14, 14)
@@ -192,17 +195,24 @@ if __name__ == '__main__':
     use_case = MNIST(l1=labels[0], l2=labels[1], image_size=image_size, H=hidden_units)
 
 
-    alg = ABC_Discrete(use_case,args.pflip, args.pcross, settings=set_proposals, info=args.exp, epsilon=args.epsilon, nchains=args.N)
+    alg = ABC_Discrete(use_case, args.pflip, args.pcross, settings=set_proposals,
+                       epsilon=args.epsilon, nchains=args.N)
 
     np.random.seed(args.seed)
 
-    for prop in set_proposals:
-        pop_error[prop] = []
-        xlim[prop]=[]
-        acceptance_r[prop] = []
-        pop_c[prop] =[]
-
+    '''
+        
+    Run the algortihm in parallel mode
+    
+    '''
     parallel(alg)
+
+
+    '''
+    Report the results 
+    
+    '''
+
     print('finihsed parallel computing')
     pkl.dump(xlim, open(store + '/xlim'+ str(args.epsilon)+'.pkl', 'wb'))
     pkl.dump(pop_error, open(store+'/pop_error'+ str(args.epsilon)+ '.pkl', 'wb'))
@@ -211,7 +221,6 @@ if __name__ == '__main__':
 
 
     report(compute_avg(acceptance_r), args.epsilon, store+'/acceptance_ratio')
-
     print('Finished')
 
 
