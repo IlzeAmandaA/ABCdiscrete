@@ -62,6 +62,7 @@ class ABC_Discrete():
                 # print('values of theta {}'.format(set(theta_)))
                 # start_time = time.time()
                 x=self.simulator.simulate(theta_)
+                print('simulation succes')
 
                 # print('for run sim time ---- {} minutes ---'.format((time.time() - start_time) / 60))
                 # sys.exit()
