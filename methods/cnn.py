@@ -67,6 +67,7 @@ class FFNN(nn.Module):
         super(FFNN, self).__init__()
 
         self.fc = nn.Linear(4 * 4 * K2, outD)
+        self.sm= nn.Softmax(dim=0)
 
     def forward(self, z):
         out = self.fc(z)
@@ -74,7 +75,7 @@ class FFNN(nn.Module):
 
     def objective(self,z,Y):
         a = self.forward(z.view(z.size(0),-1))
-        Y_prob = nn.Softmax(a, dim=0)
+        Y_prob = self.sm(a)
         Y_hat = torch.argmax(Y_prob, dim=1)
         error = 1. - Y_hat.eq(Y).cpu().float().mean().item()
         return a, error
