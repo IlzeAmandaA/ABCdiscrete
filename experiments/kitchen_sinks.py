@@ -62,11 +62,14 @@ class RandomKitchenSinks():
             print('w1 ', len(w1))
             print('w2', len(w2))
 
-            w1 = np.reshape(w1, (self.clf.K1, self.clf.inD, self.clf.F, self.clf.F))
-            w2 = np.reshape(w2, (self.clf.K2, self.clf.K1, self.clf.F, self.clf.F))
+            w1 = np.reshape(w1, (self.c1, self.inD, self.f1, self.f1))
+            w2 = np.reshape(w2, (self.c2, self.c1, self.f2, self.f2))
 
             w1 = torch.from_numpy(w1)
             w2 = torch.from_numpy(w2)
+
+            print(w1.shape)
+            print(w2.shape)
 
             # self.clf.conv1.weight.copy_(W1)
             # self.clf.conv2.weight.copy_(W2)
