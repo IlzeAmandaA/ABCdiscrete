@@ -73,9 +73,7 @@ class FFNN(nn.Module):
         return out
 
     def objective(self,z,Y):
-        print(z.shape)
-        print(Y.shape)
-        a = self.forward(z)
+        a = self.forward(z.view(z.size(0),-1))
         Y_prob = nn.Softmax(a, dim=0)
         Y_hat = torch.argmax(Y_prob, dim=1)
         error = 1. - Y_hat.eq(Y).cpu().float().mean().item()
