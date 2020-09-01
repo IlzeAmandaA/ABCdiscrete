@@ -56,7 +56,7 @@ class Forward_CNN(nn.Module):
         out = F.hardtanh(out)
         out = binarize(out)
         out = F.conv2d(out,w2, padding=1, bias=None)
-        out = F.max_pool2d(out, kernel_size=2)
+        out = F.max_pool2d(out, kernel_size=2, ceil_mode=True)
         out = F.hardtanh(out)
         out = binarize(out)
 
