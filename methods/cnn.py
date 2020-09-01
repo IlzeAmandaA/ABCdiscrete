@@ -47,6 +47,7 @@ class Forward_CNN(nn.Module):
         super(Forward_CNN, self).__init__()
 
     def forward(self, x, W):
+        x = torch.reshape(x, (x.shape[0], 1, x.shape[1], x.shape[2]))
         w1, w2 = W
         out = F.conv2d(x, w1, padding=2, bias=None)
         out = F.max_pool2d(out, kernel_size=2)
