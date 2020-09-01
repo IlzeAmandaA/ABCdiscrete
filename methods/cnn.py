@@ -149,7 +149,12 @@ class Binary_CNN(nn.Module):
             BinaryTanh()
             )
 
-        self.fc = BinaryLinear(4 * 4 * 16, 10)
+        # self.fc = BinaryLinear(4 * 4 * 16, 10)
+        self.fc = nn.Sequential(
+            BinaryLinear(4*4*16, 50, bias=False),
+            BinaryTanh(),
+            BinaryLinear(50, 10, bias=False)
+        )
 
 
         #simple cnn plus fnn
