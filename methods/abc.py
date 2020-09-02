@@ -45,7 +45,7 @@ class ABC_Discrete():
         n=0
         acceptence_ratio=0.
 
-        init_tol = 0.8
+        init_tol = 0.4
         decr_tol = 0.0002
         red_tol = 0.0000001
 
