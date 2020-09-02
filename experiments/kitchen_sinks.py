@@ -87,7 +87,7 @@ class RandomKitchenSinks():
 
             return (z, y_true)
 
-    def distance(self, sim_output):
+    def distance(self, sim_output, run):
         z, y_true = sim_output
         self.nn.train()
         error_avg = 0
@@ -99,10 +99,11 @@ class RandomKitchenSinks():
 
         self.optimizer.zero_grad()
         output, y_hat = self.nn.objective(z)
-
         loss = self.criterion(output, y_true)
-        # loss.backward()
-        # self.optimizer.step()
+
+        if run==0:
+            loss.backward()
+            self.optimizer.step()
         # Y_hat.append(y_hat)
 
         # Y_hat = torch.cat(Y_hat, dim=0)

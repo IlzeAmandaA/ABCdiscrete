@@ -62,7 +62,7 @@ class ABC_Discrete():
                 #print('for run sim time ---- {} minutes ---'.format((time.time() - start_time) / 60))
                 # sys.exit()
 
-                error, loss = self.simulator.distance(x)
+                error, loss = self.simulator.distance(x, n)
                 # tol = np.random.exponential(self.tolerance)
 
                 if seed==0 and n%5==0:
@@ -78,8 +78,9 @@ class ABC_Discrete():
                     if alpha >= np.random.uniform(0,1):
                         population[i] = theta_
                         print('update')
-                        loss.backward()
-                        self.simulator.optimizer.step()
+                        if n>0:
+                            loss.backward()
+                            self.simulator.optimizer.step()
 
                     if n>500:
                         init_tol -= decr_tol
