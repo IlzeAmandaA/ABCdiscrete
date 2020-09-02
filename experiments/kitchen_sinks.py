@@ -109,7 +109,7 @@ class RandomKitchenSinks():
         return error
 
     def prior(self,theta):
-        return np.exp(-np.mean(theta))
+        return 1#np.exp(-np.mean(theta))
 
 
 
