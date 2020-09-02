@@ -65,7 +65,7 @@ class ABC_Discrete():
                 error = self.simulator.distance(x)
                 # tol = np.random.exponential(self.tolerance)
 
-                if seed==0 and n%10==0:
+                if seed==0 and n%5==0:
                     print(n, error)
 
                 if error <=init_tol:
