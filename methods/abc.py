@@ -34,6 +34,8 @@ class ABC_Discrete():
 
     def run(self, method, steps, seed):
         # print('Started the algorihtm')
+        if seed==0:
+            print(method)
 
         #initialize the population
         population = self.population.copy() #{0,1}
@@ -79,7 +81,8 @@ class ABC_Discrete():
                         population[i] = theta_
                         weights = self.simulator.nn.fc.weight.data
                         bias = self.simulator.nn.fc.bias.data
-                        print('update')
+                        if seed==0:
+                            print('update')
                         # if n>0:
                         #     self.simulator.loss.backward()
                         #     self.simulator.optimizer.step()
