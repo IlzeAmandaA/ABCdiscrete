@@ -178,9 +178,9 @@ if __name__ == '__main__':
     alg.initialize_population()
 
     # loop over possible proposal methods
-    for method in alg.settings:
-        error, x_pos, ac_ratio, population = alg.run(method, args.steps, 0)
-    # parallel(alg)
+    # for method in alg.settings:
+    #     error, x_pos, ac_ratio, population = alg.run(method, args.steps, 0)
+    parallel(alg)
 
 
     '''
