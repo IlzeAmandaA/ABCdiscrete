@@ -8,9 +8,11 @@ import sys
 
 class RandomKitchenSinks():
 
-    def __init__(self, inD=1, outD=10, C1=6, C2=32, F1=5, F2=3,
-                 rescale=14, N_data=20000, lr=0.01,
+    def __init__(self, inD=1, outD=10, C1=32, C2=64, F1=5, F2=3,
+                 rescale=14, N_data=10000, lr=0.01, batch_size=1000,
                  path = 'external'):
+
+        #c1=6, c2=32
 
         self.inD= inD
         self.c1=C1
@@ -19,12 +21,14 @@ class RandomKitchenSinks():
         self.f2= F2
         self.outD = outD
         self.N = N_data
+        self.batch_size = batch_size
+
 
 
         self.cuda_available = torch.cuda.is_available()
 
         self.trainloader = DataLoader(MNIST(image_size=(rescale, rescale), train=True, binary=False, train_size=N_data, path=path),
-                                 batch_size=1000, shuffle=True)
+                                 batch_size=self.batch_size, shuffle=True)
         # self.testloader = DataLoader(MNIST(l1=0, l2=1, image_size=(rescale, rescale), train=False),
         #                         batch_size=128, shuffle=True)
 
@@ -86,13 +90,22 @@ class RandomKitchenSinks():
     def distance(self, sim_output):
         z, y_true = sim_output
         self.nn.train()
+        error_avg = 0
+        Y_hat = []
 
-        self.optimizer.zero_grad()
-        output, error = self.nn.objective(z,y_true)
-        loss = self.criterion(output, y_true)
-        loss.backward()
-        self.optimizer.step()
+        for i in range(int(y_true/self.batch_size)):
+            x = z[i*self.batch_size : (i+1)*self.batch_size]
+            y = y_true[i*self.batch_size : (i+1)*self.batch_size]
 
+            self.optimizer.zero_grad()
+            output, y_hat = self.nn.objective(x)
+            loss = self.criterion(output, y)
+            loss.backward()
+            self.optimizer.step()
+            Y_hat.append(y_hat)
+
+        Y_hat = torch.cat(Y_hat, dim=0)
+        error = 1. - Y_hat.eq(y_true).cpu().float().mean().item()
         return error
 
     def prior(self,theta):

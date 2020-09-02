@@ -75,8 +75,7 @@ class FFNN(nn.Module):
         a = self.forward(z.view(z.size(0),-1))
         Y_prob = self.sm(a)
         Y_hat = torch.argmax(Y_prob, dim=1)
-        error = 1. - Y_hat.eq(Y).cpu().float().mean().item()
-        return a, error
+        return a, Y_hat
 
 
 """""
@@ -92,7 +91,7 @@ class BinaryConv2d(nn.Conv2d):
 
 
 class Binary_CNN(nn.Module):
-    def __init__(self, in_features=1, out_features=10, K1=32, K2=128, F1=5, F2=3):
+    def __init__(self, in_features=1, out_features=10, K1=32, K2=64, F1=5, F2=3):
         # in_features=1, out_features=10, K1=6, K2=32, F1=5, F2=3):
         super(Binary_CNN, self).__init__()
 
