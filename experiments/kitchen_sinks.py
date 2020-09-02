@@ -107,12 +107,15 @@ class RandomKitchenSinks():
         self.optimizer.zero_grad()
         output, y_hat = self.nn.objective(z)
 
-        if not eval:
-            self.loss = self.criterion(output, y_true)
 
-        if run==0:
-            self.loss.backward()
+        if not eval:
+            loss = self.criterion(output, y_true)
+            loss.backward()
             self.optimizer.step()
+
+        # if run==0:
+        #     self.loss.backward()
+        #     self.optimizer.step()
         # Y_hat.append(y_hat)
 
         # Y_hat = torch.cat(Y_hat, dim=0)
