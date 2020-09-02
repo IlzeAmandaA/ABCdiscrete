@@ -45,6 +45,10 @@ class ABC_Discrete():
         n=0
         acceptence_ratio=0.
 
+        init_tol = 0.8
+        decr_tol = 0.0002
+        red_tol = 0.0000001
+
         while n < steps:
 
 
@@ -59,16 +63,27 @@ class ABC_Discrete():
                 # sys.exit()
 
                 error = self.simulator.distance(x)
-                tol = np.random.exponential(self.tolerance)
-                if n%10==0:
+                # tol = np.random.exponential(self.tolerance)
+
+                if seed==0 and n%10==0:
                     print(n, error)
-                if error <=tol:
-                    print('error {} and tol {}'.format(error, tol))
+
+                if error <=init_tol:
+                    if seed==0:
+                        print('error {} and tol {}'.format(error, init_tol))
+
                     alpha = self.metropolis(theta_, population[i])
                     acceptence_ratio += 1 if n <= 10000 else 0
 
                     if alpha >= np.random.uniform(0,1):
                         population[i] = theta_
+
+                    if n>500:
+                        init_tol -= decr_tol
+                        decr_tol -= red_tol
+                        if n>0 and n%1000==0:
+                            decr_tol *= 10
+
                 n += 1
 
                 if n >= sample:
