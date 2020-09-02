@@ -91,35 +91,24 @@ class RandomKitchenSinks():
     def distance(self, sim_output, run=1, eval=False):
         z, y_true = sim_output
 
-        if not eval:
-            self.nn.train()
-        else:
-            self.nn.eval()
+        self.nn.train()
 
+        Y_hat = []
 
-        # error_avg = 0
-        # Y_hat = []
+        for i in range(int(y_true.shape[0]/self.batch_size)):
+            x = z[i*self.batch_size : (i+1)*self.batch_size]
+            y = y_true[i*self.batch_size : (i+1)*self.batch_size]
 
-        # for i in range(int(y_true.shape[0]/self.batch_size)):
-        #     x = z[i*self.batch_size : (i+1)*self.batch_size]
-        #     y = y_true[i*self.batch_size : (i+1)*self.batch_size]
-
-        self.optimizer.zero_grad()
-        output, y_hat = self.nn.objective(z)
-
-
-        if not eval:
+            self.optimizer.zero_grad()
+            output, y_hat = self.nn.objective(z)
             loss = self.criterion(output, y_true)
             loss.backward()
             self.optimizer.step()
 
-        # if run==0:
-        #     self.loss.backward()
-        #     self.optimizer.step()
-        # Y_hat.append(y_hat)
+            Y_hat.append(y_hat)
 
-        # Y_hat = torch.cat(Y_hat, dim=0)
-        error = 1. - y_hat.eq(y_true).cpu().float().mean().item()
+        Y_hat = torch.cat(Y_hat, dim=0)
+        error = 1. - Y_hat.eq(y_true).cpu().float().mean().item()
         return error
 
     def prior(self,theta):
