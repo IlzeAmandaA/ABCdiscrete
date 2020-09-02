@@ -93,20 +93,21 @@ class RandomKitchenSinks():
         error_avg = 0
         Y_hat = []
 
-        for i in range(int(y_true.shape[0]/self.batch_size)):
-            x = z[i*self.batch_size : (i+1)*self.batch_size]
-            y = y_true[i*self.batch_size : (i+1)*self.batch_size]
+        # for i in range(int(y_true.shape[0]/self.batch_size)):
+        #     x = z[i*self.batch_size : (i+1)*self.batch_size]
+        #     y = y_true[i*self.batch_size : (i+1)*self.batch_size]
 
-            self.optimizer.zero_grad()
-            output, y_hat = self.nn.objective(x)
-            loss = self.criterion(output, y)
-            loss.backward()
-            self.optimizer.step()
-            Y_hat.append(y_hat)
+        self.optimizer.zero_grad()
+        output, y_hat = self.nn.objective(z)
 
-        Y_hat = torch.cat(Y_hat, dim=0)
-        error = 1. - Y_hat.eq(y_true).cpu().float().mean().item()
-        return error
+        loss = self.criterion(output, y_true)
+        # loss.backward()
+        # self.optimizer.step()
+        # Y_hat.append(y_hat)
+
+        # Y_hat = torch.cat(Y_hat, dim=0)
+        error = 1. - y_hat.eq(y_true).cpu().float().mean().item()
+        return error, loss
 
     def prior(self,theta):
         return np.exp(-np.mean(theta))
