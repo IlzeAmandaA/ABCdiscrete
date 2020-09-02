@@ -62,7 +62,7 @@ class ABC_Discrete():
                 #print('for run sim time ---- {} minutes ---'.format((time.time() - start_time) / 60))
                 # sys.exit()
 
-                error, loss = self.simulator.distance(x, n)
+                error = self.simulator.distance(x, n)
                 # tol = np.random.exponential(self.tolerance)
 
                 if seed==0 and n%5==0:
@@ -79,7 +79,7 @@ class ABC_Discrete():
                         population[i] = theta_
                         print('update')
                         if n>0:
-                            loss.backward()
+                            self.simulator.loss.backward()
                             self.simulator.optimizer.step()
 
                     if n>500:
@@ -105,8 +105,7 @@ class ABC_Discrete():
         error = 0.
         for chain in chains:
             x = self.simulator.simulate(chain)
-            er, loss = self.simulator.distance(x, eval=True)
-            error += er
+            error += self.simulator.distance(x, eval=True)
         error /= len(chains)
         return error
 

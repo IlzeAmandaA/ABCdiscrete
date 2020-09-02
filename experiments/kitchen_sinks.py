@@ -22,6 +22,7 @@ class RandomKitchenSinks():
         self.outD = outD
         self.N = N_data
         self.batch_size = batch_size
+        self.loss = None
 
 
 
@@ -89,7 +90,7 @@ class RandomKitchenSinks():
 
     def distance(self, sim_output, run=1, eval=False):
         z, y_true = sim_output
-        loss=None
+
         if not eval:
             self.nn.train()
         else:
@@ -107,17 +108,16 @@ class RandomKitchenSinks():
         output, y_hat = self.nn.objective(z)
 
         if not eval:
-            loss = self.criterion(output, y_true)
+            self.loss = self.criterion(output, y_true)
 
         if run==0:
-            loss.backward()
+            self.loss.backward()
             self.optimizer.step()
-            print('backward')
         # Y_hat.append(y_hat)
 
         # Y_hat = torch.cat(Y_hat, dim=0)
         error = 1. - y_hat.eq(y_true).cpu().float().mean().item()
-        return error, loss
+        return error
 
     def prior(self,theta):
         return np.exp(-np.mean(theta))
