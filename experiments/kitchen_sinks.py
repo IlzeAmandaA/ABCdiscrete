@@ -112,6 +112,7 @@ class RandomKitchenSinks():
         if run==0:
             loss.backward()
             self.optimizer.step()
+            print('backward')
         # Y_hat.append(y_hat)
 
         # Y_hat = torch.cat(Y_hat, dim=0)
