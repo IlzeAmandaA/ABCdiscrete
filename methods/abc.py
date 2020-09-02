@@ -78,7 +78,9 @@ class ABC_Discrete():
                     if alpha >= np.random.uniform(0,1):
                         population[i] = theta_
                         print('update')
-                        # if n>0:
+                        if n>0:
+                            self.simulator.loss.backward()
+                            self.simulator.optimizer.step()
                         #     self.simulator.loss.backward()
                         #     self.simulator.optimizer.step()
 
