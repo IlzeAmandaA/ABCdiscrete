@@ -100,8 +100,8 @@ class RandomKitchenSinks():
             y = y_true[i*self.batch_size : (i+1)*self.batch_size]
 
             self.optimizer.zero_grad()
-            output, y_hat = self.nn.objective(z)
-            loss = self.criterion(output, y_true)
+            output, y_hat = self.nn.objective(x)
+            loss = self.criterion(output, y)
             loss.backward()
             self.optimizer.step()
 
