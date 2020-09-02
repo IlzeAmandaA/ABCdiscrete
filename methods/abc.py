@@ -105,7 +105,8 @@ class ABC_Discrete():
         error = 0.
         for chain in chains:
             x = self.simulator.simulate(chain)
-            error += self.simulator.distance(x)
+            er, loss = self.simulator.distance(x, eval=True)
+            error += er
         error /= len(chains)
         return error
 

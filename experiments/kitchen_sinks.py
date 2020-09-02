@@ -87,11 +87,16 @@ class RandomKitchenSinks():
 
             return (z, y_true)
 
-    def distance(self, sim_output, run):
+    def distance(self, sim_output, run=1, eval=False):
         z, y_true = sim_output
-        self.nn.train()
-        error_avg = 0
-        Y_hat = []
+        if not eval:
+            self.nn.train()
+        else:
+            self.nn.eval()
+
+
+        # error_avg = 0
+        # Y_hat = []
 
         # for i in range(int(y_true.shape[0]/self.batch_size)):
         #     x = z[i*self.batch_size : (i+1)*self.batch_size]
@@ -99,7 +104,9 @@ class RandomKitchenSinks():
 
         self.optimizer.zero_grad()
         output, y_hat = self.nn.objective(z)
-        loss = self.criterion(output, y_true)
+
+        if not eval:
+            loss = self.criterion(output, y_true)
 
         if run==0:
             loss.backward()
