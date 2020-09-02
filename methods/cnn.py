@@ -71,7 +71,7 @@ class FFNN(nn.Module):
         out = self.fc(z)
         return out
 
-    def objective(self,z,Y):
+    def objective(self,z):
         a = self.forward(z.view(z.size(0),-1))
         Y_prob = self.sm(a)
         Y_hat = torch.argmax(Y_prob, dim=1)
