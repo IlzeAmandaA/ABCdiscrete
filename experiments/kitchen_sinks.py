@@ -91,24 +91,48 @@ class RandomKitchenSinks():
     def distance(self, sim_output, run=1, eval=False):
         z, y_true = sim_output
 
-        self.nn.train()
+        if not eval:
 
-        Y_hat = []
+            self.nn.train()
 
-        for i in range(int(y_true.shape[0]/self.batch_size)):
-            x = z[i*self.batch_size : (i+1)*self.batch_size]
-            y = y_true[i*self.batch_size : (i+1)*self.batch_size]
+            Y_hat = []
 
-            self.optimizer.zero_grad()
-            output, y_hat = self.nn.objective(x)
-            loss = self.criterion(output, y)
-            loss.backward()
-            self.optimizer.step()
+            for i in range(int(y_true.shape[0]/self.batch_size)):
+                x = z[i*self.batch_size : (i+1)*self.batch_size]
+                y = y_true[i*self.batch_size : (i+1)*self.batch_size]
 
-            Y_hat.append(y_hat)
+                self.optimizer.zero_grad()
+                output, y_hat = self.nn.objective(x)
+                loss = self.criterion(output, y)
+                loss.backward()
+                self.optimizer.step()
 
-        Y_hat = torch.cat(Y_hat, dim=0)
-        error = 1. - Y_hat.eq(y_true).cpu().float().mean().item()
+                Y_hat.append(y_hat)
+
+            Y_hat = torch.cat(Y_hat, dim=0)
+            error = 1. - Y_hat.eq(y_true).cpu().float().mean().item()
+
+        else:
+
+            self.nn.eval()
+
+            Y_hat = []
+
+            for i in range(int(y_true.shape[0] / self.batch_size)):
+                x = z[i * self.batch_size: (i + 1) * self.batch_size]
+                y = y_true[i * self.batch_size: (i + 1) * self.batch_size]
+
+                # self.optimizer.zero_grad()
+                output, y_hat = self.nn.objective(x)
+                # loss = self.criterion(output, y)
+                # loss.backward()
+                # self.optimizer.step()
+
+                Y_hat.append(y_hat)
+
+            Y_hat = torch.cat(Y_hat, dim=0)
+            error = 1. - Y_hat.eq(y_true).cpu().float().mean().item()
+
         return error
 
     def prior(self,theta):
