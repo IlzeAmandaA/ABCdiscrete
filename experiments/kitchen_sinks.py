@@ -89,6 +89,7 @@ class RandomKitchenSinks():
 
     def distance(self, sim_output, run=1, eval=False):
         z, y_true = sim_output
+        loss=None
         if not eval:
             self.nn.train()
         else:
