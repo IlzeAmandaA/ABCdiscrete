@@ -77,10 +77,12 @@ class ABC_Discrete():
 
                     if alpha >= np.random.uniform(0,1):
                         population[i] = theta_
+                        weights = self.simulator.nn.fc.weight.data
+                        bias = self.simulator.nn.fc.bias.data
                         print('update')
-                        if n>0:
-                            self.simulator.loss.backward()
-                            self.simulator.optimizer.step()
+                        # if n>0:
+                        #     self.simulator.loss.backward()
+                        #     self.simulator.optimizer.step()
                         #     self.simulator.loss.backward()
                         #     self.simulator.optimizer.step()
 
@@ -89,6 +91,8 @@ class ABC_Discrete():
                         decr_tol -= red_tol
                         if n>0 and n%1000==0:
                             decr_tol *= 10
+                else:
+                    self.simulator.reset(weights, bias)
 
                 n += 1
 
