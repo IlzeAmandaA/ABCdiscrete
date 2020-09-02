@@ -93,7 +93,7 @@ class RandomKitchenSinks():
         error_avg = 0
         Y_hat = []
 
-        for i in range(int(y_true/self.batch_size)):
+        for i in range(int(y_true.shape[0]/self.batch_size)):
             x = z[i*self.batch_size : (i+1)*self.batch_size]
             y = y_true[i*self.batch_size : (i+1)*self.batch_size]
 
