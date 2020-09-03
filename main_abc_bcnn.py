@@ -175,7 +175,7 @@ if __name__ == '__main__':
     '''
     Run the algortihm in parallel mode
     '''
-    alg.initialize_population()
+    # alg.initialize_population()
 
     # loop over possible proposal methods
     # for method in alg.settings:

@@ -107,7 +107,7 @@ class ABC_Discrete():
 
 
         acceptence_ratio = (acceptence_ratio/10000)*100
-        return error, xlim, acceptence_ratio, population
+        return error_pop, xlim, acceptence_ratio, population
 
 
     def pop_error(self, chains):
