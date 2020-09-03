@@ -26,7 +26,7 @@ parser.add_argument('--eval', type=int, default=15, metavar='int',
 parser.add_argument('--exp', type=str, default='dde-mc', metavar='str',
                     help='proposal selection')
 
-parser.add_argument('--epsilon', type=float, default=0.1, metavar='float',
+parser.add_argument('--epsilon', type=float, default=0.2, metavar='float',
                     help='distance threshold')
 
 parser.add_argument('--alg', type=str, default = 'abc', metavar='str',

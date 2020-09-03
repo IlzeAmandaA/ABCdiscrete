@@ -47,9 +47,9 @@ class ABC_Discrete():
         n=0
         acceptence_ratio=0.
 
-        init_tol = 0.6
-        decr_tol = 0.0002
-        red_tol = 0.0000001
+        # init_tol = 0.6
+        # decr_tol = 0.0002
+        # red_tol = 0.0000001
 
         while n < steps:
 
@@ -65,7 +65,7 @@ class ABC_Discrete():
                 # sys.exit()
 
                 error = self.simulator.distance(x, n)
-                # tol = np.random.exponential(self.tolerance)
+                init_tol = np.random.exponential(self.tolerance)
 
                 if seed==0 and n%5==0:
                     print(n, error)
@@ -89,11 +89,11 @@ class ABC_Discrete():
                         #     self.simulator.loss.backward()
                         #     self.simulator.optimizer.step()
 
-                    if n>500:
-                        init_tol -= decr_tol
-                        decr_tol -= red_tol
-                        if n>0 and n%1000==0:
-                            decr_tol *= 10
+                    # if n>500:
+                    #     init_tol -= decr_tol
+                    #     decr_tol -= red_tol
+                    #     if n>0 and n%1000==0:
+                    #         decr_tol *= 10
                 else:
                     self.simulator.reset(weights, bias)
 
