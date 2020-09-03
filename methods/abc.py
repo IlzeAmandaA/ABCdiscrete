@@ -67,6 +67,10 @@ class ABC_Discrete():
                 error = self.simulator.distance(x, n)
                 init_tol = np.random.exponential(self.tolerance)
 
+                if n==0:
+                    weights = self.simulator.nn.fc.weight.data
+                    bias = self.simulator.nn.fc.bias.data
+
                 if seed==0 and n%5==0:
                     print(n, error)
 
