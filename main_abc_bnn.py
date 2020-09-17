@@ -56,6 +56,7 @@ def initialize(run_seed, simulation):
     For every run initialize the chains with different initial  distribution
     '''
     np.random.seed(run_seed)
+    simulation.initialize_chains()
 
     #loop over possible proposal methods
     for method in simulation.settings:
