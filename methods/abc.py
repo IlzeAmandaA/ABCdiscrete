@@ -46,72 +46,52 @@ class ABC_Discrete():
 
         n=0
         acceptence_ratio=0.
-
-        # init_tol = 0.6
-        # decr_tol = 0.0002
-        # red_tol = 0.0000001
+        print_t=10000
+        start_time = time.time()
+        store_data = 5
+        start_store = steps - ((store_data*self.N)+1)
+        parameter_dict = {}
 
         while n < steps:
 
+            if n==start_store:
+                id = 1
+                parameter_dict[str(id)]=population
+                id+=1
+                start_store+=self.N
 
             for i in range(len(population)):
                 theta_ = self.proposal(population, i, method)
-                # print('proposal obtined')
-                # print('theta shape {}'.format(theta_.shape))
-                # print('values of theta {}'.format(set(theta_)))
-                start_time = time.time()
+                # # print('proposal obtined')
+                # # print('theta shape {}'.format(theta_.shape))
+                # # print('values of theta {}'.format(set(theta_)))
+
                 x=self.simulator.simulate(theta_)
                 #print('for run sim time ---- {} minutes ---'.format((time.time() - start_time) / 60))
                 # sys.exit()
 
-                error = self.simulator.distance(x, n)
-                init_tol = np.random.exponential(self.tolerance)
-
-                if n==0:
-                    weights = self.simulator.nn.fc.weight.data
-                    bias = self.simulator.nn.fc.bias.data
-
-                if seed==0 and n%5==0:
-                    print(n, error)
-
-                if error <= init_tol:
-                    if seed==0:
-                        print('error {} and tol {}'.format(error, init_tol))
-
+                if self.simulator.distance(x) <= np.random.exponential(self.tolerance):
                     alpha = self.metropolis(theta_, population[i])
                     acceptence_ratio += 1 if n <= 10000 else 0
 
-                    if alpha >= np.random.uniform(0,1):
+                    if alpha >= np.random.uniform(0, 1):
                         population[i] = theta_
-                        weights = self.simulator.nn.fc.weight.data
-                        bias = self.simulator.nn.fc.bias.data
-                        if seed==0:
-                            print('update')
-                        # if n>0:
-                        #     self.simulator.loss.backward()
-                        #     self.simulator.optimizer.step()
-                        #     self.simulator.loss.backward()
-                        #     self.simulator.optimizer.step()
-
-                    # if n>500:
-                    #     init_tol -= decr_tol
-                    #     decr_tol -= red_tol
-                    #     if n>0 and n%1000==0:
-                    #         decr_tol *= 10
-                else:
-                    self.simulator.reset(weights, bias)
 
                 n += 1
 
                 if n >= sample:
-                    # print(n)
                     error_pop.append(self.pop_error(population))
                     xlim.append(n)
                     sample += 1000 #1500
 
+                if n>=print_t and seed==0:
+                    print('for run n {} sim time ---- {} minutes ---'.format(n,(time.time() - start_time) / 60))
+
+
 
         acceptence_ratio = (acceptence_ratio/10000)*100
-        return error_pop, xlim, acceptence_ratio, population
+        #return error_pop, xlim, acceptence_ratio, population
+        return error_pop, xlim, acceptence_ratio, parameter_dict
 
 
     def pop_error(self, chains):
