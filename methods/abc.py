@@ -77,7 +77,7 @@ class ABC_Discrete():
 
                 if n>=print_t and seed==0:
                     print('for run n {} sim time ---- {} minutes ---'.format(n,(time.time() - start_time) / 60))
-                    print_t += print_t
+                    print_t += 1000
 
 
 
