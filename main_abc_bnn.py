@@ -41,7 +41,7 @@ SEED_MODEL=1
 
 
 
-def run(run_seed, simulation):
+def initialize(run_seed, simulation):
     print(run_seed)
     start_time = time.time()
 
@@ -59,7 +59,7 @@ def run(run_seed, simulation):
 
     #loop over possible proposal methods
     for method in simulation.settings:
-        error, x_pos, ac_ratio, population = simulation.run_abc(method, args.steps)
+        error, x_pos, ac_ratio, population = simulation.run(method, args.steps)
 
         pop[method] = error
         x[method] = x_pos
@@ -81,7 +81,7 @@ def parallel(simulation):
     pool = mp.Pool(processes=15)
 
     for k in range(args.eval):
-        pool.apply_async(run, (k,simulation), callback=collect_result)
+        pool.apply_async(initialize, (k,simulation), callback=collect_result)
 
     pool.close()
     pool.join()
@@ -205,7 +205,6 @@ if __name__ == '__main__':
     Run the algortihm in parallel mode
     '''
     parallel(alg)
-
 
     '''
     Report the results 
