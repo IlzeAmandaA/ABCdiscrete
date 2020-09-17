@@ -46,16 +46,17 @@ class ABC_Discrete():
         store_data = 5
         start_store = steps - ((store_data*self.N)+1)
         parameter_dict = {}
+        id = 1
 
         while n < steps:
 
             if n>=start_store:
-                id = 1
                 parameter_dict[str(id)]=population
-                id+=1
-                start_store+=self.N
                 if seed==0:
                     print('stored values : {}'.format(id))
+                id+=1
+                start_store+=self.N
+
 
             for i in range(len(population)):
                 theta_ = self.proposal(population, i, method)
@@ -83,6 +84,7 @@ class ABC_Discrete():
 
         acceptence_ratio = (acceptence_ratio/10000)*100
         #return error_pop, xlim, acceptence_ratio, population
+
         return error_pop, xlim, acceptence_ratio, parameter_dict
 
 
