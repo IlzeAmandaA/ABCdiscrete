@@ -179,7 +179,7 @@ if __name__ == '__main__':
         acceptance_r[prop] = []
         pop_c[prop] =[]
 
-    for id in args.eval:
+    for id in range(args.eval):
         pop_store[str(id)]={}
 
 
