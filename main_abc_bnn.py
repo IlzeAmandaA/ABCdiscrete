@@ -203,7 +203,6 @@ if __name__ == '__main__':
     '''
         
     Run the algortihm in parallel mode
-    
     '''
     parallel(alg)
 

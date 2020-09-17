@@ -46,7 +46,7 @@ class ABC_Discrete():
 
         n=0
         acceptence_ratio=0.
-        print_t=10000
+        print_t=1000
         start_time = time.time()
         store_data = 5
         start_store = steps - ((store_data*self.N)+1)
