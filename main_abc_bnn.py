@@ -28,7 +28,7 @@ parser.add_argument('--eval', type=int, default=5, metavar='int',
 parser.add_argument('--exp', type=str, default='dde-mc', metavar='str',
                     help='proposal selection')
 
-parser.add_argument('--epsilon', type=float, default=0.1, metavar='float',
+parser.add_argument('--epsilon', type=float, default=0.04, metavar='float',
                     help='distance threshold')
 
 parser.add_argument('--alg', type=str, default = 'abc', metavar='str',
@@ -71,6 +71,7 @@ def process(run_seed, simulation):
     post=0
 
     print('for run {} time ---- {} minutes ---'.format(run_seed, (time.time() - start_time) / 60))
+    print(chains)
 
     return (pop, x, ratio, run_var, run_seed, chains)
 
@@ -91,7 +92,8 @@ def parallel(simulation):
 
 def collect_result(outcome):
     # for result in result_list:
-    pop, x, r, var, run_id, post = outcome
+    #pop, x, r, var, run_id, post = outcome
+    pop, x, r, var, run_id, pop_s = outcome
 
     global pop_error
     for key, value in pop.items():
@@ -105,9 +107,12 @@ def collect_result(outcome):
     for key,value in r.items():
         acceptance_r[key].append(value)
 
-    global pop_c
-    for key,value in post.items():
-        pop_c[key].append(value)
+    # global pop_c
+    # for key,value in post.items():
+    #     pop_c[key].append(value)
+
+    global pop_store
+    pop_store[str(run_id)] = pop_s
 
 
 
@@ -166,12 +171,16 @@ if __name__ == '__main__':
     xlim = {}
     acceptance_r ={}
     pop_c ={}
+    pop_store={}
 
     for prop in set_proposals:
         pop_error[prop] = []
         xlim[prop]=[]
         acceptance_r[prop] = []
         pop_c[prop] =[]
+
+    for id in args.eval:
+        pop_store[str(id)]={}
 
 
     '''
@@ -206,7 +215,8 @@ if __name__ == '__main__':
     print('finihsed parallel computing')
     pkl.dump(xlim, open(store + '/xlim'+ str(args.epsilon)+'.pkl', 'wb'))
     pkl.dump(pop_error, open(store+'/pop_error'+ str(args.epsilon)+ '.pkl', 'wb'))
-    pkl.dump(pop_c,open(store+'/pop_c'+ str(args.epsilon)+ '.pkl', 'wb'))
+    #pkl.dump(pop_c,open(store+'/pop_c'+ str(args.epsilon)+ '.pkl', 'wb'))
+    pkl.dump(pop_store,open(store+'/pop_store'+ str(args.epsilon)+ '.pkl', 'wb'))
     create_plot(pop_error, xlim, store +'/pop_error'+ str(args.epsilon), 'error')
 
 
