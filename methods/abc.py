@@ -59,14 +59,18 @@ class ABC_Discrete():
                 parameter_dict[str(id)]=population
                 id+=1
                 start_store+=self.N
+                if seed==0:
+                    print('stored values : {}'.format(id))
 
             for i in range(len(population)):
                 theta_ = self.proposal(population, i, method)
+                print('propsal got')
                 # # print('proposal obtined')
                 # # print('theta shape {}'.format(theta_.shape))
                 # # print('values of theta {}'.format(set(theta_)))
 
                 x=self.simulator.simulate(theta_)
+                print('got x')
                 #print('for run sim time ---- {} minutes ---'.format((time.time() - start_time) / 60))
                 # sys.exit()
 
@@ -98,7 +102,7 @@ class ABC_Discrete():
         error = 0.
         for chain in chains:
             x = self.simulator.simulate(chain)
-            error += self.simulator.distance(x, eval=True)
+            error += self.simulator.distance(x, eval=False)
         error /= len(chains)
         return error
 
