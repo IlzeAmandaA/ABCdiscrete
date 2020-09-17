@@ -49,7 +49,7 @@ class ABC_Discrete():
 
         while n < steps:
 
-            if n==start_store:
+            if n>=start_store:
                 id = 1
                 parameter_dict[str(id)]=population
                 id+=1
