@@ -60,7 +60,7 @@ def initialize(run_seed, simulation):
 
     #loop over possible proposal methods
     for method in simulation.settings:
-        error, x_pos, ac_ratio, population = simulation.run(method, args.steps)
+        error, x_pos, ac_ratio, population = simulation.run(method, args.steps, run_seed)
 
         pop[method] = error
         x[method] = x_pos
@@ -206,6 +206,11 @@ if __name__ == '__main__':
     Run the algortihm in parallel mode
     '''
     parallel(alg)
+    # alg.initialize_population()
+    #
+    # # loop over possible proposal methods
+    # for method in simulation.settings:
+    #     error, x_pos, ac_ratio, population = simulation.run(method, args.steps)
     '''
     Report the results 
     
