@@ -41,7 +41,7 @@ SEED_MODEL=1
 
 
 
-def initialize(run_seed, simulation):
+def process(run_seed, simulation):
     print(run_seed)
     start_time = time.time()
 
@@ -82,7 +82,7 @@ def parallel(simulation):
     pool = mp.Pool(processes=15)
 
     for k in range(args.eval):
-        pool.apply_async(initialize, (k,simulation), callback=collect_result)
+        pool.apply_async(process, (k,simulation), callback=collect_result)
 
     pool.close()
     pool.join()
@@ -109,14 +109,6 @@ def collect_result(outcome):
     for key,value in post.items():
         pop_c[key].append(value)
 
-    # global variability
-    # variability = var
-    #
-    # global output_post
-    # output_post[run_id+1] = post[0]
-    #
-    # global output_true
-    # output_true[run_id+1] = post[1]
 
 
 def compute_variability(matrix):
@@ -206,11 +198,6 @@ if __name__ == '__main__':
     Run the algortihm in parallel mode
     '''
     parallel(alg)
-    # alg.initialize_population()
-    #
-    # # loop over possible proposal methods
-    # for method in simulation.settings:
-    #     error, x_pos, ac_ratio, population = simulation.run(method, args.steps)
     '''
     Report the results 
     

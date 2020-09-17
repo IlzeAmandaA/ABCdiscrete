@@ -28,16 +28,11 @@ class ABC_Discrete():
             # self.model.generate_population(self.N)
 
 
-    # def sample_chain(self):
-    #     return np.random.binomial(1, .5, self.model.D)
-    #
-
     def run(self, method, steps, seed):
-        # print('Started the algorihtm')
         if seed==0:
             print(method)
 
-        #initialize the population
+        #copy the pop
         population = self.population.copy() #{0,1}
 
         error_pop = []
@@ -64,15 +59,7 @@ class ABC_Discrete():
 
             for i in range(len(population)):
                 theta_ = self.proposal(population, i, method)
-                print('propsal got')
-                # # print('proposal obtined')
-                # # print('theta shape {}'.format(theta_.shape))
-                # # print('values of theta {}'.format(set(theta_)))
-
                 x=self.simulator.simulate(theta_)
-                print('got x')
-                #print('for run sim time ---- {} minutes ---'.format((time.time() - start_time) / 60))
-                # sys.exit()
 
                 if self.simulator.distance(x) <= np.random.exponential(self.tolerance):
                     alpha = self.metropolis(theta_, population[i])
