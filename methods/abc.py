@@ -38,11 +38,11 @@ class ABC_Discrete():
 
         error_pop = []
         xlim=[]
-        sample = 250
+        sample = 1000
 
         n=0
         acceptence_ratio=0.
-        print_t=1000
+        print_t=10000
         start_time = time.time()
         store_data = 5
         start_store = steps - ((store_data*self.N)+1)
@@ -77,7 +77,7 @@ class ABC_Discrete():
 
                 if n>=print_t and seed==0:
                     print('for run {} {} sim time ---- {} minutes ---'.format(n, method, (time.time() - start_time) / 60))
-                    print_t += 1000
+                    print_t += 10000
                     start_time = time.time()
 
 
