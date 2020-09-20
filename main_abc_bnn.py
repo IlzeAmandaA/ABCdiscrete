@@ -55,19 +55,24 @@ def execute(method, simulation, runid):
 def parallel(simulation):
     pool = mp.Pool(processes=15)
 
-    N_prop = len(simulation.settings)
-    prop_types = list(simulation.settings.keys())
-    diff = N_prop
-    seed= 1
+    # N_prop = len(simulation.settings)
+    # prop_types = list(simulation.settings.keys())
+    # diff = N_prop
+    # seed= 1
+    #
+    # for k in range(args.eval*N_prop):
+    #     if k < N_prop:
+    #         pool.apply_async(execute, (prop_types[k], simulation, seed-1), callback=log_result)
+    #     else:
+    #         pool.apply_async(execute, (prop_types[k - diff], simulation, seed), callback=log_result)
+    #         if k>diff:
+    #             diff += N_prop
+    #             seed +=1
 
-    for k in range(args.eval*N_prop):
-        if k < N_prop:
-            pool.apply_async(execute, (prop_types[k], simulation, seed-1), callback=log_result)
-        else:
-            pool.apply_async(execute, (prop_types[k - diff], simulation, seed), callback=log_result)
-            if k>diff:
-                diff += N_prop
-                seed +=1
+    for k in range(args.eval):
+        for prop in simulation.settings:
+            pool.apply_async(execute, (prop, simulation,k), callback=log_result)
+
     pool.close()
     pool.join()
 
