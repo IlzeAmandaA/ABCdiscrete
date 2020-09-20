@@ -29,7 +29,7 @@ class ABC_Discrete():
 
 
     def run(self, method, steps, seed):
-        start_time = time.time()
+        initial_time = time.time()
         if seed==0:
             print(method)
 
@@ -85,7 +85,7 @@ class ABC_Discrete():
         #return error_pop, xlim, acceptence_ratio, population
 
 
-        print('for run {} time ---- {} minutes ---'.format(seed, (time.time() - start_time) / 60))
+        print('for run {} time ---- {} minutes ---'.format(seed, (time.time() - initial_time) / 60))
 
         return error_pop, xlim, acceptence_ratio, parameter_dict
 
