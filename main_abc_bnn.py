@@ -41,8 +41,10 @@ SEED_MODEL=1
 
 
 
-def process(method, simulation, runid):
+def execute(method, simulation, runid):
 
+    np.random.seed(runid)
+    simulation.initialize_population()
     error, x_pos, ac_ratio, population = simulation.run(method, args.steps, runid)
 
     return (method, runid, error, x_pos, ac_ratio, population)
@@ -53,18 +55,19 @@ def process(method, simulation, runid):
 def parallel(simulation):
     pool = mp.Pool(processes=15)
 
+    N_prop = len(simulation.settings)
+    prop_types = list(simulation.settings.keys)
+    diff = N_prop
+    seed= 1
 
-    for k in range(args.eval):
-        print('run {}'.format(k))
-
-        '''
-        For every run initialize the chains with different initial  distribution
-        '''
-        np.random.seed(k)
-        simulation.initialize_population()
-
-        for proposal in simulation.settings:
-            pool.apply_async(process, (proposal,simulation, k), callback=log_result)
+    for k in range(args.eval*N_prop):
+        if k < N_prop:
+            pool.apply_async(execute, (prop_types[k], simulation, seed-1), callback=log_result)
+        else:
+            pool.apply_async(execute, (prop_types[k - diff], simulation, seed), callback=log_result)
+            if k>diff:
+                diff += N_prop
+                seed +=1
 
     print('finihsed pool')
     pool.close()
