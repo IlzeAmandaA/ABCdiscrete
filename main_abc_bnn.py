@@ -68,8 +68,6 @@ def parallel(simulation):
             if k>diff:
                 diff += N_prop
                 seed +=1
-
-    print('finihsed pool')
     pool.close()
     pool.join()
 
@@ -207,6 +205,7 @@ if __name__ == '__main__':
     Run the algortihm in parallel mode
     '''
     parallel(alg)
+    print('out of alg')
 
     '''
     Report the results 
