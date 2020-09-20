@@ -79,7 +79,7 @@ class ABC_Discrete():
                 if n>=print_t and seed==0:
                     print('for run n {} sim time ---- {} minutes ---'.format(n,(time.time() - start_time) / 60))
                     print_t += 1000
-
+                    start_time = time.time()
 
 
         acceptence_ratio = (acceptence_ratio/10000)*100

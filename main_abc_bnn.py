@@ -13,7 +13,7 @@ import time
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
 parser.add_argument('--seq', default=False, action='store_true',
                     help='Flag to run the simulation in parallel processing')
-parser.add_argument('--steps', type=int, default=300000, metavar='int',
+parser.add_argument('--steps', type=int, default=5000, metavar='int',
                     help='evaluation steps') #600000
 parser.add_argument('--seed', type=int, default=0, metavar='int',
                     help='seed')
@@ -41,39 +41,13 @@ SEED_MODEL=1
 
 
 
-def process(run_seed, simulation):
-    print(run_seed)
-    start_time = time.time()
+def process(method, simulation, runid):
 
-    pop={}
-    x={}
-    ratio={}
-    run_var = []
-    chains = {}
+    error, x_pos, ac_ratio, population = simulation.run(method, args.steps, runid)
 
+    return (method, runid, error, x_pos, ac_ratio, population)
 
-    '''
-    For every run initialize the chains with different initial  distribution
-    '''
-    np.random.seed(run_seed)
-    simulation.initialize_population()
-
-    #loop over possible proposal methods
-    for method in simulation.settings:
-        error, x_pos, ac_ratio, population = simulation.run(method, args.steps, run_seed)
-
-        pop[method] = error
-        x[method] = x_pos
-        ratio[method] = ac_ratio
-        chains[method] = population
-
-  #  post = report_posterior(simulation, run_seed, chains, store+'/posterior' +str(args.epsilon))
-    post=0
-
-    print('for run {} time ---- {} minutes ---'.format(run_seed, (time.time() - start_time) / 60))
-    print(chains)
-
-    return (pop, x, ratio, run_var, run_seed, chains)
+    # return (pop, x, ratio, run_var, run_seed, chains)
 
 
 
@@ -82,11 +56,35 @@ def parallel(simulation):
 
     pool = mp.Pool(processes=15)
 
+
     for k in range(args.eval):
-        pool.apply_async(process, (k,simulation), callback=collect_result)
+        '''
+        For every run initialize the chains with different initial  distribution
+        '''
+        np.random.seed(k)
+        simulation.initialize_population()
+        start_time = time.time()
+        for proposal in simulation.settings:
+            pool.apply_async(process, (proposal,simulation, k), callback=log_result)
+        print('for run {} time ---- {} minutes ---'.format(k, (time.time() - start_time) / 60))
 
     pool.close()
     pool.join()
+
+def log_result(result):
+    method, runid, error, x_pos, ac_ratio, population = result
+
+    global pop_error
+    pop_error[method].append(error)
+
+    global xlim
+    xlim[method].append(x_pos)
+
+    global acceptance_r
+    acceptance_r[method] = ac_ratio
+
+    global pop_store
+    pop_store[runid][method] = population
 
 
 
@@ -207,6 +205,7 @@ if __name__ == '__main__':
     Run the algortihm in parallel mode
     '''
     parallel(alg)
+
     '''
     Report the results 
     
