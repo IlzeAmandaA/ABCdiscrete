@@ -56,7 +56,7 @@ def parallel(simulation):
     pool = mp.Pool(processes=15)
 
     N_prop = len(simulation.settings)
-    prop_types = list(simulation.settings.keys)
+    prop_types = list(simulation.settings.keys())
     diff = N_prop
     seed= 1
 
