@@ -66,6 +66,7 @@ def parallel(simulation):
         for proposal in simulation.settings:
             pool.apply_async(process, (proposal,simulation, k), callback=log_result)
 
+    print('finihsed pool')
     pool.close()
     pool.join()
 

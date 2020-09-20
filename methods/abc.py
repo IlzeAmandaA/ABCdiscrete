@@ -84,7 +84,6 @@ class ABC_Discrete():
         acceptence_ratio = (acceptence_ratio/10000)*100
         #return error_pop, xlim, acceptence_ratio, population
 
-
         print('for run {} time ---- {} minutes ---'.format(seed, (time.time() - initial_time) / 60))
 
         return error_pop, xlim, acceptence_ratio, parameter_dict
