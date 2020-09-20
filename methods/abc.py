@@ -29,6 +29,7 @@ class ABC_Discrete():
 
 
     def run(self, method, steps, seed):
+        start_time = time.time()
         if seed==0:
             print(method)
 
@@ -52,8 +53,6 @@ class ABC_Discrete():
 
             if n>=start_store:
                 parameter_dict[str(id)]=population
-                if seed==0:
-                    print('stored values : {}'.format(id))
                 id+=1
                 start_store+=self.N
 
@@ -84,6 +83,9 @@ class ABC_Discrete():
 
         acceptence_ratio = (acceptence_ratio/10000)*100
         #return error_pop, xlim, acceptence_ratio, population
+
+
+        print('for run {} time ---- {} minutes ---'.format(seed, (time.time() - start_time) / 60))
 
         return error_pop, xlim, acceptence_ratio, parameter_dict
 

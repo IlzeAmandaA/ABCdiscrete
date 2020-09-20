@@ -13,7 +13,7 @@ import time
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
 parser.add_argument('--seq', default=False, action='store_true',
                     help='Flag to run the simulation in parallel processing')
-parser.add_argument('--steps', type=int, default=5000, metavar='int',
+parser.add_argument('--steps', type=int, default=3000, metavar='int',
                     help='evaluation steps') #600000
 parser.add_argument('--seed', type=int, default=0, metavar='int',
                     help='seed')
@@ -50,23 +50,21 @@ def process(method, simulation, runid):
     # return (pop, x, ratio, run_var, run_seed, chains)
 
 
-
 def parallel(simulation):
-    print('settings {} & running python in parallel mode with seed {}'.format(args.exp,args.seed))
-
     pool = mp.Pool(processes=15)
 
 
     for k in range(args.eval):
+        print('run {}'.format(k))
+
         '''
         For every run initialize the chains with different initial  distribution
         '''
         np.random.seed(k)
         simulation.initialize_population()
-        start_time = time.time()
+
         for proposal in simulation.settings:
             pool.apply_async(process, (proposal,simulation, k), callback=log_result)
-        print('for run {} time ---- {} minutes ---'.format(k, (time.time() - start_time) / 60))
 
     pool.close()
     pool.join()
