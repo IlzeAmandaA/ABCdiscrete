@@ -84,7 +84,7 @@ def log_result(result):
     acceptance_r[method] = ac_ratio
 
     global pop_store
-    pop_store[runid][method] = population
+    pop_store[str(runid)][method] = population
 
 
 
