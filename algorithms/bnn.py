@@ -5,8 +5,6 @@ from torch.autograd import Function
 import torch.nn.functional as F
 
 
-
-
 class BinarizeF(Function):
     @staticmethod
     def forward(ctx, input):
@@ -21,23 +19,7 @@ class BinarizeF(Function):
         grad_input = grad_output.clone()
         return grad_input
 
-
-class BinarizeR(Function):
-    @staticmethod
-    def forward(ctx, input):
-        output = input.new(input.size())
-        output[input > 0] = 1
-        output[input == 0] = -1
-        return output
-
-    @staticmethod
-    def backward(ctx, grad_output):
-        grad_input = grad_output.clone()
-        return grad_input
-
-
 binarize = BinarizeF.apply
-binarize_ReLu = BinarizeR.apply
 
 class BinaryTanh(nn.Module):
     def __init__(self):
@@ -59,18 +41,6 @@ class BinaryLinear(nn.Linear):
         else:
             return F.linear(input, binary_weight, self.bias)
 
-        # if not hasattr(self.weight, 'org'):
-        #     self.weight.org = self.weight.data.clone()
-        # self.weight.data = binarize(self.weight.org)
-        # # print(input.type())
-        # # print(self.weight.type())
-        # out = nn.functional.linear(input, self.weight)
-        # if not self.bias is None:
-        #     print('there is a bias term')
-        #     self.bias.org = self.bias.data.clone()
-        #     out += self.bias.view(1,-1).expand_as(out)
-        #
-        # return out
 
 
 class Network(nn.Module):
@@ -86,8 +56,6 @@ class Network(nn.Module):
 
     def forward(self, x):
         out = self.fc1(x)
-        out = F.relu(out)
-        out = binarize_ReLu(out)
         out = self.fc2(out)
         y_hat = torch.ge(out, 0.5).float().squeeze()
 
@@ -102,7 +70,6 @@ class Network(nn.Module):
 
     def calculate_classification_error(self, X,Y):
         _, Y_hat = self.forward(X)
-        error = 1. - Y_hat.eq(Y).cpu().float().mean().item()  # .data[0]
-        #error = Y_hat.eq(Y).cpu().float().mean().item()  # .data[0]
+        error = 1. - Y_hat.eq(Y).cpu().float().mean().item()
         return error, Y_hat
 

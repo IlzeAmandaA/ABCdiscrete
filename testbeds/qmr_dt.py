@@ -1,13 +1,15 @@
 import numpy as np
+from testbeds.main_usecase import Testbed
 
 """
 QMR-DT Network
 """
 
 
-class QMR_DT():
+class QMR_DT(Testbed):
 
     def __init__(self, m=10, f=20, a_p = 0.9):
+        super(QMR_DT, self).__init__()
 
         self.D = m
         self.f = f
@@ -15,7 +17,6 @@ class QMR_DT():
         self.p_l = np.random.beta(0.15, 0.15, self.D)  # disease prior
         self.q_i0 = np.random.beta(0.15, 0.15, self.f)  # leak probability
         self.q_il = self.association()  # association between disease l and finding i (finding, disease)
-
 
         self.parameters = None #sample b_truth from disease prior
         self.data = None #generate multipl findings given b_truth
@@ -55,12 +56,23 @@ class QMR_DT():
                     self.data[row,idx]=1
 
 
-    def generate_population(self, N):
-        population = []
-        for i in range(N):
-            population.append(np.random.binomial(1, 0.5, (self.D,1)).squeeze())
+    # def generate_population(self, N):
+    #     population = []
+    #     for i in range(N):
+    #         population.append(np.random.binomial(1, 0.5, (self.D,1)).squeeze())
+    #
+    #     return population
 
-        return population
+    # def initialize(self, N):
+    #     population = []
+    #     for i in range(N):
+    #         population.append(np.random.binomial(1, 0.5, (self.D, 1)).squeeze())
+    #
+    #     return population
+
+    # def initialize(self, N):
+    #     return self.bern(N,self.D)
+
 
 
     def simulate(self, b):
@@ -79,8 +91,6 @@ class QMR_DT():
         """
         return np.sum(b * np.log(self.p_l) + (1 - b) * np.log(1 - self.p_l))
 
-    def log_prior(self, b):
-        return np.sum(b * np.log(self.p_l) + (1 - b) * np.log(1 - self.p_l))
 
     def product_lh(self, b):
         product = 1.

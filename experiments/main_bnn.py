@@ -1,42 +1,29 @@
-from methods.cnn import Binary_CNN
-from experiments.mnist_torch import *
 from utils.func_support import *
 import pickle as pkl
 from torch.utils.data import DataLoader
 import torch.utils.data
 import torch.optim as optim
-import numpy as np
-import torch.nn as nn
+import sys
 import os
-import argparse
-import time
 
-parser = argparse.ArgumentParser(description='ABC models for discrete data')
-parser.add_argument('--lr', type=float, default=0.01, metavar='float',
-                    help='evaluation steps') #600000
-parser.add_argument('--N', type=float, default=60000, metavar='int',
-                    help='evaluation steps') #600000
+PYTHONPATH = '/home/ilze/PycharmProjects/MasterThesis/ABCdiscrete/experiments'
+sys.path.append(os.path.dirname(os.path.expanduser(PYTHONPATH)))
 
-
-args = parser.parse_args()
-
+from algorithms.bnn import Network
+from testbeds.mnist_torch import *
 
 def train(epoch):
     batch_loss = []
     clf.train()
-    if epoch==1:
-        start_time = time.time()
     for batch_idx, (inputs,targets) in enumerate(trainloader):
         if cuda_available:
             inputs, targets = inputs.cuda(), targets.cuda()
 
         inputs = inputs.type(torch.FloatTensor)
-        targets = targets.type(torch.LongTensor)
+        targets = targets.type(torch.FloatTensor)
 
         optimizer.zero_grad()
-        output = clf(inputs)
-        loss = criterion(output, targets)
-
+        loss = clf.calculate_objective(inputs, targets)
         loss.backward()
 
         for p in list(clf.parameters()):
@@ -54,16 +41,13 @@ def train(epoch):
     avg_loss = np.mean(batch_loss)
     train_loss.append(avg_loss)
 
-    if epoch ==1:
-        print('sim time ---- {} minutes ---'.format((time.time() - start_time)))
-    # if epoch%5==0:
-    print('Train Epoch: %d Training Loss %.3f' % (epoch,  avg_loss))
+    if epoch%10==0:
+        print('Train Epoch: %d Training Loss %.3f' % (epoch,  avg_loss))
 # print('Training Loss : %.3f Time : %.3f seconds ' % (np.mean(avg_loss)), end - start))
 
-def test(epoch):
+def test():
     clf.eval()
-    test_error = []
-    test_loss = []
+    tb_error = []
     with torch.no_grad():
         for batch_idx, (inputs, targets) in enumerate(testloader):
             # inputs = inputs.type(torch.FloatTensor)
@@ -71,22 +55,16 @@ def test(epoch):
                 inputs, targets = inputs.cuda(), targets.cuda()
 
             inputs = inputs.type(torch.FloatTensor)
-            targets = targets.type(torch.LongTensor)
+            targets = targets.type(torch.FloatTensor)
 
-            Y_out, error = clf.calculate_classification_error(inputs, targets)
-            loss = criterion(Y_out, targets)
-            test_error.append(error)
-            test_loss.append(loss)
+            error, predicted = clf.calculate_classification_error(inputs, targets)
+            tb_error.append(error)
 
-        avg_error = np.mean(np.array(test_error))
-        avg_loss = np.mean(np.array(test_loss))
+        avg_terror = np.mean(np.array(tb_error))
+        # print('Test Error: %.3f' % (avg_terror))
+        # print('--------------------------------------------------------------')
 
-        # if epoch % 10 == 0:
-        print('Test Error: %.3f' % (avg_error))
-        print('Test Loss: %.3f' % (avg_loss))
-        print('--------------------------------------------------------------')
-
-    return avg_error
+    return avg_terror
 
 def content(data):
     weights = []
@@ -101,15 +79,14 @@ def content(data):
 
 print('Loading Data')
 rescale = 14
+trainloader = DataLoader(MNIST(l1=0, l2=1, image_size=(rescale, rescale), train=True,path='internal'),
+                         batch_size=128, shuffle=True)
+testloader = DataLoader(MNIST(l1=0, l2=1, image_size=(rescale, rescale), train=False,path='internal'),
+                        batch_size=128, shuffle=True)
 
-
-trainloader = DataLoader(MNIST(l1=0, l2=1, image_size=(rescale, rescale), train=True,  binary=False, train_size=int(args.N)),
-                         batch_size=64, shuffle=True)
-testloader = DataLoader(MNIST(l1=0, l2=1, image_size=(rescale, rescale), train=False,  binary=False),
-                        batch_size=64, shuffle=True)
-
-evaluate = 1
-epochs = 100
+evaluate = 5
+epochs = 50
+early_stop = False
 cross_tr_loss = []
 cross_te_loss = []
 cross_w = []
@@ -122,19 +99,18 @@ for eval in range(evaluate):
         torch.cuda.manual_seed(0)
         print('running on GPU')
 
-    clf = Binary_CNN(1,10)
-
+    hidden_units = 20
+    output = 1
+    clf = Network(rescale * rescale, output, hidden_units)
     if cuda_available:
         clf = clf.cuda()
 
-    criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(clf.parameters(), lr=args.lr)
+    optimizer = optim.Adam(clf.parameters(), lr=0.0001)
 
     min_loss = np.inf
-    n_epochs_stop = 5
+    n_epochs_stop = 10
     epochs_no_improve = 0
     best_params = None
-    early_stop = True
 
     # e=[]
     train_loss = []
@@ -143,7 +119,7 @@ for eval in range(evaluate):
     for epoch in range(1,epochs+1):
         # e.append(epoch)
         train(epoch)
-        error = test(epoch)
+        error = test()
         test_error.append(error)
         if error < min_loss:
             epochs_no_improve = 0
@@ -166,16 +142,17 @@ for eval in range(evaluate):
     cross_te_loss.append(test_error)
     cross_w.append(content(best_params))
 
-store = 'results/' + 'cbnn'
+store = 'results/bnn'
 if not os.path.exists(store):
     os.makedirs(store)
 
-plot_bnn(cross_te_loss, store + '/test' + str(args.lr), 'error')
-plot_bnn(cross_tr_loss, store + '/train' + str(args.lr), 'loss')
-report_weight(cross_w, store + '/weight' + str(args.lr))
-pkl.dump(cross_te_loss, open(store + '/test' + str(args.lr)+'.pkl', 'wb'))
-pkl.dump(cross_tr_loss, open(store + '/train'  + str(args.lr)+  '.pkl', 'wb'))
-pkl.dump(cross_w, open(store + '/avg_w' + str(args.lr)+ '.pkl', 'wb'))
+if not early_stop:
+    plot_bnn(cross_te_loss, store + '/test', 'error')
+    plot_bnn(cross_tr_loss, store + '/train', 'loss')
+    report_weight(cross_w, store + '/weight')
+    pkl.dump(cross_te_loss, open(store + '/test' + '.pkl', 'wb'))
+    pkl.dump(cross_tr_loss, open(store + '/train'  + '.pkl', 'wb'))
+    pkl.dump(cross_w, open(store + '/avg_w' + '.pkl', 'wb'))
 
 
 
