@@ -59,7 +59,7 @@ def log_result(result):
     xlim[method].append(x_pos)
 
     global acceptance_r
-    acceptance_r[method] = ac_ratio
+    acceptance_r[method].append(ac_ratio)
 
     global pop_store
     pop_store[str(runid)][method] = population
@@ -77,14 +77,12 @@ if __name__ == '__main__':
     pop_error = {}
     xlim = {}
     acceptance_r = {}
-    pop_c = {}
     pop_store = {}
 
     for prop in set_proposals:
         pop_error[prop] = []
         xlim[prop] = []
         acceptance_r[prop] = []
-        pop_c[prop] = []
 
     for id in range(args.eval):
         pop_store[str(id)] = {}

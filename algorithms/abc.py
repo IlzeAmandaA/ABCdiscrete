@@ -4,7 +4,7 @@ from algorithms.main_sampling import Sampling_Algorithm
 
 
 """
-Implementation of Metropolis algorithm
+Implementation of the ABC Discrete Algorithm 
 """
 
 
@@ -43,7 +43,7 @@ class ABC_Discrete(Sampling_Algorithm):
 
             for i in range(len(population)):
                 theta_, _, _ = self.proposal(population, i, method)
-                x=self.simulator.simulate(theta_)
+                x, theta_ = self.simulator.simulate(theta_)
 
                 if self.simulator.distance(x) <= np.random.exponential(self.tolerance):
                     alpha = self.metropolis(theta_, population[i])
@@ -70,7 +70,7 @@ class ABC_Discrete(Sampling_Algorithm):
     def pop_error(self, population):
         error = 0.
         for chain in population:
-            x = self.simulator.simulate(chain)
+            x, _ = self.simulator.simulate(chain)
             error += self.simulator.distance(x, eval=False)
         error /= len(population)
         return error
