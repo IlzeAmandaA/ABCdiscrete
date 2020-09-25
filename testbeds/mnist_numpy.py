@@ -193,7 +193,7 @@ class MNIST(Testbed):
             else:
                 y_pred[i * batch_size: (i + 1) * batch_size] = np.rint(np.squeeze(prob))  # np.argmax(prob, -1)
 
-        return y_pred.astype(int), None
+        return y_pred.astype(int), w_orig
 
     def binarize(self, x):
         x[x>0]=1

@@ -81,7 +81,7 @@ class QMR_DT(Testbed):
             if (1 - np.exp(self.llh(b, idx))) >= np.random.uniform(0, 1):
                 findings[idx] = 1
 
-        return findings, None
+        return findings, b
 
 
     def prior(self, b):
