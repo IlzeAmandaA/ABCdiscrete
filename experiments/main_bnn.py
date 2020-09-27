@@ -1,4 +1,3 @@
-from utils.func_support import *
 import pickle as pkl
 from torch.utils.data import DataLoader
 import torch.utils.data
@@ -11,6 +10,7 @@ sys.path.append(os.path.dirname(os.path.expanduser(PYTHONPATH)))
 
 from algorithms.bnn import Network
 from testbeds.mnist_torch import *
+from utils.func_support import *
 
 def train(epoch):
     batch_loss = []
