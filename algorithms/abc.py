@@ -60,7 +60,7 @@ class ABC_Discrete(Sampling_Algorithm):
             parameter_dict = population
 
         acceptence_ratio = (acceptence_ratio/10000)*100
-        print('final {} time ---- {} minutes ---'.format(runid, (time.time() - initial_time) / 60))
+        print('final {} {} time ---- {} minutes ---'.format(runid, method, (time.time() - initial_time) / 60))
 
         return error_pop, xlim, acceptence_ratio, parameter_dict
 

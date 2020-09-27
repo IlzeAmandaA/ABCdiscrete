@@ -1,5 +1,4 @@
 import argparse
-from utils.func_support import *
 import multiprocessing as mp
 import pickle as pkl
 import os
@@ -10,12 +9,13 @@ sys.path.append(os.path.dirname(os.path.expanduser(PYTHONPATH)))
 
 from testbeds.mnist_numpy import MNIST
 from algorithms.abc import ABC_Discrete
+from utils.func_support import *
 
 
 
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
 parser.add_argument('--steps', type=int, default=300000, metavar='int',
-                    help='evaluation steps') #600000
+                    help='evaluation steps') #300000
 parser.add_argument('--seed', type=int, default=0, metavar='int',
                     help='seed')
 parser.add_argument('--N', type=int, default=24, metavar='int',
@@ -41,11 +41,9 @@ def execute(method, simulation, runid):
 
     np.random.seed(runid)
     simulation.initialize_population()
-    error, x_pos, ac_ratio, chains, population = simulation.run(method, args.steps, runid)
+    error, x_pos, ac_ratio, population = simulation.run(method, args.steps, runid)
 
     return (method, runid, error, x_pos, ac_ratio, population)
-
-    # return (pop, x, ratio, run_var, run_seed, chains)
 
 
 def parallel(simulation):
@@ -68,7 +66,7 @@ def log_result(result):
     xlim[method].append(x_pos)
 
     global acceptance_r
-    acceptance_r[method] = ac_ratio
+    acceptance_r[method].append(ac_ratio)
 
     global pop_store
     pop_store[str(runid)][method] = population
@@ -87,14 +85,12 @@ if __name__ == '__main__':
     pop_error = {}
     xlim = {}
     acceptance_r ={}
-    pop_c ={}
     pop_store={}
 
     for prop in set_proposals:
         pop_error[prop] = []
         xlim[prop]=[]
         acceptance_r[prop] = []
-        pop_c[prop] =[]
 
     for id in range(args.eval):
         pop_store[str(id)]={}

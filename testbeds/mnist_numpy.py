@@ -24,7 +24,7 @@ def transform_polar(image):
 
 class MNIST(Testbed):
 
-    def __init__(self, l1=0, l2=1, H=20, name='mnist', image_size=(14, 14), batch_size=1000, path='external'):
+    def __init__(self, l1=0, l2=1, H=20, name='mnist', image_size=(14, 14), batch_size=1000, path='internal'):
         super(MNIST).__init__()
         self.name = name
         self.image_size = image_size
@@ -122,17 +122,6 @@ class MNIST(Testbed):
         self.x_test[self.x_test < 0.5] = -1
         self.x_test[self.x_test > 0.5] = 1
 
-
-    # def bern2(self, p, D1, D2):
-    #     return 2. * np.random.binomial(1, p, (D1, D2)) - 1.
-
-    # def bern(self, p, D1, D2):
-    #     return np.random.binomial(1, p, (D1, D2))
-    #
-
-    # def initialize(self, N):
-    #     D=self.image_size[0] * self.image_size[1] * self.H + self.H * 1
-    #     return self.bern(0.5,N,D)
 
     def hardtanh(self,data):
         data[data > 1] = 1
