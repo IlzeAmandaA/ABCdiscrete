@@ -1,6 +1,12 @@
-from experiments.mnist_numpy import MNIST
 import pickle as pkl
 import numpy as np
+import os
+import sys
+
+PYTHONPATH = '/home/ilze/PycharmProjects/MasterThesis/ABCdiscrete/evaluate'
+sys.path.append(os.path.dirname(os.path.expanduser(PYTHONPATH)))
+
+from testbeds.mnist_numpy import MNIST
 
 
 def report_txt(method, results, N):
