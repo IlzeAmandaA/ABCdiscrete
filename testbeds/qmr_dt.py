@@ -4,7 +4,7 @@ from testbeds.main_usecase import Testbed
 """
 QMR-DT Network
 """
-
+#PUT A FLAG TO USE BETA OR UNIFORM DIST
 
 class QMR_DT(Testbed):
 
@@ -55,23 +55,8 @@ class QMR_DT(Testbed):
                 if (1-np.exp(self.llh(self.parameters, idx)))>= np.random.uniform(0,1):
                     self.data[row,idx]=1
 
-
-    # def generate_population(self, N):
-    #     population = []
-    #     for i in range(N):
-    #         population.append(np.random.binomial(1, 0.5, (self.D,1)).squeeze())
-    #
-    #     return population
-
-    # def initialize(self, N):
-    #     population = []
-    #     for i in range(N):
-    #         population.append(np.random.binomial(1, 0.5, (self.D, 1)).squeeze())
-    #
-    #     return population
-
-    # def initialize(self, N):
-    #     return self.bern(N,self.D)
+        if n==1:
+            self.data = self.data[0]
 
 
 
@@ -99,7 +84,6 @@ class QMR_DT(Testbed):
                 product *= (1-np.exp(self.llh(b,id)))
             else:
                 product *= np.exp(self.llh(b,id))
-        print(product)
         return product
 
 
@@ -178,20 +162,6 @@ class QMR_DT(Testbed):
             if bl != a[idx]:
                 distance+=1
         return distance
-
-
-
-    # def hamming(self, b):
-    #     """
-    #     Hamming distance to evaluate two strings of bits (b_truth and generated b)
-    #     """
-    #     distance = 0.
-    #     for idx,bl in enumerate(b):
-    #         if bl != self.parameters[idx]:
-    #             distance+=1
-    #     return distance
-
-
 
 
 

@@ -32,7 +32,7 @@ class PB_MCMC(Sampling_Algorithm):
         fitDist = []
         error = []
         xlim=[]
-        sample = 500*20
+        sample = 500 #*20
 
         n=0
         while n < steps:
@@ -52,12 +52,12 @@ class PB_MCMC(Sampling_Algorithm):
                         best_params = iprime
 
                 if n >= sample:
-                    fitHistory.append(self.simulator.distance(best_params))
+                    fitHistory.append(self.simulator.hamming(best_params, self.simulator.parameters))
                     fitDist.append(best_target)
 
                     error.append(self.pop_error(population))
                     xlim.append(n)
-                    sample += 500*20
+                    sample += 500 #*20
 
         print('final {} for {} time ---- {} minutes ---'.format(runid, method, (time.time() - initial_time) / 60))
 
@@ -67,8 +67,8 @@ class PB_MCMC(Sampling_Algorithm):
     def pop_error(self, population):
         error = 0.
         for chain in population:
-            error += self.simulator.distance(chain)
-        return error
+            error += self.simulator.hamming(chain, self.simulator.parameters)
+        return error/len(population)
 
 
     def metropolis(self, post_iprime, i, jprime, j):

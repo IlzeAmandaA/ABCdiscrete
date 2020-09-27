@@ -1,5 +1,4 @@
 import argparse
-from utils.func_support import *
 import multiprocessing as mp
 import pickle as pkl
 import os
@@ -10,10 +9,11 @@ sys.path.append(os.path.dirname(os.path.expanduser(PYTHONPATH)))
 
 from testbeds.qmr_dt import QMR_DT
 from algorithms.mcmc import PB_MCMC
+from utils.func_support import *
 
 
 parser = argparse.ArgumentParser(description='Likelihood-based inference')
-parser.add_argument('--steps', type=int, default=20000, metavar='int',
+parser.add_argument('--steps', type=int, default=5000, metavar='int',
                     help='evaluation steps')
 parser.add_argument('--seed', type=int, default=0, metavar='int',
                     help='seed')
@@ -21,17 +21,17 @@ parser.add_argument('--pflip', type=float, default=0.01, metavar='float',
                     help='bitflip probability') #0.1
 parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
-parser.add_argument('--eval', type=int, default=40, metavar='int',
+parser.add_argument('--eval', type=int, default=2, metavar='int',
                     help = 'number of evaluations')
-parser.add_argument('--N', type=int, default=12, metavar='int',
+parser.add_argument('--N', type=int, default=24, metavar='int',
                     help = 'population size')
-parser.add_argument('--fB', type=bool, default=True, action='store_false',
+parser.add_argument('--fB', default=True, action='store_false',
                     help='flag to use either a fixed or alternating underling b')
 
 
 args = parser.parse_args()
 SEED_MODEL=1
-MAX_PROCESS=15
+MAX_PROCESS=1
 
 
 def execute(method, simulation, runid):
@@ -43,7 +43,7 @@ def execute(method, simulation, runid):
         simulation.simulator.generate_data()  # sample findings for the generated instance
 
 
-    simulation.initialize_chains()
+    simulation.initialize_population()
     simulation.compute_fitness()
 
     bestSolution, fitHistory, fitDist, error, x_pos = simulation.run(method, args.steps, runid)
@@ -70,9 +70,9 @@ def parallel(simulation):
 
 def log_result(result):
 
-    method, result, dist, pop, x = result
+    method, error, dist, pop, x = result
     global results
-    best_error[method] = result
+    best_error[method].append(error)
 
     global post_dist
     post_dist[method].append(dist)
@@ -112,7 +112,7 @@ if __name__ == '__main__':
     
     '''
     np.random.seed(SEED_MODEL)
-    alg = PB_MCMC(QMR_DT(), settings=proposals, pflip=args.pflip, pcross=args.pcross, N=args.N)
+    alg = PB_MCMC(QMR_DT(m=20, f=80), settings=proposals, pflip=args.pflip, pcross=args.pcross, N=args.N)
 
     '''
 
@@ -126,17 +126,16 @@ if __name__ == '__main__':
 
     parallel(alg)
 
-
     '''
     Report the results 
 
     '''
+    pkl.dump(post_dist, open(store + '/posterior.pkl', 'wb'))
     create_plot(post_dist, xlim, store + '/proposal_dist', 'posterior', True)
-    pkl.dump(post_dist, open(store+'/posterior.pkl', 'wb'))
     create_plot(pop_error, xlim, store+'/pop_error', 'error')
 
     pkl.dump(best_error, open(store+'/error.pkl', 'wb'))
-    create_plot(best_error, xlim, store+'/'+args.exp, 'error')
+    create_plot(best_error, xlim, store+'/error_bestparams', 'error')
 
 
 

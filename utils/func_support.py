@@ -25,18 +25,18 @@ def text_output(method, iter, solution, simulation, store):
     textfile = open(store + '/'+ method + '.txt', 'a+')
     textfile.write('------------------------------------------------\n')
     textfile.write('Iteration {}\n'.format(iter))
-    if np.array_equal(solution, simulation.model.parameters):
+    if np.array_equal(solution, simulation.simulator.parameters):
         textfile.write('---MATCH---')
     else:
-        textfile.write('--MISMATCH of {} --'.format(simulation.model.error(solution)))
+        textfile.write('--MISMATCH of {} --'.format(simulation.simulator.hamming(solution, simulation.simulator.parameters)))
     textfile.write('\n b truth\n')
-    textfile.write(str([int(n) for n in simulation.model.parameters]))
-    textfile.write('\n target posterior {} '.format(simulation.model.posterior(simulation.model.parameters)))
-    textfile.write('\n target likelihood {} '.format(simulation.model.product_lh(simulation.model.parameters)))
+    textfile.write(str([int(n) for n in simulation.simulator.parameters]))
+    textfile.write('\n target posterior {} '.format(simulation.simulator.posterior(simulation.simulator.parameters)))
+    textfile.write('\n target likelihood {} '.format(simulation.simulator.product_lh(simulation.simulator.parameters)))
     textfile.write('\n best simulated b\n')
     textfile.write(str([int(n) for n in solution]))
-    textfile.write('\n best posterior {} '.format(simulation.model.posterior(solution)))
-    textfile.write('\n best likelihood {} '.format(simulation.model.product_lh(solution)))
+    textfile.write('\n best posterior {} '.format(simulation.simulator.posterior(solution)))
+    textfile.write('\n best likelihood {} '.format(simulation.simulator.product_lh(solution)))
     textfile.write('\n\n')
 
 def report_weight(list_avg, loc):
