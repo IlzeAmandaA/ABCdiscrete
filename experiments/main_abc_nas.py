@@ -1,13 +1,19 @@
 import argparse
+import multiprocessing as mp
+import pickle as pkl
+import sys
+import os
+
+PYTHONPATH = '/home/ilze/PycharmProjects/MasterThesis/ABCdiscrete/experiments'
+sys.path.append(os.path.dirname(os.path.expanduser(PYTHONPATH)))
+
 from testbeds.nas import NAS
 from algorithms.abc import ABC_Discrete
 from utils.func_support import *
-import multiprocessing as mp
-import pickle as pkl
-import os
+
 
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
-parser.add_argument('--steps', type=int, default=20000, metavar='int',
+parser.add_argument('--steps', type=int, default=120000, metavar='int',
                     help='evaluation steps')  # 600000
 parser.add_argument('--seed', type=int, default=0, metavar='int',
                     help='seed')
@@ -17,7 +23,7 @@ parser.add_argument('--pflip', type=float, default=0.01, metavar='float',
                     help='bitflip probability')  # 0.1
 parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
-parser.add_argument('--eval', type=int, default=1, metavar='int',
+parser.add_argument('--eval', type=int, default=5, metavar='int',
                     help='number of evaluations')
 parser.add_argument('--epsilon', type=float, default=0.04, metavar='float',
                     help='distance threshold')
@@ -28,7 +34,7 @@ parser.add_argument('--ens', type=int, default=1, metavar='int',
 args = parser.parse_args()
 
 SEED_MODEL = 1
-MAX_PROCESS=15
+MAX_PROCESS=1
 
 
 def execute(method, simulation, runid):
@@ -68,7 +74,7 @@ def log_result(result):
 
 if __name__ == '__main__':
 
-    set_proposals = {'de-mc': None, 'mut+xor': 0.5}
+    set_proposals = {'dde-mc': 1, 'mut+xor': 0.5}
 
     store = 'results/abc/nas'
     if not os.path.exists(store):
@@ -110,7 +116,7 @@ if __name__ == '__main__':
 
     '''
 
-    print('finihsed parallel computing')
+    print('finished parallel computing')
     pkl.dump(xlim, open(store + '/xlim' + str(args.epsilon) + '.pkl', 'wb'))
     pkl.dump(pop_error, open(store + '/pop_error' + str(args.epsilon) + '.pkl', 'wb'))
     pkl.dump(pop_store, open(store + '/pop_store' + str(args.epsilon) + '.pkl', 'wb'))

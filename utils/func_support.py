@@ -4,20 +4,20 @@ from operator import  add
 import collections
 
 formats = {'mut': '--or', 'mut+crx': ':^g', 'mut+xor': '-.vb',
-           'de-mc':'--or', 'de-mc1':':^g', 'de-mc2':'-.vb'} #check
+           'dde-mc':'--or', 'dde-mc1':':^g', 'dde-mc2':'-.vb'} #check
 #https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.plot.html
 
 line = {'mut': '--o', 'mut+crx': ':^', 'mut+xor': '-.v',
-        'de-mc':'-<', 'de-mc1':':^', 'de-mc2':'-.v'
+        'dde-mc':'-<', 'dde-mc1':':^', 'dde-mc2':'-.v'
         }
 
 
 color = {'mut': '#fa4224', 'mut+crx': '#388004', 'mut+xor': '#004577',
-         'de-mc':'#ff028d', 'de-mc1':'#388004', 'de-mc2':'#004577'
+         'dde-mc':'#ff028d', 'dde-mc1':'#388004', 'dde-mc2':'#004577'
          }
 
 fill = {'mut': '#FF9848', 'mut+crx': '#c7fdb5', 'mut+xor': '#95d0fc',
-        'de-mc':'#ffb2d0', 'de-mc1':'#c7fdb5', 'de-mc2':'#95d0fc'
+        'dde-mc':'#ffb2d0', 'dde-mc1':'#c7fdb5', 'dde-mc2':'#95d0fc'
         }
 
 
@@ -52,34 +52,33 @@ def report(dict,epsilon, store):
         textfile.write('acceptance ratio : mean {} (std {}) \n'.format(values['mean'], values['std']))
     # textfile.write('--------------------- \n\n')
 
-def report_variablitity(list, store):
-    mean = np.mean(np.asarray(list))
-    std = np.std(np.asarray(list))
+def report_variablitity(data, store):
     textfile = open(store + '.txt', 'a+')
-    textfile.write('avg variability : {}  (std {})  '.format(mean, std))
-    textfile.write('--------------------- \n\n')
+    for runid, info in data.items():
+        for method, var in info.items():
+            mean = np.mean(np.asarray(var))
+            std = np.std(np.asarray(var))
+        textfile.write('for run {} \n'.format(runid))
+        textfile.write('avg variability : {}  (std {})  '.format(mean, std))
+        textfile.write('--------------------- \n\n')
 
-def report_posterior(sim, run, pops, store):
-  #  sim.output_post[str(run)] = {}
-    post = {}
-
+def report_posterior(sim, run, method, pops, store):
+    posterior_list = []
     textfile = open(store + '.txt', 'a+')
     textfile.write('\nRun: {} \n'.format(run))
+    textfile.write('Method: {} \n'.format(method))
 
-    for method, population in pops.items():
-        textfile.write('Method: {} \n'.format(method))
-        posterior_list = []
-        for chain in population:
-            posterior_list.append(sim.model.log_posterior_abc(chain, sim.model.Z))
-        post_avg = np.mean(np.asarray(posterior_list))
-        post_std = np.std(np.asarray(posterior_list))
-        post[method] = [post_avg,post_std]
-        textfile.write('avg post : {}  (std {})  \n'.format(post_avg, post_std))
+    for chain in pops:
+        posterior_list.append(sim.simulator.log_posterior_abc(chain))
+    post_avg = np.mean(np.asarray(posterior_list))
+    post_std = np.std(np.asarray(posterior_list))
+    textfile.write('avg post : {}  (std {})  \n'.format(post_avg, post_std))
 
-    true_post = sim.model.MAP
-    textfile.write('MAP : {}  '.format(true_post))
+    true_post = sim.simulator.log_posterior_abc(sim.simulator.parameters)
+    textfile.write('true post : {}  '.format(true_post))
     textfile.write('--------------------- \n\n')
-    return (post, true_post)
+
+    return ([post_avg, post_std], true_post, posterior_list)
 
 
 def create_plot(results, x, location, yaxis, transform=False, ylim=None, xlim=None, length=16, height=6):
@@ -188,20 +187,21 @@ def plot_single(results, points, name, location):
     plt.savefig(location+ '.png')
 
 def plot_dist(dict_res, dict_true, location):
-    format = {'mut+xor':['o','green','lightgreen'], 'de-mc':['v','blue','lightblue']}
+    format = {'mut+xor':['o','green','lightgreen'], 'dde-mc':['v','blue','lightblue']}
     od_res = collections.OrderedDict(sorted(dict_res.items()))
     od_true = collections.OrderedDict(sorted(dict_true.items()))
-
     move = 0.08
 
     fig, ax = plt.subplots(figsize=(16, 6))
 
-    for selection in ['mut+xor', 'de-mc']:
+    for selection in ['mut+xor', 'dde-mc']:
         x = []
         y = []
         std = []
 
         for id in od_res:
+            print(id)
+            print(od_res[id][selection][0])
             y.append(od_res[id][selection][0])
             std.append(od_res[id][selection][1])
             if selection == 'mut+xor':
@@ -214,7 +214,7 @@ def plot_dist(dict_res, dict_true, location):
                     elinewidth=1, capsize=1)
 
     x = [int(k) for k in od_true.keys()]
-    ax.scatter(x, [v for v in od_true.values()], color='magenta', label='true posterior', marker='*')
+    ax.scatter(x, [v['dde-mc'] for v in od_true.values()], color='magenta', label='true posterior', marker='*')
 
     # Set plot title and axes labels
     ax.set(xlabel="Run",

@@ -165,21 +165,31 @@ class QMR_DT(Testbed):
         return sum(avg_lh)/len(self.data)
 
 
+    def distance(self, x, eval=False):
+        distance = 0.
+        for true_data in self.data:
+            distance += self.hamming(x,true_data)
+        return distance/len(self.data)
 
 
-
-
-
-
-    def error(self, b):
-        """
-        Hamming distance to evaluate two strings of bits (b_truth and generated b)
-        """
+    def hamming(self,a,b):
         distance = 0.
         for idx,bl in enumerate(b):
-            if bl != self.parameters[idx]:
+            if bl != a[idx]:
                 distance+=1
         return distance
+
+
+
+    # def hamming(self, b):
+    #     """
+    #     Hamming distance to evaluate two strings of bits (b_truth and generated b)
+    #     """
+    #     distance = 0.
+    #     for idx,bl in enumerate(b):
+    #         if bl != self.parameters[idx]:
+    #             distance+=1
+    #     return distance
 
 
 

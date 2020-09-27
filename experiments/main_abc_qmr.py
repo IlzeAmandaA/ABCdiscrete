@@ -1,5 +1,4 @@
 import argparse
-from utils.func_support import *
 import multiprocessing as mp
 import pickle as pkl
 import os
@@ -10,11 +9,12 @@ sys.path.append(os.path.dirname(os.path.expanduser(PYTHONPATH)))
 
 from testbeds.qmr_dt import QMR_DT
 from algorithms.abc import ABC_Discrete
+from utils.func_support import *
 
 
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
-parser.add_argument('--steps', type=int, default=100000, metavar='int',
-                    help='evaluation steps')
+parser.add_argument('--steps', type=int, default=10000, metavar='int',
+                    help='evaluation steps')#
 parser.add_argument('--seed', type=int, default=10, metavar='int',
                     help='seed')
 parser.add_argument('--N', type=int, default=24, metavar='int',
@@ -23,7 +23,7 @@ parser.add_argument('--pflip', type=float, default=0.01, metavar='float',
                     help='bitflip probability') #0.1
 parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
-parser.add_argument('--eval', type=int, default=15, metavar='int',
+parser.add_argument('--eval', type=int, default=1, metavar='int',
                     help = 'number of evaluations')
 parser.add_argument('--exp', type=str, default='dde-mc', metavar='str',
                     help='proposal selection')
@@ -33,7 +33,7 @@ parser.add_argument('--epsilon', type=float, default=1, metavar='float',
 args = parser.parse_args()
 
 SEED_MODEL=1
-MAX_PROCESS=15
+MAX_PROCESS=1
 
 
 def execute(method, simulation, runid):
@@ -48,10 +48,8 @@ def execute(method, simulation, runid):
 
     simulation.initialize_population()
 
-    error, x_pos, ac_ratio, chains, _ = simulation.run(method, args.steps, runid)
-
-    post = report_posterior(simulation, runid, chains, store+'/posterior' +str(args.epsilon))
-    # return (error, x_pos, ac_ratio, run_var, runid, post)
+    error, x_pos, ac_ratio, chains = simulation.run(method, args.steps, runid)
+    post = report_posterior(simulation, runid, method, chains, store+'/posterior' +str(args.epsilon))
     return (method, runid, error, x_pos, ac_ratio, run_var, post)
 
 
@@ -77,17 +75,19 @@ def log_result(result):
     xlim[method].append(x_pos)
 
     global acceptance_r
-    acceptance_r[method] = ac_ratio
+    acceptance_r[method].append(ac_ratio)
 
     global variability
-    variability[str(runid)][method] = run_var #FIX THIS
+    variability[str(runid)][method] = run_var
 
     global output_post
-    output_post[runid + 1] = post[0]
+    output_post[runid + 1][method] = post[0]
 
     global output_true
-    output_true[runid + 1] = post[1]
+    output_true[runid + 1][method] = post[1]
 
+    global post_val
+    post_val[method].append(post[2])
 
 
 
@@ -118,21 +118,27 @@ if __name__ == '__main__':
     pop_error = {}
     xlim = {}
     acceptance_r ={}
-    variability = []
+    variability = {}
     output_post = {}
     output_true = {}
+    post_val = {}
 
     '''
     keep the underlying model same across all experiments with Seed_model
     '''
     np.random.seed(SEED_MODEL)
-
     alg = ABC_Discrete(QMR_DT(), settings=set_proposals, epsilon=args.epsilon)
+
+    for run in range(args.eval):
+        variability[str(run)]={}
+        output_true[run+1]={}
+        output_post[run+1]={}
 
     for prop in set_proposals:
         pop_error[prop] = []
         xlim[prop]=[]
         acceptance_r[prop] = []
+        post_val[prop] = []
 
     '''
 
@@ -141,11 +147,22 @@ if __name__ == '__main__':
 
     parallel(alg)
 
+    # np.random.seed(0)
+    # alg.simulator.generate_parameters() #create underlying true parameters
+    # alg.simulator.generate_data(n=10) #sample K data for the given parameter settings
+    # run_var = compute_variability(alg.simulator.data)
+    #
+    # alg.initialize_population()
+    #
+    # error, x_pos, ac_ratio, chains = alg.run('dde-mc', args.steps, 0)
+    # post = report_posterior(alg, 0, 'dde-mc', chains, store+'/posterior' +str(args.epsilon))
+
+
     '''
     Report the results 
 
     '''
-
+    print('finished parallel computing')
     pkl.dump(xlim, open(store + '/xlim'+ str(args.epsilon)+'.pkl', 'wb'))
     pkl.dump(pop_error, open(store+'/pop_error'+ str(args.epsilon)+ '.pkl', 'wb'))
     create_plot(pop_error, xlim, store +'/pop_error'+ str(args.epsilon), 'error')
@@ -155,7 +172,8 @@ if __name__ == '__main__':
     plot_dist(output_post, output_true, store +'/dist'+ str(args.epsilon))
     pkl.dump(output_post, open(store+'/dist_post'+ str(args.epsilon)+ '.pkl', 'wb'))
     pkl.dump(output_true, open(store + '/dist_true' + str(args.epsilon) + '.pkl', 'wb'))
-
+    pkl.dump(post_val, open(store + '/dist_all' + str(args.epsilon) + '.pkl', 'wb'))
+    print('Finished')
 
 
 
