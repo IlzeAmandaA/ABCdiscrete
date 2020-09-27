@@ -4,7 +4,8 @@ import pickle as pkl
 import os
 import sys
 
-PYTHONPATH = '/home/ilze/PycharmProjects/MasterThesis/ABCdiscrete/experiments'
+# PYTHONPATH = '/home/ilze/PycharmProjects/MasterThesis/ABCdiscrete/experiments'
+PYTHONPATH = '/home/iaa510/ABCdiscrete/experiments'
 sys.path.append(os.path.dirname(os.path.expanduser(PYTHONPATH)))
 
 from testbeds.mnist_numpy import MNIST
@@ -39,7 +40,7 @@ MAX_PROCESS=15
 
 def execute(method, simulation, runid):
 
-    np.random.seed(runid)
+    np.random.seed(runid+args.seed)
     simulation.initialize_population()
     error, x_pos, ac_ratio, population = simulation.run(method, args.steps, runid)
 
@@ -77,7 +78,7 @@ if __name__ == '__main__':
 
     set_proposals = {'dde-mc':1, 'mut+xor':0.5}
 
-    store = 'results/abc/bnn_mnist'
+    store = 'results/abc/bnn_mnist/' + 'argseed' + str(args.seed)
     if not os.path.exists(store):
         os.makedirs(store)
 
@@ -112,7 +113,6 @@ if __name__ == '__main__':
 
     alg = ABC_Discrete(use_case, settings=set_proposals, epsilon=args.epsilon, store=args.ens)
 
-    np.random.seed(args.seed)
 
     '''
         

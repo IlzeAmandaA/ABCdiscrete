@@ -24,7 +24,7 @@ def transform_polar(image):
 
 class MNIST(Testbed):
 
-    def __init__(self, l1=0, l2=1, H=20, name='mnist', image_size=(14, 14), batch_size=1000, path='internal'):
+    def __init__(self, l1=0, l2=1, H=20, name='mnist', image_size=(14, 14), batch_size=1000, path='external'):
         super(MNIST).__init__()
         self.name = name
         self.image_size = image_size

@@ -86,7 +86,7 @@ testloader = DataLoader(MNIST(l1=0, l2=1, image_size=(rescale, rescale), train=F
 
 evaluate = 5
 epochs = 50
-early_stop = False
+early_stop = True
 cross_tr_loss = []
 cross_te_loss = []
 cross_w = []
