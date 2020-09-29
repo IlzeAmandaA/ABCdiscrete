@@ -25,7 +25,7 @@ parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
 parser.add_argument('--eval', type=int, default=5, metavar='int',
                     help='number of evaluations')
-parser.add_argument('--epsilon', type=float, default=0.04, metavar='float',
+parser.add_argument('--epsilon', type=float, default=0.01, metavar='float',
                     help='distance threshold')
 parser.add_argument('--ens', type=int, default=1, metavar='int',
                     help='number of last iterations to store')
@@ -40,9 +40,9 @@ MAX_PROCESS=1
 def execute(method, simulation, runid):
     np.random.seed(runid)
     simulation.initialize_population()
-    error, x_pos, ac_ratio, population = simulation.run(method, args.steps, runid)
+    error_pop, error, x_pos, ac_ratio, population = simulation.run(method, args.steps, runid)
 
-    return (method, runid, error, x_pos, ac_ratio, population)
+    return (method, runid, error_pop, error, x_pos, ac_ratio, population)
 
 def parallel(simulation):
     pool = mp.Pool(processes=MAX_PROCESS)
@@ -56,10 +56,13 @@ def parallel(simulation):
 
 
 def log_result(result):
-    method, runid, error, x_pos, ac_ratio, population = result
+    method, runid, error_pop, error, x_pos, ac_ratio, population = result
 
     global pop_error
-    pop_error[method].append(error)
+    pop_error[method].append(error_pop)
+
+    global min_error
+    min_error[method].append(error)
 
     global xlim
     xlim[method].append(x_pos)
@@ -74,19 +77,21 @@ def log_result(result):
 
 if __name__ == '__main__':
 
-    set_proposals = {'dde-mc': 1, 'mut+xor': 0.5}
+    set_proposals = {'dde-mc': 1, 'mut+xor': 0.5, 'id-samp':1}
 
     store = 'results/abc/nas'
     if not os.path.exists(store):
         os.makedirs(store)
 
     pop_error = {}
+    min_error = {}
     xlim = {}
     acceptance_r = {}
     pop_store = {}
 
     for prop in set_proposals:
         pop_error[prop] = []
+        min_error[prop] = []
         xlim[prop] = []
         acceptance_r[prop] = []
 
@@ -109,7 +114,18 @@ if __name__ == '__main__':
 
     Run the algortihm in parallel mode
     '''
-    parallel(alg)
+    for runid in range(args.eval):
+        np.random.seed(runid)
+        for method in set_proposals:
+            alg.initialize_population()
+            error_pop, error, x_pos, ac_ratio, population = alg.run(method, args.steps, runid)
+            pop_error[method].append(error_pop)
+            min_error[method].append(error)
+            xlim[method].append(x_pos)
+            acceptance_r[method].append(ac_ratio)
+            pop_store[str(runid)][method] = population
+
+    # parallel(alg)
 
     '''
     Report the results 
@@ -119,8 +135,10 @@ if __name__ == '__main__':
     print('finished parallel computing')
     pkl.dump(xlim, open(store + '/xlim' + str(args.epsilon) + '.pkl', 'wb'))
     pkl.dump(pop_error, open(store + '/pop_error' + str(args.epsilon) + '.pkl', 'wb'))
+    pkl.dump(min_error, open(store + '/min_error' + str(args.epsilon) + '.pkl', 'wb'))
     pkl.dump(pop_store, open(store + '/pop_store' + str(args.epsilon) + '.pkl', 'wb'))
-    create_plot(pop_error, xlim, store + '/pop_error' + str(args.epsilon), 'error')
+    create_plot(pop_error, xlim, store + '/pop_error' + str(args.epsilon), 'avg error')
+    create_plot(min_error, xlim, store + '/min_error' + str(args.epsilon), 'error')
 
     report(compute_avg(acceptance_r), args.epsilon, store + '/acceptance_ratio')
     print('Finished')

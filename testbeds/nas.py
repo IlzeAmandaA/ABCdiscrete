@@ -38,22 +38,23 @@ class NAS(Testbed):
 
         else:
             matrix = self.transform(w_orig)
-            while True:
-                cell = api.ModelSpec(
-                    matrix=matrix,
-                    ops = self.OPS
-                )
+            # while True:
+            cell = api.ModelSpec(
+                matrix=matrix,
+                ops = self.OPS
+            )
 
-                if self.nasbench.is_valid(cell):
-                    return cell, self.extract(matrix)
+            if self.nasbench.is_valid(cell):
+                return cell # self.extract(matrix)
 
-                else:
-                    matrix = self.connectivity(matrix)
+            else:
+                return 1
+                    # matrix = self.connectivity(matrix)
 
     def transform(self, w_orig):
         w = w_orig.copy()
-        while np.sum(w) > 9:
-            w[np.random.randint(0, self.D)] = 0
+        # while np.sum(w) > 9:
+        #     w[np.random.randint(0, self.D)] = 0
 
         # convert w_orig to matrix form
         W_m = []
@@ -71,13 +72,13 @@ class NAS(Testbed):
 
         return matrix
 
-    def connectivity(self, matrix):
-        if np.sum(matrix) <= 8:
-            matrix[np.random.randint(0, self.size), np.random.randint(0, self.size)] = 1
-        else:
-            matrix[np.random.randint(0, self.size), np.random.randint(0, self.size)] = 0
-        matrix = np.triu(matrix, 1)
-        return matrix
+    # def connectivity(self, matrix):
+    #     if np.sum(matrix) <= 8:
+    #         matrix[np.random.randint(0, self.size), np.random.randint(0, self.size)] = 1
+    #     else:
+    #         matrix[np.random.randint(0, self.size), np.random.randint(0, self.size)] = 0
+    #     matrix = np.triu(matrix, 1)
+    #     return matrix
 
     def extract(self, matrix):
         w_cor = []
@@ -91,7 +92,10 @@ class NAS(Testbed):
         if eval:
             return 1 - self.nasbench.query(input)['test_accuracy']
         else:
-            return 1 - self.nasbench.query(input)['validation_accuracy']
+            if input==1:
+                return 1
+            else:
+                return 1 - self.nasbench.query(input)['validation_accuracy']
 
     def prior(self, theta):
         return np.exp(-np.mean(theta))

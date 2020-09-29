@@ -23,6 +23,7 @@ def report_txt(method, results, N):
 
 
 loc = '/home/ilze/PycharmProjects/MasterThesis/NAS/nas/'
+loc = '/home/ilze/PycharmProjects/MasterThesis/ABCdiscrete/results/abc/nas/'
 type = '0.01'
 data=pkl.load(open(loc+'pop_store' + type + '.pkl', 'rb'))
 

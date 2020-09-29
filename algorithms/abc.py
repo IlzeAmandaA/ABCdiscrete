@@ -22,7 +22,9 @@ class ABC_Discrete(Sampling_Algorithm):
         population = self.population.copy()
 
         #storage
+        er_min = np.inf
         error_pop = []
+        error_min = []
         xlim=[]
         parameter_dict = {}
 
@@ -36,7 +38,7 @@ class ABC_Discrete(Sampling_Algorithm):
 
             for i in range(len(population)):
                 theta_, _, _ = self.proposal(population, i, method)
-                x, theta_ = self.simulator.simulate(theta_)
+                x = self.simulator.simulate(theta_)
                 if self.simulator.distance(x) <= np.random.exponential(self.tolerance):
                     alpha = self.metropolis(theta_, population[i])
                     acceptence_ratio += 1 if n <= 10000 else 0
@@ -47,7 +49,14 @@ class ABC_Discrete(Sampling_Algorithm):
                 n += 1
 
                 if n >= sample:
-                    error_pop.append(self.pop_error(population))
+                    er_p, er_min_ = self.pop_error(population)
+
+                    if er_min_ < er_min:
+                        er_min = er_min_
+
+
+                    error_min.append(er_min)
+                    error_pop.append(er_p)
                     xlim.append(n)
                     sample += 1000 #1500
 
@@ -62,16 +71,15 @@ class ABC_Discrete(Sampling_Algorithm):
         acceptence_ratio = (acceptence_ratio/10000)*100
         print('final {} {} time ---- {} minutes ---'.format(runid, method, (time.time() - initial_time) / 60))
 
-        return error_pop, xlim, acceptence_ratio, parameter_dict
+        return error_pop, error_min, xlim, acceptence_ratio, parameter_dict
 
 
     def pop_error(self, population):
-        error = 0.
-        for chain in population:
-            x, _ = self.simulator.simulate(chain)
-            error += self.simulator.distance(x, eval=False)
-        error /= len(population)
-        return error
+        error = np.zeros(len(population))
+        for idx,chain in enumerate(population):
+            x = self.simulator.simulate(chain)
+            error[idx] = self.simulator.distance(x, eval=False)
+        return np.mean(error), np.min(error)
 
 
     def metropolis(self, theta_, theta):

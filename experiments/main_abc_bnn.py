@@ -39,12 +39,11 @@ MAX_PROCESS=15
 
 
 def execute(method, simulation, runid):
-
-    np.random.seed(runid+args.seed)
+    np.random.seed(runid + args.seed)
     simulation.initialize_population()
-    error, x_pos, ac_ratio, population = simulation.run(method, args.steps, runid)
+    error_pop, error, x_pos, ac_ratio, population = simulation.run(method, args.steps, runid)
 
-    return (method, runid, error, x_pos, ac_ratio, population)
+    return (method, runid, error_pop, error,x_pos, ac_ratio, population)
 
 
 def parallel(simulation):
@@ -58,10 +57,13 @@ def parallel(simulation):
     pool.join()
 
 def log_result(result):
-    method, runid, error, x_pos, ac_ratio, population = result
+    method, runid,error_pop, error, x_pos, ac_ratio, population = result
 
     global pop_error
-    pop_error[method].append(error)
+    pop_error[method].append(error_pop)
+
+    global min_error
+    min_error[method].append(error)
 
     global xlim
     xlim[method].append(x_pos)
@@ -76,7 +78,7 @@ def log_result(result):
 
 if __name__ == '__main__':
 
-    set_proposals = {'dde-mc':1, 'mut+xor':0.5}
+    set_proposals = {'dde-mc':1, 'mut+xor':0.5, 'id-samp':1}
 
     store = 'results/abc/bnn_mnist/' + 'argseed' + str(args.seed)
     if not os.path.exists(store):
@@ -84,12 +86,14 @@ if __name__ == '__main__':
 
 
     pop_error = {}
+    min_error = {}
     xlim = {}
     acceptance_r ={}
     pop_store={}
 
     for prop in set_proposals:
         pop_error[prop] = []
+        min_error[prop] = []
         xlim[prop]=[]
         acceptance_r[prop] = []
 
@@ -127,9 +131,11 @@ if __name__ == '__main__':
     '''
     pkl.dump(xlim, open(store + '/xlim'+ str(args.epsilon)+'.pkl', 'wb'))
     pkl.dump(pop_error, open(store+'/pop_error'+ str(args.epsilon)+ '.pkl', 'wb'))
+    pkl.dump(min_error, open(store + '/min_error' + str(args.epsilon) + '.pkl', 'wb'))
     pkl.dump(pop_store,open(store+'/pop_store'+ str(args.epsilon)+ '.pkl', 'wb'))
 
     create_plot(pop_error, xlim, store +'/pop_error'+ str(args.epsilon), 'error')
+    create_plot(min_error, xlim, store + '/min_error' + str(args.epsilon), 'error')
     report(compute_avg(acceptance_r), args.epsilon, store+'/acceptance_ratio')
 
     print('Analysis Stored')
