@@ -77,6 +77,10 @@ def content(data):
     return np.mean(w)
 
 
+store = 'results/bnn'
+if not os.path.exists(store):
+    os.makedirs(store)
+
 print('Loading Data')
 rescale = 14
 trainloader = DataLoader(MNIST(l1=0, l2=1, image_size=(rescale, rescale), train=True,path='internal'),
@@ -84,9 +88,9 @@ trainloader = DataLoader(MNIST(l1=0, l2=1, image_size=(rescale, rescale), train=
 testloader = DataLoader(MNIST(l1=0, l2=1, image_size=(rescale, rescale), train=False,path='internal'),
                         batch_size=128, shuffle=True)
 
-evaluate = 5
-epochs = 50
-early_stop = True
+evaluate = 10
+epochs = 30
+early_stop = False
 cross_tr_loss = []
 cross_te_loss = []
 cross_w = []
@@ -94,7 +98,7 @@ cross_w = []
 for eval in range(evaluate):
     print('Evaluation {} \n'.format(eval))
     cuda_available = torch.cuda.is_available()
-    torch.manual_seed = (0)
+    torch.manual_seed = (eval)
     if cuda_available:
         torch.cuda.manual_seed(0)
         print('running on GPU')
@@ -121,6 +125,8 @@ for eval in range(evaluate):
         train(epoch)
         error = test()
         test_error.append(error)
+
+
         if error < min_loss:
             epochs_no_improve = 0
             min_loss = error
@@ -138,13 +144,12 @@ for eval in range(evaluate):
             print('--------------------------------------------------------------')
             break
 
+    torch.save(clf, store + '/model'+str(eval)+'.pt')
     cross_tr_loss.append(train_loss)
     cross_te_loss.append(test_error)
     cross_w.append(content(best_params))
 
-store = 'results/bnn'
-if not os.path.exists(store):
-    os.makedirs(store)
+
 
 if not early_stop:
     plot_bnn(cross_te_loss, store + '/test', 'error')
