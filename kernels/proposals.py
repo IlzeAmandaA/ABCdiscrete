@@ -48,4 +48,6 @@ class Proposals():
         return np.logical_xor(chain_i, ep_diff).astype(int)
 
 
+    def indepent_sampler(self, chain):
+        return np.random.binomial(1, 0.5, len(chain))
 

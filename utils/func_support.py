@@ -4,20 +4,24 @@ from operator import  add
 import collections
 
 formats = {'mut': '--or', 'mut+crx': ':^g', 'mut+xor': '-.vb',
-           'dde-mc':'--or', 'dde-mc1':':^g', 'dde-mc2':'-.vb'} #check
+           'dde-mc':'--or', 'dde-mc1':':^g', 'dde-mc2':'-.vb',
+           'id-samp':':^g'} #check
 #https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.plot.html
 
 line = {'mut': '--o', 'mut+crx': ':^', 'mut+xor': '-.v',
-        'dde-mc':'-<', 'dde-mc1':':^', 'dde-mc2':'-.v'
+        'dde-mc':'-<', 'dde-mc1':':^', 'dde-mc2':'-.v',
+        'id-samp':':^'
         }
 
 
 color = {'mut': '#fa4224', 'mut+crx': '#388004', 'mut+xor': '#004577',
-         'dde-mc':'#ff028d', 'dde-mc1':'#388004', 'dde-mc2':'#004577'
+         'dde-mc':'#ff028d', 'dde-mc1':'#388004', 'dde-mc2':'#004577',
+         'id-samp':'#388004'
          }
 
 fill = {'mut': '#FF9848', 'mut+crx': '#c7fdb5', 'mut+xor': '#95d0fc',
-        'dde-mc':'#ffb2d0', 'dde-mc1':'#c7fdb5', 'dde-mc2':'#95d0fc'
+        'dde-mc':'#ffb2d0', 'dde-mc1':'#c7fdb5', 'dde-mc2':'#95d0fc',
+        'id-samp':'#c7fdb5'
         }
 
 

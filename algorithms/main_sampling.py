@@ -33,6 +33,9 @@ class Sampling_Algorithm():
         if method == 'mut':
             iprime = self.proposals.bit_flip(population[i])
 
+        elif method == 'id-samp':
+            iprime = self.proposals.indepent_sampler(population[i])
+
         else:
             j, k = self.sample_idx(i, len(population), 2)
             assert j != k, 'Check proposal xor method {} {}'.format(j, k)
