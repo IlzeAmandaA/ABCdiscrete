@@ -24,7 +24,7 @@ parser.add_argument('--pflip', type=float, default=0.01, metavar='float',
                     help='bitflip probability') #0.1
 parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
-parser.add_argument('--eval', type=int, default=20, metavar='int',
+parser.add_argument('--eval', type=int, default=80, metavar='int',
                     help = 'number of evaluations')
 parser.add_argument('--epsilon', type=float, default=2, metavar='float',
                     help='distance threshold')
@@ -41,8 +41,8 @@ def execute(method, simulation, runid):
     For every run initialize the chains with different initial  distribution
     '''
     np.random.seed(runid)
-    # simulation.simulator.generate_parameters() #create underlying true parameters
-    # simulation.simulator.generate_data(n=10) #sample K data for the given parameter settings
+    simulation.simulator.generate_parameters() #create underlying true parameters
+    simulation.simulator.generate_data(n=10) #sample K data for the given parameter settings
     run_var = compute_variability(simulation.simulator.data)
 
     simulation.initialize_population()
@@ -134,8 +134,8 @@ if __name__ == '__main__':
     alg = ABC_Discrete(QMR_DT(), settings=set_proposals, epsilon=args.epsilon)
 
     #moved here
-    alg.simulator.generate_parameters() #create underlying true parameters
-    alg.simulator.generate_data(n=10) #sample K data for the given parameter settings
+    # alg.simulator.generate_parameters() #create underlying true parameters
+    # alg.simulator.generate_data(n=10) #sample K data for the given parameter settings
 
     for run in range(args.eval):
         variability[str(run)]={}
