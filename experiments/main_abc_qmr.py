@@ -16,7 +16,7 @@ from utils.func_support_temp import *
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
 parser.add_argument('--steps', type=int, default=100000, metavar='int',
                     help='evaluation steps')#
-parser.add_argument('--seed', type=int, default=10, metavar='int',
+parser.add_argument('--seed', type=int, default=4, metavar='int',
                     help='seed')
 parser.add_argument('--N', type=int, default=24, metavar='int',
                     help='seed')
@@ -24,7 +24,7 @@ parser.add_argument('--pflip', type=float, default=0.01, metavar='float',
                     help='bitflip probability') #0.1
 parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
-parser.add_argument('--eval', type=int, default=80, metavar='int',
+parser.add_argument('--eval', type=int, default=40, metavar='int',
                     help = 'number of evaluations')
 parser.add_argument('--epsilon', type=float, default=1, metavar='float',
                     help='distance threshold')
@@ -46,6 +46,7 @@ def execute(method, simulation, runid):
     run_var = compute_variability(simulation.simulator.data)
 
     simulation.initialize_population()
+
 
     error_pop, error, x_pos, ac_ratio, population = simulation.run(method, args.steps, runid)
     # error, x_pos, ac_ratio, chains = simulation.run(method, args.steps, runid)

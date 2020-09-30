@@ -74,7 +74,7 @@ class QMR_DT(Testbed):
         :param b: binary vector (np.array)
         :return: log prior
         """
-        return np.sum(b * np.log(self.p_l) + (1 - b) * np.log(1 - self.p_l))
+        return np.exp(np.sum(b * np.log(self.p_l) + (1 - b) * np.log(1 - self.p_l)))
 
 
     def product_lh(self, b):
