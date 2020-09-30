@@ -26,8 +26,6 @@ parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
 parser.add_argument('--eval', type=int, default=80, metavar='int',
                     help = 'number of evaluations')
-parser.add_argument('--exp', type=str, default='dde-mc', metavar='str',
-                    help='proposal selection')
 parser.add_argument('--epsilon', type=float, default=1, metavar='float',
                     help='distance threshold')
 
@@ -49,9 +47,10 @@ def execute(method, simulation, runid):
 
     simulation.initialize_population()
 
-    error, x_pos, ac_ratio, chains = simulation.run(method, args.steps, runid)
-    post = report_posterior(simulation, runid, method, chains, store+'/posterior' +str(args.epsilon))
-    return (method, runid, error, x_pos, ac_ratio, run_var, post)
+    error_pop, error, x_pos, ac_ratio, population = simulation.run(method, args.steps, runid)
+    # error, x_pos, ac_ratio, chains = simulation.run(method, args.steps, runid)
+    post = report_posterior(simulation, runid, method, population, store+'/posterior' +str(args.epsilon))
+    return (method, runid, error_pop, error, x_pos, ac_ratio, run_var, post)
 
 
 
@@ -67,10 +66,13 @@ def parallel(simulation):
     pool.join()
 
 def log_result(result):
-    method, runid, error, x_pos, ac_ratio, run_var, post = result
+    method, runid, error_pop, error, x_pos, ac_ratio, run_var, post = result
 
     global pop_error
-    pop_error[method].append(error)
+    pop_error[method].append(error_pop)
+
+    global min_error
+    min_error[method].append(error)
 
     global xlim
     xlim[method].append(x_pos)
@@ -115,8 +117,8 @@ if __name__ == '__main__':
     if not os.path.exists(store):
         os.makedirs(store)
 
-
     pop_error = {}
+    min_error = {}
     xlim = {}
     acceptance_r ={}
     variability = {}
@@ -137,6 +139,7 @@ if __name__ == '__main__':
 
     for prop in set_proposals:
         pop_error[prop] = []
+        min_error[prop] = []
         xlim[prop]=[]
         acceptance_r[prop] = []
         post_val[prop] = []
@@ -156,7 +159,9 @@ if __name__ == '__main__':
     print('finished parallel computing')
     pkl.dump(xlim, open(store + '/xlim'+ str(args.epsilon)+'.pkl', 'wb'))
     pkl.dump(pop_error, open(store+'/pop_error'+ str(args.epsilon)+ '.pkl', 'wb'))
-    create_plot(pop_error, xlim, store +'/pop_error'+ str(args.epsilon), 'error')
+    pkl.dump(min_error, open(store + '/min_error' + str(args.epsilon) + '.pkl', 'wb'))
+    create_plot(pop_error, xlim, store +'/pop_error'+ str(args.epsilon), 'avg error')
+    create_plot(min_error, xlim, store + '/min_error' + str(args.epsilon), 'error')
 
     report(compute_avg(acceptance_r), args.epsilon, store+'/acceptance_ratio')
     report_variablitity(variability, store+'/acceptance_ratio')
