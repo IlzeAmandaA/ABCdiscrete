@@ -9,7 +9,7 @@ sys.path.append(os.path.dirname(os.path.expanduser(PYTHONPATH)))
 
 from testbeds.qmr_dt import QMR_DT
 from algorithms.abc import ABC_Discrete
-from utils.func_support import *
+from utils.func_support_temp import *
 
 
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
@@ -109,7 +109,7 @@ def compute_variability(matrix):
 
 if __name__ == '__main__':
 
-    set_proposals = {'dde-mc':1, 'mut+xor':0.5}
+    set_proposals = {'dde-mc':1, 'mut+xor':0.5, 'id-samp':1}
     store = 'results/abc/qmr-dt/'
     if not os.path.exists(store):
         os.makedirs(store)

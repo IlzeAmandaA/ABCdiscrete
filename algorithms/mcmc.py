@@ -39,7 +39,7 @@ class PB_MCMC(Sampling_Algorithm):
             for i in range(len(population)):
                 iprime, jprime, j = self.proposal(population, i, method)
                 target_iprime = self.simulator.neg_log_posterior(iprime)
-                alpha = self.metropolis(target_iprime, i, jprime, j)
+                alpha = self.metropolis(target_iprime, i, jprime, j, population)
 
                 n += 1 if jprime is None else 2
 
@@ -71,15 +71,15 @@ class PB_MCMC(Sampling_Algorithm):
         return error/len(population)
 
 
-    def metropolis(self, post_iprime, i, jprime, j):
+    def metropolis(self, post_iprime, i, jprime, j, population):
         #based on negative log distribution
         if jprime is None:
-            return min(1, np.exp(self.simulator.neg_log_posterior(self.population[i])-post_iprime))
+            return min(1, np.exp(self.simulator.neg_log_posterior(population[i])-post_iprime))
         else:
             c1 = post_iprime
             c2 = self.simulator.neg_log_posterior(jprime)
-            bi = self.simulator.neg_log_posterior(self.population[i])
-            bj = self.simulator.neg_log_posterior(self.population[j])
+            bi = self.simulator.neg_log_posterior(population[i])
+            bj = self.simulator.neg_log_posterior(population[j])
             return min(1,  np.exp((bi - c1)+(bj- c2)))
 
 

@@ -9,19 +9,19 @@ sys.path.append(os.path.dirname(os.path.expanduser(PYTHONPATH)))
 
 from testbeds.qmr_dt import QMR_DT
 from algorithms.mcmc import PB_MCMC
-from utils.func_support import *
+from utils.func_support_temp import *
 
 
 parser = argparse.ArgumentParser(description='Likelihood-based inference')
-parser.add_argument('--steps', type=int, default=5000, metavar='int',
+parser.add_argument('--steps', type=int, default=10000, metavar='int',
                     help='evaluation steps')
-parser.add_argument('--seed', type=int, default=0, metavar='int',
+parser.add_argument('--seed', type=int, default=4, metavar='int',
                     help='seed')
 parser.add_argument('--pflip', type=float, default=0.01, metavar='float',
                     help='bitflip probability') #0.1
 parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
-parser.add_argument('--eval', type=int, default=2, metavar='int',
+parser.add_argument('--eval', type=int, default=40, metavar='int',
                     help = 'number of evaluations')
 parser.add_argument('--N', type=int, default=24, metavar='int',
                     help = 'population size')
@@ -31,7 +31,7 @@ parser.add_argument('--fB', default=True, action='store_false',
 
 args = parser.parse_args()
 SEED_MODEL=1
-MAX_PROCESS=1
+MAX_PROCESS=15
 
 
 def execute(method, simulation, runid):
@@ -88,8 +88,10 @@ def log_result(result):
 
 if __name__ == '__main__':
 
-    proposals = {'mut': 1., 'mut+xor': 0.5, 'mut+crx': 0.66,
-                'dde-mc':1, 'dde-mc1':1, 'dde-mc2':1}
+    # proposals = {'mut': 1., 'mut+xor': 0.5, 'mut+crx': 0.66,
+    #             'dde-mc':1, 'dde-mc1':1, 'dde-mc2':1}
+
+    proposals = {'mut': 1., 'mut+xor': 0.5, 'mut+crx': 0.66, 'dde-mc':1, 'id-samp':1}
 
 
     store = 'results/mcmc/qmr-dt/seed' + str(args.seed)

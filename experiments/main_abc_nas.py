@@ -9,7 +9,7 @@ sys.path.append(os.path.dirname(os.path.expanduser(PYTHONPATH)))
 
 from testbeds.nas import NAS
 from algorithms.abc import ABC_Discrete
-from utils.func_support import *
+from utils.func_support_temp import *
 
 
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
@@ -23,7 +23,7 @@ parser.add_argument('--pflip', type=float, default=0.01, metavar='float',
                     help='bitflip probability')  # 0.1
 parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
-parser.add_argument('--eval', type=int, default=5, metavar='int',
+parser.add_argument('--eval', type=int, default=40, metavar='int',
                     help='number of evaluations')
 parser.add_argument('--epsilon', type=float, default=0.01, metavar='float',
                     help='distance threshold')
@@ -79,7 +79,7 @@ if __name__ == '__main__':
 
     set_proposals = {'dde-mc': 1, 'mut+xor': 0.5, 'id-samp':1}
 
-    store = 'results/abc/nas'
+    store = 'results/abc/nas/' + 'flip' + str(args.pflip)
     if not os.path.exists(store):
         os.makedirs(store)
 
@@ -106,7 +106,7 @@ if __name__ == '__main__':
     np.random.seed(SEED_MODEL)
 
 
-    alg = ABC_Discrete(NAS(), settings=set_proposals, epsilon=args.epsilon, store=args.ens)
+    alg = ABC_Discrete(NAS(), settings=set_proposals, epsilon=args.epsilon, store=args.ens, pflip=args.pflip)
 
     np.random.seed(args.seed)
 
