@@ -4,7 +4,8 @@ import pickle as pkl
 import os
 import sys
 
-PYTHONPATH = '/home/ilze/PycharmProjects/MasterThesis/ABCdiscrete/experiments'
+# PYTHONPATH = '/home/ilze/PycharmProjects/MasterThesis/ABCdiscrete/experiments'
+PYTHONPATH = '/home/iaa510/ABCdiscrete/experiments'
 sys.path.append(os.path.dirname(os.path.expanduser(PYTHONPATH)))
 
 from testbeds.qmr_dt import QMR_DT
