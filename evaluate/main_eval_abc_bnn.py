@@ -22,7 +22,7 @@ def eval_test(method_id):
                 if method == method_id:
                     for cross_eval, pop in method_dict.items():
                         for idx,chain in enumerate(pop):
-                            y_hat, _= use_case.simulate(chain, eval=True)
+                            y_hat = use_case.simulate(chain, eval=True)
                             error_min = use_case.distance(y_hat,eval=True)
                             Y_hat.append(y_hat)
                             if error_min<error_argmin:
@@ -47,7 +47,8 @@ def report_txt(method, id, error):
     textfile.write('---------------------------------\n')
 
 
-loc='/home/ilze/PycharmProjects/MasterThesis/ensemble/argseed'
+# loc='/home/ilze/PycharmProjects/MasterThesis/ensemble/argseed'
+loc='/home/ilze/PycharmProjects/MasterThesis/ensemble/id/argseed'
 storage = [loc+str(i*10)+'/' for i in range(10)]
 res = '/home/ilze/PycharmProjects/MasterThesis/ABCdiscrete/results/abc/bnn_mnist/'
 type = '0.04'
@@ -58,9 +59,10 @@ hidden_units = 20
 labels = [0,1]
 use_case = MNIST(l1=labels[0], l2=labels[1], image_size=image_size, H=hidden_units, path='internal')
 
+eval_test('id-samp')
 
-for method in ['dde-mc', 'mut+xor']:
-    eval_test(method)
+# for method in ['dde-mc', 'mut+xor']:
+#     eval_test(method)
 
 
 #

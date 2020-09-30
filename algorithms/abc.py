@@ -10,8 +10,8 @@ Implementation of the ABC Discrete Algorithm
 
 class ABC_Discrete(Sampling_Algorithm):
 
-    def __init__(self, sim, settings, epsilon, store=1):
-        super(ABC_Discrete, self).__init__(sim, settings)
+    def __init__(self, sim, settings, epsilon, pflip=0.01, store=1):
+        super(ABC_Discrete, self).__init__(sim, settings, pflip=pflip)
 
         self.tolerance = epsilon
         self.ensemble = store

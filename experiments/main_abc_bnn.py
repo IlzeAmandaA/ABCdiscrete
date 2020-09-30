@@ -80,7 +80,7 @@ if __name__ == '__main__':
 
     set_proposals = {'dde-mc':1, 'mut+xor':0.5, 'id-samp':1}
 
-    store = 'results/abc/bnn_mnist/' + 'argseed' + str(args.seed)
+    store = 'results/abc/bnn_mnist/plfip' + str(args.pflip) + '/argseed' + str(args.seed)
     if not os.path.exists(store):
         os.makedirs(store)
 
@@ -115,7 +115,7 @@ if __name__ == '__main__':
     use_case = MNIST(l1=labels[0], l2=labels[1], image_size=image_size, H=hidden_units)
 
 
-    alg = ABC_Discrete(use_case, settings=set_proposals, epsilon=args.epsilon, store=args.ens)
+    alg = ABC_Discrete(use_case, settings=set_proposals, epsilon=args.epsilon, store=args.ens, pflip = args.pflip)
 
 
     '''
