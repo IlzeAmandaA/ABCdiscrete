@@ -9,7 +9,7 @@ sys.path.append(os.path.dirname(os.path.expanduser(PYTHONPATH)))
 
 from testbeds.nas import NAS
 from algorithms.abc import ABC_Discrete
-from utils.func_support_temp import *
+from utils.func_support import *
 
 
 parser = argparse.ArgumentParser(description='ABC models for discrete data')

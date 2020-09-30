@@ -21,6 +21,8 @@ class ABC_Discrete(Sampling_Algorithm):
         initial_time = time.time()
         population = self.population.copy()
 
+        print('pop', population[0])
+
         #storage
         er_min = np.inf
         error_pop = []
@@ -39,6 +41,7 @@ class ABC_Discrete(Sampling_Algorithm):
             for i in range(len(population)):
                 theta_, _, _ = self.proposal(population, i, method)
                 x = self.simulator.simulate(theta_)
+
                 if self.simulator.distance(x) <= np.random.exponential(self.tolerance):
                     alpha = self.metropolis(theta_, population[i])
                     acceptence_ratio += 1 if n <= 10000 else 0

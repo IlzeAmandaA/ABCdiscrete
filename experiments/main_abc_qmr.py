@@ -10,11 +10,11 @@ sys.path.append(os.path.dirname(os.path.expanduser(PYTHONPATH)))
 
 from testbeds.qmr_dt import QMR_DT
 from algorithms.abc import ABC_Discrete
-from utils.func_support_temp import *
+from utils.func_support import *
 
 
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
-parser.add_argument('--steps', type=int, default=100000, metavar='int',
+parser.add_argument('--steps', type=int, default=80000, metavar='int',
                     help='evaluation steps')#
 parser.add_argument('--seed', type=int, default=4, metavar='int',
                     help='seed')
@@ -24,9 +24,9 @@ parser.add_argument('--pflip', type=float, default=0.01, metavar='float',
                     help='bitflip probability') #0.1
 parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
-parser.add_argument('--eval', type=int, default=40, metavar='int',
+parser.add_argument('--eval', type=int, default=20, metavar='int',
                     help = 'number of evaluations')
-parser.add_argument('--epsilon', type=float, default=1, metavar='float',
+parser.add_argument('--epsilon', type=float, default=2, metavar='float',
                     help='distance threshold')
 
 args = parser.parse_args()
@@ -41,8 +41,8 @@ def execute(method, simulation, runid):
     For every run initialize the chains with different initial  distribution
     '''
     np.random.seed(runid)
-    simulation.simulator.generate_parameters() #create underlying true parameters
-    simulation.simulator.generate_data(n=10) #sample K data for the given parameter settings
+    # simulation.simulator.generate_parameters() #create underlying true parameters
+    # simulation.simulator.generate_data(n=10) #sample K data for the given parameter settings
     run_var = compute_variability(simulation.simulator.data)
 
     simulation.initialize_population()
@@ -132,6 +132,10 @@ if __name__ == '__main__':
     '''
     np.random.seed(SEED_MODEL)
     alg = ABC_Discrete(QMR_DT(), settings=set_proposals, epsilon=args.epsilon)
+
+    #moved here
+    alg.simulator.generate_parameters() #create underlying true parameters
+    alg.simulator.generate_data(n=10) #sample K data for the given parameter settings
 
     for run in range(args.eval):
         variability[str(run)]={}

@@ -16,12 +16,12 @@ line = {'mut': '--o', 'mut+crx': ':^', 'mut+xor': '-.v',
 
 color = {'mut': '#fa4224', 'mut+crx': '#388004', 'mut+xor': '#004577',
          'dde-mc':'#ff028d', 'dde-mc1':'#388004', 'dde-mc2':'#004577',
-         'id-samp':'#388004'
+         'id-samp':'#af6f09'
          }
 
 fill = {'mut': '#FF9848', 'mut+crx': '#c7fdb5', 'mut+xor': '#95d0fc',
         'dde-mc':'#ffb2d0', 'dde-mc1':'#c7fdb5', 'dde-mc2':'#95d0fc',
-        'id-samp':'#c7fdb5'
+        'id-samp':'#fdaa48'
         }
 
 
@@ -204,8 +204,6 @@ def plot_dist(dict_res, dict_true, location):
         std = []
 
         for id in od_res:
-            print(id)
-            print(od_res[id][selection][0])
             y.append(od_res[id][selection][0])
             std.append(od_res[id][selection][1])
             if selection == 'mut+xor':

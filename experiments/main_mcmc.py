@@ -10,7 +10,7 @@ sys.path.append(os.path.dirname(os.path.expanduser(PYTHONPATH)))
 
 from testbeds.qmr_dt import QMR_DT
 from algorithms.mcmc import PB_MCMC
-from utils.func_support_temp import *
+from utils.func_support import *
 
 
 parser = argparse.ArgumentParser(description='Likelihood-based inference')
