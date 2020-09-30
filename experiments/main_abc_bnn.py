@@ -15,7 +15,7 @@ from utils.func_support import *
 
 
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
-parser.add_argument('--steps', type=int, default=300000, metavar='int',
+parser.add_argument('--steps', type=int, default=200000, metavar='int',
                     help='evaluation steps') #300000
 parser.add_argument('--seed', type=int, default=0, metavar='int',
                     help='seed')
@@ -27,7 +27,7 @@ parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
 parser.add_argument('--eval', type=int, default=5, metavar='int',
                     help = 'number of evaluations')
-parser.add_argument('--epsilon', type=float, default=0.04, metavar='float',
+parser.add_argument('--epsilon', type=float, default=0.1, metavar='float',
                     help='distance threshold')
 parser.add_argument('--ens', type=int, default=5, metavar='int',
                     help='number of last iterations to store')
