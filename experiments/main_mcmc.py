@@ -43,7 +43,7 @@ def execute(method, simulation, runid):
         simulation.simulator.generate_parameters()  # create b truth
         simulation.simulator.generate_data()  # sample findings for the generated instance
 
-
+    np.random.seed(runid)
     simulation.initialize_population()
     simulation.compute_fitness()
 
