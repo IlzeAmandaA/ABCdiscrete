@@ -115,7 +115,7 @@ if __name__ == '__main__':
     
     '''
     np.random.seed(SEED_MODEL)
-    alg = PB_MCMC(QMR_DT(m=20, f=80), settings=proposals, pflip=args.pflip, pcross=args.pcross, N=args.N)
+    alg = PB_MCMC(QMR_DT(m=20, f=80, beta=False), settings=proposals, pflip=args.pflip, pcross=args.pcross, N=args.N)
 
     '''
 

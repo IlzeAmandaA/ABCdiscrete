@@ -8,21 +8,21 @@ QMR-DT Network
 
 class QMR_DT(Testbed):
 
-    def __init__(self, m=10, f=20, a_p = 0.9):
+    def __init__(self, m=10, f=20, a_p = 0.9, beta=False):
         super(QMR_DT, self).__init__()
 
         self.D = m
         self.f = f
         self.association_prob = a_p
-        self.p_l = np.random.beta(0.15, 0.15, self.D)  # disease prior
-        self.q_i0 = np.random.beta(0.15, 0.15, self.f)  # leak probability
-        self.q_il = self.association()  # association between disease l and finding i (finding, disease)
+        self.p_l = np.random.beta(0.15, 0.15, self.D) if beta else np.random.uniform(0,0.5, self.D)  # disease prior
+        self.q_i0 = np.random.beta(0.15, 0.15, self.f) if beta else np.random.uniform(0,1,self.f)  # leak probability
+        self.q_il = self.association(beta)  # association between disease l and finding i (finding, disease)
 
         self.parameters = None #sample b_truth from disease prior
         self.data = None #generate multipl findings given b_truth
 
 
-    def association(self):
+    def association(self, beta):
         """
         Function to create matrix between the finding and association probabilities q_il
         :return: matrix(findings,diseases)
@@ -32,7 +32,7 @@ class QMR_DT(Testbed):
             f_association=np.zeros(self.D)
             for b in range(self.D):
                 if np.random.uniform(0,1) >= self.association_prob:
-                    f_association[b] = np.random.beta(0.15,0.15)
+                    f_association[b] = np.random.beta(0.15,0.15) if beta else np.random.uniform(0,1)
             q_il.append(f_association)
 
         return np.array(q_il)
