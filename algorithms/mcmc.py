@@ -32,7 +32,7 @@ class PB_MCMC(Sampling_Algorithm):
         fitDist = []
         error = []
         xlim=[]
-        sample = 500 #*20
+        sample = 250 #*20
 
         n=0
         while n < steps:
