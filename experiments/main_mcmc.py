@@ -134,6 +134,8 @@ if __name__ == '__main__':
 
     '''
     pkl.dump(post_dist, open(store + '/posterior.pkl', 'wb'))
+    pkl.dump(pop_error, open(store + '/pop_error.pkl', 'wb'))
+    pkl.dump(xlim, open(store + '/xlim.pkl', 'wb'))
     create_plot(post_dist, xlim, store + '/proposal_dist', 'posterior', True)
     create_plot(pop_error, xlim, store+'/pop_error', 'error')
 
