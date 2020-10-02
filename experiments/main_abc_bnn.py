@@ -27,7 +27,7 @@ parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
 parser.add_argument('--eval', type=int, default=5, metavar='int',
                     help = 'number of evaluations')
-parser.add_argument('--epsilon', type=float, default=0.1, metavar='float',
+parser.add_argument('--epsilon', type=float, default=0.05, metavar='float',
                     help='distance threshold')
 parser.add_argument('--ens', type=int, default=5, metavar='int',
                     help='number of last iterations to store')
@@ -78,7 +78,7 @@ def log_result(result):
 
 if __name__ == '__main__':
 
-    set_proposals = {'dde-mc':1, 'mut+xor':0.5, 'id-samp':1}
+    set_proposals = {'dde-mc':1, 'mut+xor':0.5, 'ind-samp':1}
 
     store = 'results/abc/bnn_mnist/plfip' + str(args.pflip) + '/argseed' + str(args.seed)
     if not os.path.exists(store):

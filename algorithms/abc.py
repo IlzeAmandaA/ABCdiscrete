@@ -10,18 +10,17 @@ Implementation of the ABC Discrete Algorithm
 
 class ABC_Discrete(Sampling_Algorithm):
 
-    def __init__(self, sim, settings, epsilon, pflip=0.01, store=1):
+    def __init__(self, sim, settings, epsilon, pflip=0.01, store=1, e_fixed=False):
         super(ABC_Discrete, self).__init__(sim, settings, pflip=pflip)
 
         self.tolerance = epsilon
         self.ensemble = store
+        self.ep_fixed = e_fixed
 
 
     def run(self, method, steps, runid):
         initial_time = time.time()
         population = self.population.copy()
-
-        print('pop', population[0])
 
         #storage
         er_min = np.inf
@@ -42,7 +41,8 @@ class ABC_Discrete(Sampling_Algorithm):
                 theta_, _, _ = self.proposal(population, i, method)
                 x = self.simulator.simulate(theta_)
 
-                if self.simulator.distance(x) <= np.random.exponential(self.tolerance):
+                threshold = np.random.exponential(self.tolerance) if not self.ep_fixed else self.tolerance
+                if self.simulator.distance(x) <= threshold:
                     alpha = self.metropolis(theta_, population[i])
                     acceptence_ratio += 1 if n <= 10000 else 0
 

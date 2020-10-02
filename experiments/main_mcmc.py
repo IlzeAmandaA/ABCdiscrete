@@ -92,7 +92,7 @@ if __name__ == '__main__':
     # proposals = {'mut': 1., 'mut+xor': 0.5, 'mut+crx': 0.66,
     #             'dde-mc':1, 'dde-mc1':1, 'dde-mc2':1}
 
-    proposals = {'mut': 1., 'mut+xor': 0.5, 'mut+crx': 0.66, 'dde-mc':1, 'id-samp':1}
+    proposals = {'mut': 1., 'mut+xor': 0.5, 'mut+crx': 0.66, 'dde-mc':1, 'ind-samp':1}
 
 
     store = 'results/mcmc/qmr-dt/seed' + str(args.seed)

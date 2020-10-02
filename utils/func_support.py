@@ -5,23 +5,27 @@ import collections
 
 formats = {'mut': '--or', 'mut+crx': ':^g', 'mut+xor': '-.vb',
            'dde-mc':'--or', 'dde-mc1':':^g', 'dde-mc2':'-.vb',
-           'id-samp':':^g'} #check
+           'id-samp':':^g', 'ind-samp':':^g',
+           'dde-mc*': ':^g', 'mut+xor*': '--or'} #check
 #https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.plot.html
 
 line = {'mut': '--o', 'mut+crx': ':^', 'mut+xor': '-.v',
         'dde-mc':'-<', 'dde-mc1':':^', 'dde-mc2':'-.v',
-        'id-samp':':^'
+        'id-samp':':^', 'ind-samp':':^',
+        'dde-mc*': ':^', 'mut+xor*': '--o'
         }
 
 
-color = {'mut': '#fa4224', 'mut+crx': '#388004', 'mut+xor': '#004577',
-         'dde-mc':'#ff028d', 'dde-mc1':'#388004', 'dde-mc2':'#004577',
-         'id-samp':'#af6f09'
+color = {'mut': '#fa4224', 'mut+crx': '#7e1e9c', 'mut+xor': '#004577',
+         'dde-mc':'#388004', 'dde-mc1':'#388004', 'dde-mc2':'#004577',
+         'id-samp': '#ff028d', 'ind-samp': '#ff028d',
+         'dde-mc*': '#6f7c00', 'mut+xor*': '#13bbaf'
          }
 
-fill = {'mut': '#FF9848', 'mut+crx': '#c7fdb5', 'mut+xor': '#95d0fc',
-        'dde-mc':'#ffb2d0', 'dde-mc1':'#c7fdb5', 'dde-mc2':'#95d0fc',
-        'id-samp':'#fdaa48'
+fill = {'mut': '#FF9848', 'mut+crx': '#efc0fe', 'mut+xor': '#95d0fc',
+        'dde-mc':'#c7fdb5', 'dde-mc1':'#c7fdb5', 'dde-mc2':'#95d0fc',
+        'id-samp': '#ffb2d0', 'ind-samp': '#ffb2d0',
+        'dde-mc*': '#d0e429', 'mut+xor*': '#cafffb'
         }
 
 
@@ -91,6 +95,7 @@ def create_plot(results, x, location, yaxis, transform=False, ylim=None, xlim=No
 
 def compute_statistics(dict, x, transform=False):
     overall={}
+
     for key, values in dict.items():
         # assert len(values[0]) == len(values[1]), 'issue with lenghts'
         overall[key] = {}
@@ -115,7 +120,10 @@ def compute_avg(dict):
 
 def plot(avg_dict, location, yaxis, ylim, xlim, length=16, height=6):
     plt.figure(figsize=(length, height))
-
+    # order = ['dde-mc*', 'mut+xor*', 'dde-mc', 'mut+xor']
+    #
+    # for transformation in order:
+    #     results = avg_dict[transformation]
     for transformation, results in avg_dict.items():
         y = results['mean']
         std = results['std']

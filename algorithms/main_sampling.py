@@ -33,7 +33,7 @@ class Sampling_Algorithm():
         if method == 'mut':
             iprime = self.proposals.bit_flip(population[i])
 
-        elif method == 'id-samp':
+        elif method == 'ind-samp':
             iprime = self.proposals.indepent_sampler(population[i])
 
         else:

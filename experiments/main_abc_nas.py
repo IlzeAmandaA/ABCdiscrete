@@ -23,9 +23,9 @@ parser.add_argument('--pflip', type=float, default=0.01, metavar='float',
                     help='bitflip probability')  # 0.1
 parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
-parser.add_argument('--eval', type=int, default=40, metavar='int',
+parser.add_argument('--eval', type=int, default=5, metavar='int',
                     help='number of evaluations')
-parser.add_argument('--epsilon', type=float, default=0.01, metavar='float',
+parser.add_argument('--epsilon', type=float, default=0.2, metavar='float',
                     help='distance threshold')
 parser.add_argument('--ens', type=int, default=1, metavar='int',
                     help='number of last iterations to store')
@@ -77,7 +77,7 @@ def log_result(result):
 
 if __name__ == '__main__':
 
-    set_proposals = {'dde-mc': 1, 'mut+xor': 0.5, 'id-samp':1}
+    set_proposals = {'dde-mc': 1, 'mut+xor': 0.5, 'ind-samp':1}
 
     store = 'results/abc/nas/' + 'flip' + str(args.pflip)
     if not os.path.exists(store):

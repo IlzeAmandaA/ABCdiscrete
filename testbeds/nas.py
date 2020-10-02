@@ -33,8 +33,8 @@ class NAS(Testbed):
             if self.nasbench.is_valid(cell):
                 return cell
             else:
-                print(matrix)
-                sys.exit('invalid cell')
+                print('invalid cell')
+                return 1
 
         else:
             matrix = self.transform(w_orig)
@@ -89,11 +89,11 @@ class NAS(Testbed):
 
     def distance(self, input, eval=False):
         # convert to a minimization problem
-        if eval:
-            return 1 - self.nasbench.query(input)['test_accuracy']
+        if input==1:
+            return 1
         else:
-            if input==1:
-                return 1
+            if eval:
+                return 1 - self.nasbench.query(input)['test_accuracy']
             else:
                 return 1 - self.nasbench.query(input)['validation_accuracy']
 

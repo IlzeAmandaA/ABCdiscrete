@@ -10,6 +10,28 @@ sys.path.append(os.path.dirname(os.path.expanduser(PYTHONPATH)))
 
 from testbeds.nas import NAS
 
+def compute_argmin(method_id):
+    best = (np.inf, None)
+    results = {}
+    for runid, res in data.items():
+        for method, population in res.items():
+            if method == method_id:
+                pop_test_error = np.zeros((len(population),))
+                for idx, chain in enumerate(population):
+                    Y_hat = use_case.simulate(chain, eval=True)
+                    error = use_case.distance(Y_hat, eval=True)
+                    pop_test_error[idx] = error
+
+                min_error = (np.min(pop_test_error), population[np.argmin(pop_test_error)])
+                if min_error[0] < best[0]:
+                    best = min_error
+
+                results[str(runid)] = (np.mean(pop_test_error), np.std(pop_test_error))
+
+    results['min_error'] = best[0]
+    results['dist'] = (1 - np.mean(best[1])) * 100
+    report_txt(method_id, results, len(data.keys()))
+
 
 def report_txt(method, results, N):
     textfile = open(loc + 'results' + type + '.txt', 'a+')
@@ -24,7 +46,8 @@ def report_txt(method, results, N):
 
 loc = '/home/ilze/PycharmProjects/MasterThesis/NAS/nas/'
 loc = '/home/ilze/PycharmProjects/MasterThesis/ABCdiscrete/results/abc/nas/'
-type = '0.01'
+loc = '/home/ilze/PycharmProjects/MasterThesis/ABCdiscrete/results/abc/nas/flip0.01/'
+type = '0.2' #'0.01'
 data=pkl.load(open(loc+'pop_store' + type + '.pkl', 'rb'))
 
 image_size = (14, 14)
@@ -33,31 +56,10 @@ hidden_units = 20
 labels = [0,1]
 use_case = NAS()
 
-best= (np.inf, None)
+for method_id in ['mut+xor', 'dde-mc', 'id-samp']:
+    print(method_id)
+    compute_argmin(method_id)
 
-for method, run in data.items():
-    results = {}
-
-    for i, pop in enumerate(run):
-        pop_test_error = np.zeros((len(pop),))
-
-        for idx, chain in enumerate(pop):
-            #performance
-            Y_hat = use_case.simulate(chain, eval=True)
-            error = use_case.distance(Y_hat, eval=True)
-            pop_test_error[idx] = error
-
-        min_error = (np.min(pop_test_error), pop[np.argmin(pop_test_error)])
-        if min_error[0] < best[0]:
-            best = min_error
-
-        results[str(i)] = (np.mean(pop_test_error), np.std(pop_test_error))
-
-    results['min_error'] = best[0]
-    results['dist'] = (1 - np.mean(best[1]))*100
-
-
-    report_txt(method, results, len(run))
 
 
 

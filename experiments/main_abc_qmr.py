@@ -113,7 +113,7 @@ def compute_variability(matrix):
 
 if __name__ == '__main__':
 
-    set_proposals = {'dde-mc':1, 'mut+xor':0.5, 'id-samp':1}
+    set_proposals = {'dde-mc':1, 'mut+xor':0.5, 'ind-samp':1}
     store = 'results/abc/qmr-dt/'
     if not os.path.exists(store):
         os.makedirs(store)
@@ -131,7 +131,7 @@ if __name__ == '__main__':
     keep the underlying model same across all experiments with Seed_model
     '''
     np.random.seed(SEED_MODEL)
-    alg = ABC_Discrete(QMR_DT(), settings=set_proposals, epsilon=args.epsilon)
+    alg = ABC_Discrete(QMR_DT(), settings=set_proposals, epsilon=args.epsilon, e_fixed=True)
 
     #moved here
     # alg.simulator.generate_parameters() #create underlying true parameters
