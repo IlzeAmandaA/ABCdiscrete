@@ -8,7 +8,7 @@ QMR-DT Network
 
 class QMR_DT(Testbed):
 
-    def __init__(self, m=10, f=20, a_p = 0.9, beta=False):
+    def __init__(self, m=10, f=20, a_p = 0.9, beta=True):
         super(QMR_DT, self).__init__()
 
         self.D = m

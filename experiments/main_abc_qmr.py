@@ -9,7 +9,7 @@ PYTHONPATH = '/home/iaa510/ABCdiscrete/experiments'
 sys.path.append(os.path.dirname(os.path.expanduser(PYTHONPATH)))
 
 from testbeds.qmr_dt import QMR_DT
-from algorithms.abc import ABC_Discrete
+from algorithms.abc_fake import ABC_Discrete
 from utils.func_support import *
 
 
@@ -131,7 +131,7 @@ if __name__ == '__main__':
     keep the underlying model same across all experiments with Seed_model
     '''
     np.random.seed(SEED_MODEL)
-    alg = ABC_Discrete(QMR_DT(), settings=set_proposals, epsilon=args.epsilon)
+    alg = ABC_Discrete(QMR_DT(), settings=set_proposals, epsilon=args.epsilon, e_fixed=True)
 
     #moved here
     # alg.simulator.generate_parameters() #create underlying true parameters
