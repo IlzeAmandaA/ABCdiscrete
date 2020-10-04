@@ -48,8 +48,8 @@ def execute(method, simulation, runid):
     simulation.initialize_population()
     simulation.compute_fitness()
 
-    print('run id ,', runid)
-    print('b truth', simulation.parameters)
+    print('run id,', runid)
+    print('b truth', simulation.simulator.parameters)
 
     bestSolution, fitHistory, fitDist, error, x_pos = simulation.run(method, args.steps, runid)
 
