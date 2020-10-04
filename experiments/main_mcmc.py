@@ -38,6 +38,7 @@ MAX_PROCESS=15
 def execute(method, simulation, runid):
 
 
+
     if not args.fB:
         np.random.seed(runid)
         simulation.simulator.generate_parameters()  # create b truth
@@ -46,6 +47,9 @@ def execute(method, simulation, runid):
     np.random.seed(runid)
     simulation.initialize_population()
     simulation.compute_fitness()
+
+    print('run id ,', runid)
+    print('b truth', simulation.parameters)
 
     bestSolution, fitHistory, fitDist, error, x_pos = simulation.run(method, args.steps, runid)
 
@@ -88,9 +92,6 @@ def log_result(result):
 
 
 if __name__ == '__main__':
-
-    # proposals = {'mut': 1., 'mut+xor': 0.5, 'mut+crx': 0.66,
-    #             'dde-mc':1, 'dde-mc1':1, 'dde-mc2':1}
 
     proposals = {'mut': 1., 'mut+xor': 0.5, 'mut+crx': 0.66, 'dde-mc':1, 'ind-samp':1}
 
