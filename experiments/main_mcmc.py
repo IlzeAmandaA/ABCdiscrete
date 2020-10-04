@@ -22,11 +22,11 @@ parser.add_argument('--pflip', type=float, default=0.01, metavar='float',
                     help='bitflip probability') #0.1
 parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
-parser.add_argument('--eval', type=int, default=40, metavar='int',
+parser.add_argument('--eval', type=int, default=80, metavar='int',
                     help = 'number of evaluations')
 parser.add_argument('--N', type=int, default=24, metavar='int',
                     help = 'population size')
-parser.add_argument('--fB', default=True, action='store_false',
+parser.add_argument('--fB', default=False, action='store_false',
                     help='flag to use either a fixed or alternating underling b')
 
 
@@ -37,19 +37,14 @@ MAX_PROCESS=15
 
 def execute(method, simulation, runid):
 
-
+    np.random.seed(runid)
 
     if not args.fB:
-        np.random.seed(runid)
         simulation.simulator.generate_parameters()  # create b truth
         simulation.simulator.generate_data()  # sample findings for the generated instance
 
-    np.random.seed(runid)
     simulation.initialize_population()
     simulation.compute_fitness()
-
-    print('run id,', runid)
-    print('b truth', simulation.simulator.parameters)
 
     bestSolution, fitHistory, fitDist, error, x_pos = simulation.run(method, args.steps, runid)
 
