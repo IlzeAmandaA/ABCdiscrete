@@ -88,7 +88,8 @@ def log_result(result):
 
 if __name__ == '__main__':
 
-    proposals = {'mut': 1., 'mut+xor': 0.5, 'mut+crx': 0.66, 'dde-mc':1, 'ind-samp':1}
+    # proposals = {'mut': 1., 'mut+xor': 0.5, 'mut+crx': 0.66, 'dde-mc':1, 'ind-samp':1}
+    proposals = {'dde-mc':1, 'dde-mc1':1, 'dde-mc2':1}
 
 
     store = 'results/mcmc/qmr-dt/seed' + str(args.seed)
@@ -135,8 +136,8 @@ if __name__ == '__main__':
     create_plot(post_dist, xlim, store + '/proposal_dist', 'posterior', True)
     create_plot(pop_error, xlim, store+'/pop_error', 'error')
 
-    pkl.dump(best_error, open(store+'/error.pkl', 'wb'))
-    create_plot(best_error, xlim, store+'/error_bestparams', 'error')
+    pkl.dump(best_error, open(store+'/min_error.pkl', 'wb'))
+    create_plot(best_error, xlim, store+'/min_error', 'error')
 
 
 

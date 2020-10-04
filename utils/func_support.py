@@ -101,7 +101,7 @@ def compute_statistics(dict, x, transform=False):
         overall[key] = {}
         values = np.exp(-(np.asarray(values))) if transform else np.asarray(values)
         overall[key]['mean'] = np.mean(values, axis=0)
-        overall[key]['std'] = np.std(values, axis=0)
+        overall[key]['std'] = np.std(values, axis=0)  / np.sqrt(len(values))
 
     for key, values in x.items():
         overall[key]['x'] = np.mean(np.asarray(values), axis=0)
@@ -113,7 +113,7 @@ def compute_avg(dict):
     for key, values in dict.items():
         overall[key] = {}
         overall[key]['mean'] = np.mean(np.asarray(values))
-        overall[key]['std'] = np.std(np.asarray(values)) # / len(values)
+        overall[key]['std'] = np.std(np.asarray(values))
 
     return overall
 
