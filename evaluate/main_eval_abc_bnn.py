@@ -10,6 +10,7 @@ sys.path.append(os.path.dirname(os.path.expanduser(PYTHONPATH)))
 from testbeds.mnist_numpy import MNIST
 
 def eval_test(method_id):
+    theta_best = None
     error_argmin=np.inf
     total_error = np.zeros((len(storage),))
     for id,store in enumerate(storage):
@@ -19,6 +20,8 @@ def eval_test(method_id):
             for method, method_dict in data.items():
                 if method == 'de-mc':
                     method = 'dde-mc'
+                elif method == 'id-samp':
+                    method = 'ind-samp'
                 if method == method_id:
                     for cross_eval, pop in method_dict.items():
                         for idx,chain in enumerate(pop):
@@ -27,31 +30,44 @@ def eval_test(method_id):
                             Y_hat.append(y_hat)
                             if error_min<error_argmin:
                                 error_argmin=error_min
+                                theta_best = y_hat
+
 
         Y_df = pd.DataFrame(Y_hat)
         Y_mode = np.array(Y_df.mode(axis=0))[0]
         error = use_case.distance(Y_mode, eval=True)
-        report_txt(method_id,  id, error)
+        report_txt(method_id, id, error)
 
         total_error[id] = error
 
     avg_error = np.mean(total_error)
     ste = np.std(total_error) / np.sqrt(len(total_error))
-    print('method {} avg error {} ste {}, argmin error {}'.format(method_id, avg_error, ste, error_argmin))
+    dist = 1 - np.mean(theta_best)
+    report_txt1(method_id, avg_error, ste, error_argmin, dist)
+    # print('method {} avg error {} ste {}, argmin error {}'.format(method_id, avg_error, ste, error_argmin))
+
 
 def report_txt(method, id, error):
-    textfile = open(res + 'test_results.txt', 'a+')
+    textfile = open(res + 'test_results_' + str(type) + '.txt', 'a+')
     textfile.write('Model id {} \n'.format(id))
     textfile.write('Results for proposal {} \n'.format(method))
     textfile.write('Test error obtained: {} \n'.format(error))
     textfile.write('---------------------------------\n')
 
+def report_txt1(method_id, avg_error, ste, error_argmin, dist):
+    textfile = open(res + 'test_results_' + str(type) + '.txt', 'a+')
+    textfile.write('method {} avg error {} ste {}, argmin error {} \n'.format(method_id, avg_error, ste, error_argmin))
+    textfile.write('percentage of 0s: {}'.format(dist))
+    textfile.write('---------------------------------\n')
 
-# loc='/home/ilze/PycharmProjects/MasterThesis/ensemble/argseed'
-loc='/home/ilze/PycharmProjects/MasterThesis/ensemble/id/argseed'
-storage = [loc+str(i*10)+'/' for i in range(10)]
+
+#loc='/home/ilze/PycharmProjects/MasterThesis/ensemble/argseed'
+#loc='/home/ilze/PycharmProjects/MasterThesis/ensemble/id/argseed'
+#storage = '/home/ilze/PycharmProjects/MasterThesis/ensemble/id/argseed0/'
+loc = '/home/ilze/PycharmProjects/MasterThesis/ABC/bnn_mnist/plfip0.01/argseed'
+storage = [loc+str(i*10)+'/' for i in range(5)]
 res = '/home/ilze/PycharmProjects/MasterThesis/ABCdiscrete/results/abc/bnn_mnist/'
-type = '0.04'
+type = '0.05'
 
 image_size = (14, 14)
 hidden_units = 20
@@ -59,10 +75,9 @@ hidden_units = 20
 labels = [0,1]
 use_case = MNIST(l1=labels[0], l2=labels[1], image_size=image_size, H=hidden_units, path='internal')
 
-eval_test('id-samp')
 
-# for method in ['dde-mc', 'mut+xor']:
-#     eval_test(method)
+for method in ['dde-mc', 'mut+xor', 'ind-samp']:
+    eval_test(method)
 
 
 #

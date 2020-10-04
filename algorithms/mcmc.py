@@ -19,6 +19,7 @@ class PB_MCMC(Sampling_Algorithm):
         self.target_population = [self.simulator.neg_log_posterior(chain) for chain in self.population]
 
     def run(self, method, steps, runid):
+        print(method)
         initial_time = time.time()
 
         #initialize the population
