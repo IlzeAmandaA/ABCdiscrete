@@ -114,18 +114,8 @@ if __name__ == '__main__':
 
     Run the algortihm in parallel mode
     '''
-    for runid in range(args.eval):
-        np.random.seed(runid)
-        for method in set_proposals:
-            alg.initialize_population()
-            error_pop, error, x_pos, ac_ratio, population = alg.run(method, args.steps, runid)
-            pop_error[method].append(error_pop)
-            min_error[method].append(error)
-            xlim[method].append(x_pos)
-            acceptance_r[method].append(ac_ratio)
-            pop_store[str(runid)][method] = population
 
-    # parallel(alg)
+    parallel(alg)
 
     '''
     Report the results 
