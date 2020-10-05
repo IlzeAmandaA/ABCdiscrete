@@ -4,7 +4,6 @@ from testbeds.main_usecase import Testbed
 """
 QMR-DT Network
 """
-#PUT A FLAG TO USE BETA OR UNIFORM DIST
 
 class QMR_DT(Testbed):
 

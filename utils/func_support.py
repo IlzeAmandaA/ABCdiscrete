@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from operator import  add
 import collections
 
 formats = {'mut': '--or', 'mut+crx': ':^g', 'mut+xor': '-.vb',
@@ -101,7 +100,7 @@ def compute_statistics(dict, x, transform=False):
         overall[key] = {}
         values = np.exp(-(np.asarray(values))) if transform else np.asarray(values)
         overall[key]['mean'] = np.mean(values, axis=0)
-        overall[key]['std'] = np.std(values, axis=0)  / np.sqrt(len(values))
+        overall[key]['ste'] = np.std(values, axis=0)  / np.sqrt(len(values))
 
     for key, values in x.items():
         overall[key]['x'] = np.mean(np.asarray(values), axis=0)
@@ -120,17 +119,14 @@ def compute_avg(dict):
 
 def plot(avg_dict, location, yaxis, ylim, xlim, length=16, height=6):
     plt.figure(figsize=(length, height))
-    # order = ['dde-mc*', 'mut+xor*', 'dde-mc', 'mut+xor']
-    #
-    # for transformation in order:
-    #     results = avg_dict[transformation]
+
     for transformation, results in avg_dict.items():
         y = results['mean']
-        std = results['std']
+        ste = results['ste']
         x = results['x']
-        y_min=y-std
-        y_plus=y+std
-        assert len(x) == len(y) == len(std), 'The number of instances fo not match, check create plot function'
+        y_min=y-ste
+        y_plus=y+ste
+        assert len(x) == len(y) == len(ste), 'The number of instances fo not match, check create plot function'
 
         plt.plot(x,y, line[transformation], color=color[transformation], label = transformation)
         plt.fill_between(x, y_min, y_plus,
@@ -142,7 +138,7 @@ def plot(avg_dict, location, yaxis, ylim, xlim, length=16, height=6):
     if xlim is not None:
         a,b = xlim
         plt.xlim(a,b)
-    plt.xlabel('evaluations')
+    plt.xlabel('iterations')
     plt.ylabel(yaxis)
     plt.grid(True)
     plt.legend(loc=0)
@@ -176,27 +172,6 @@ def plot_bnn(list, location, yaxis, ylim=None, xlim=None, length=16, height=6):
     plt.savefig(location + '.png')
     # plt.show()
 
-def plot_single(results, points, name, location):
-
-    plt.figure(figsize=(16, 6))
-
-    for transformation, data in results.items():
-        y = np.asarray(data)
-        std = np.std(y)
-        y_min = y+std
-        y_plus = y-std
-        x = points[transformation]
-        assert len(x) == len(y), 'The number of instances fo not match, check create plot function'
-        plt.plot(x, y, line[transformation], color=color[transformation], label=transformation)
-        plt.fill_between(x, y_min, y_plus,
-                         alpha=0.5, edgecolor=color[transformation], facecolor=fill[transformation])
-
-
-    plt.xlabel('evaluations')
-    plt.ylabel(name)
-    plt.grid(True)
-    plt.legend(loc=0)
-    plt.savefig(location+ '.png')
 
 def plot_dist(dict_res, dict_true, location):
     format = {'mut+xor':['o','green','lightgreen'], 'dde-mc':['v','blue','lightblue']}
@@ -231,7 +206,6 @@ def plot_dist(dict_res, dict_true, location):
            ylabel="Posterior")
 
     plt.xticks(x, [str(id) for id in x])
-    #plt.ylim(-25, 15)
     plt.legend()
     plt.savefig(location + '.png')
 

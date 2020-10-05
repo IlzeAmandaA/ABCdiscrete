@@ -1,7 +1,7 @@
 from nasbench import api
 import numpy as np
 from testbeds.main_usecase import Testbed
-import sys
+
 
 INPUT = 'input'
 OUTPUT = 'output'
@@ -14,7 +14,7 @@ class NAS(Testbed):
     def __init__(self):
         super(NAS, self).__init__()
 
-        PATH = '/home/ilze/MasterThesis/nas/nasbench_only108.tfrecord'
+        PATH = 'specify the path to where the nasbench_only108.tfrecord is stored'
         self.OPS = [INPUT, CONV1X1, CONV3X3, CONV3X3, CONV3X3, MAXPOOL3X3, OUTPUT]
 
         self.nasbench = api.NASBench(PATH)
@@ -45,16 +45,13 @@ class NAS(Testbed):
             )
 
             if self.nasbench.is_valid(cell):
-                return cell # self.extract(matrix)
+                return cell
 
             else:
                 return 1
-                    # matrix = self.connectivity(matrix)
 
     def transform(self, w_orig):
         w = w_orig.copy()
-        # while np.sum(w) > 9:
-        #     w[np.random.randint(0, self.D)] = 0
 
         # convert w_orig to matrix form
         W_m = []
@@ -72,13 +69,6 @@ class NAS(Testbed):
 
         return matrix
 
-    # def connectivity(self, matrix):
-    #     if np.sum(matrix) <= 8:
-    #         matrix[np.random.randint(0, self.size), np.random.randint(0, self.size)] = 1
-    #     else:
-    #         matrix[np.random.randint(0, self.size), np.random.randint(0, self.size)] = 0
-    #     matrix = np.triu(matrix, 1)
-    #     return matrix
 
     def extract(self, matrix):
         w_cor = []

@@ -5,7 +5,7 @@ import torch.optim as optim
 import sys
 import os
 
-PYTHONPATH = '/home/ilze/PycharmProjects/MasterThesis/ABCdiscrete/experiments'
+PYTHONPATH = 'specify the python path to folder'
 sys.path.append(os.path.dirname(os.path.expanduser(PYTHONPATH)))
 
 from algorithms.bnn import Network

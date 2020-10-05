@@ -4,8 +4,7 @@ import pickle as pkl
 import os
 import sys
 
-# PYTHONPATH = '/home/ilze/PycharmProjects/MasterThesis/ABCdiscrete/experiments'
-PYTHONPATH = '/home/iaa510/ABCdiscrete/experiments'
+PYTHONPATH = 'specify the python path to folder'
 sys.path.append(os.path.dirname(os.path.expanduser(PYTHONPATH)))
 
 from testbeds.qmr_dt import QMR_DT
@@ -88,8 +87,8 @@ def log_result(result):
 
 if __name__ == '__main__':
 
-    # proposals = {'mut': 1., 'mut+xor': 0.5, 'mut+crx': 0.66, 'dde-mc':1, 'ind-samp':1}
-    proposals = {'dde-mc':1, 'dde-mc1':1, 'dde-mc2':1}
+    proposals = {'mut': 1., 'mut+xor': 0.5, 'mut+crx': 0.66, 'dde-mc':1, 'ind-samp':1}
+    #proposals = {'dde-mc':1, 'dde-mc1':1, 'dde-mc2':1}
 
 
     store = 'results/mcmc/qmr-dt/seed' + str(args.seed)

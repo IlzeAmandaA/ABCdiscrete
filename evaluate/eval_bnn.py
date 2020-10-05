@@ -3,7 +3,7 @@ import torch.utils.data
 import sys
 import os
 
-PYTHONPATH = '/home/ilze/PycharmProjects/MasterThesis/ABCdiscrete/experiments'
+PYTHONPATH = 'specify the python path to folder'
 sys.path.append(os.path.dirname(os.path.expanduser(PYTHONPATH)))
 
 from testbeds.mnist_torch import *
@@ -23,10 +23,10 @@ def test():
 
     return avg_terror
 
-models = ['model'+str(i) + str('.pt') for i in range(10)]
-path = '/home/ilze/PycharmProjects/MasterThesis/ABCdiscrete/results/bnn/'
 
-print('Loading Data')
+models = ['model'+str(i) + str('.pt') for i in range(10)]
+path = 'specify the path where the model is stored'
+
 rescale = 14
 hidden_units = 20
 output = 1

@@ -34,10 +34,10 @@ class MNIST(Dataset):
         self.train_size = train_size
         self.binary = binary
 
-        if path == 'external':
-            PYTHONPATH = '/home/iaa510'
-        elif path == 'internal':
-            PYTHONPATH = '/home/ilze/MasterThesis/mnist'
+        if path=='external':
+            PYTHONPATH = 'specify the python path when working on a remote devise'
+        elif path=='internal':
+            PYTHONPATH = 'specify the python path to folder'
         else:
             print('Invalid python path selection')
             sys.exit()

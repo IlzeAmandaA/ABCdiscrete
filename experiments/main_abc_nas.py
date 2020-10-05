@@ -4,7 +4,7 @@ import pickle as pkl
 import sys
 import os
 
-PYTHONPATH = '/home/ilze/PycharmProjects/MasterThesis/ABCdiscrete/experiments'
+PYTHONPATH = 'specify the python path to folder'
 sys.path.append(os.path.dirname(os.path.expanduser(PYTHONPATH)))
 
 from testbeds.nas import NAS

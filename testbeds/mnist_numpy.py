@@ -33,9 +33,9 @@ class MNIST(Testbed):
         self.D=self.image_size[0] * self.image_size[1] * self.H + self.H * 1
 
         if path=='external':
-            PYTHONPATH = '/home/iaa510'
+            PYTHONPATH = 'specify the python path when working on a remote devise'
         elif path=='internal':
-            PYTHONPATH = '/home/ilze/MasterThesis/mnist'
+            PYTHONPATH = 'specify the python path to folder'
         else:
             print('Invalid python path selection')
             sys.exit()
