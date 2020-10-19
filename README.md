@@ -31,6 +31,6 @@ The repository is organized in 7 folders, which details are described below:
     - population-based ABC `abc.py`
 - **kernels**: contains the possible proposal distributions. 
 - **results**: the directory where the results will be stored.
-- **evaluate**: contains the execution files for the evaluation
+- **evaluate**: contains the execution files for the evaluation.
 - **utils**: contains additional functionalities such as plotting or creating text files to aid storing the results in a more user-friendly way. 
 
