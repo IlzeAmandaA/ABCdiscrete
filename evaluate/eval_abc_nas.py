@@ -45,9 +45,10 @@ def report_txt(method, results, N):
     textfile.write('---------------------------------\n')
 
 
-loc =  'specify the path where the result files are stored'
+DATA_PATH = 'specify the path to where the nasbench_only108.tfrecord is stored'
+STORE =  'specify the path where the result files are stored'
 type = '0.2' #best epsilon threshold
-data=pkl.load(open(loc+'pop_store' + type + '.pkl', 'rb'))
+data=pkl.load(open(STORE+'pop_store' + type + '.pkl', 'rb'))
 res = 'specify the path where to store the result'
 
 
@@ -55,7 +56,7 @@ image_size = (14, 14)
 hidden_units = 20
 
 labels = [0,1]
-use_case = NAS()
+use_case = NAS(path=DATA_PATH)
 
 for method_id in ['mut+xor', 'dde-mc', 'id-samp']:
     print(method_id)

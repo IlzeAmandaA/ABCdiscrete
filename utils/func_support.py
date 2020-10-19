@@ -5,7 +5,7 @@ import collections
 formats = {'mut': '--or', 'mut+crx': ':^g', 'mut+xor': '-.vb',
            'dde-mc':'--or', 'dde-mc1':':^g', 'dde-mc2':'-.vb',
            'id-samp':':^g', 'ind-samp':':^g',
-           'dde-mc*': ':^g', 'mut+xor*': '--or'} #check
+           'dde-mc*': ':^g', 'mut+xor*': '--or'}
 #https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.plot.html
 
 line = {'mut': '--o', 'mut+crx': ':^', 'mut+xor': '-.v',

@@ -14,7 +14,7 @@ from utils.func_support import *
 
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
 parser.add_argument('--steps', type=int, default=120000, metavar='int',
-                    help='evaluation steps')  # 600000
+                    help='evaluation steps')
 parser.add_argument('--seed', type=int, default=0, metavar='int',
                     help='seed')
 parser.add_argument('--N', type=int, default=24, metavar='int',
@@ -35,6 +35,7 @@ args = parser.parse_args()
 
 SEED_MODEL = 1
 MAX_PROCESS=1
+DATA_PATH = 'specify the path to where the nasbench_only108.tfrecord is stored'
 
 
 def execute(method, simulation, runid):
@@ -106,7 +107,7 @@ if __name__ == '__main__':
     np.random.seed(SEED_MODEL)
 
 
-    alg = ABC_Discrete(NAS(), settings=set_proposals, epsilon=args.epsilon, store=args.ens, pflip=args.pflip)
+    alg = ABC_Discrete(NAS(path=DATA_PATH), settings=set_proposals, epsilon=args.epsilon, store=args.ens, pflip=args.pflip)
 
     np.random.seed(args.seed)
 

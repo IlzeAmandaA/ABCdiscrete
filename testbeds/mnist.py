@@ -24,7 +24,7 @@ def transform_polar(image):
 
 class MNIST(Testbed):
 
-    def __init__(self, l1=0, l2=1, H=20, name='mnist', image_size=(14, 14), batch_size=1000, path='external'):
+    def __init__(self, path, l1=0, l2=1, H=20, name='mnist', image_size=(14, 14), batch_size=1000):
         super(MNIST).__init__()
         self.name = name
         self.image_size = image_size
@@ -32,13 +32,7 @@ class MNIST(Testbed):
         self.batch_size = batch_size
         self.D=self.image_size[0] * self.image_size[1] * self.H + self.H * 1
 
-        if path=='external':
-            PYTHONPATH = 'specify the python path when working on a remote devise'
-        elif path=='internal':
-            PYTHONPATH = 'specify the python path to folder'
-        else:
-            print('Invalid python path selection')
-            sys.exit()
+        PYTHONPATH = path
 
         if not(os.path.isfile(PYTHONPATH + '/data/' + 'mnist.pkl')):
             self.download_mnist(location=PYTHONPATH + '/data/')

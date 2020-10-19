@@ -7,7 +7,7 @@ import sys
 PYTHONPATH = 'specify the python path to folder'
 sys.path.append(os.path.dirname(os.path.expanduser(PYTHONPATH)))
 
-from testbeds.mnist_numpy import MNIST
+from testbeds.mnist import MNIST
 from algorithms.abc import ABC_Discrete
 from utils.func_support import *
 
@@ -15,13 +15,13 @@ from utils.func_support import *
 
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
 parser.add_argument('--steps', type=int, default=200000, metavar='int',
-                    help='evaluation steps') #300000
+                    help='evaluation steps')
 parser.add_argument('--seed', type=int, default=0, metavar='int',
                     help='seed')
 parser.add_argument('--N', type=int, default=24, metavar='int',
                     help='seed')
 parser.add_argument('--pflip', type=float, default=0.01, metavar='float',
-                    help='bitflip probability') #0.1
+                    help='bitflip probability')
 parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
 parser.add_argument('--eval', type=int, default=5, metavar='int',
@@ -35,6 +35,7 @@ args = parser.parse_args()
 
 SEED_MODEL=1
 MAX_PROCESS=15
+DATA_PATH = 'specify where to store the MNIST dataset'
 
 
 def execute(method, simulation, runid):
@@ -111,7 +112,7 @@ if __name__ == '__main__':
     hidden_units = 20
 
     labels = [0,1]
-    use_case = MNIST(l1=labels[0], l2=labels[1], image_size=image_size, H=hidden_units)
+    use_case = MNIST(path=DATA_PATH, l1=labels[0], l2=labels[1], image_size=image_size, H=hidden_units)
 
 
     alg = ABC_Discrete(use_case, settings=set_proposals, epsilon=args.epsilon, store=args.ens, pflip = args.pflip)

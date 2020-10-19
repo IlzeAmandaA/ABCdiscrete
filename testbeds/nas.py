@@ -11,10 +11,10 @@ MAXPOOL3X3 = 'maxpool3x3'
 
 class NAS(Testbed):
 
-    def __init__(self):
+    def __init__(self, path):
         super(NAS, self).__init__()
 
-        PATH = 'specify the path to where the nasbench_only108.tfrecord is stored'
+        PATH = path
         self.OPS = [INPUT, CONV1X1, CONV3X3, CONV3X3, CONV3X3, MAXPOOL3X3, OUTPUT]
 
         self.nasbench = api.NASBench(PATH)

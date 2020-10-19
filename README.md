@@ -1,19 +1,36 @@
-# ABCdiscrete
-A python repository for a likelihood-free inference method for discerete data, ABC-discrete
+# ABCdiscrete: Approximate Bayesian Computation for Discrete Data
+The repository contains the python code required to reproduce the experiments carried out in the following paper:
 
-# Contents
-The repostiroy is orgniazed in 7 folders, which details are described below:
-1. **experiments** main execution file folder - this folder contains the main python files for each one of the experiments executed
-2. **testbeds** contains the use-cases utalized for the experiments, with a super class `main_usecase.py` that specifies the functionalities that a given use case must posses for the code to execute
-3. **algorithms** contains a super class, `main_sampling.py` that specifies the minimum required functions that are shared across the different algirhtms, as well as subclasses such as:
-- population-based MCMC `mcmc.py`
-- approximate bayesian computation `abc.py`
-- binarized neural network `bnn.py`
-4. **kernels** contains alternative proposal methods. 
-5. **results** location where the results of each experiment are stored 
-6. **evaluate** contains the main evaluation files for each experiment 
-7. **utils** contains additional functionalities such as plotting or creating text files to aid storing the results in a user-friendly set-up. 
+- Ilze A. Auzina, and Jakub M. Tomczak, 'ABC-di:Approximate Bayesian Computation for Discrete Data', ...
 
-# How to use 
+## Requirements 
+The code requires: 
+- python 3.5 or above
+- numpy 
+- nasbench software (https://github.com/google-research/nasbench)
+- matplotlib
 
-Before running the code specify the python path for the experiments folder. Furthermore, for the experiments on binarized neural network and neural architecture search the actual data files must be dowanloaded and stored on your local device (specify python path in the testbeds files). Morover, for the NAS experiment the software package nasbench must be installed. 
+## Run the Experiments 
+1. Open the `experiments` directory 
+2. Select one of the experiments of interest
+3. Check the settings and update the **pythonpath** and the **datapath** (if needed)
+4. Run the experiment 
+
+## Evaluate the Experiments
+1. Open the `evaluate` directory
+2. Select the experiment you want to evaluate
+3. Check the settings and update the **pythonpath** and the **datapath** 
+4. Run the evaluation
+
+## Overall Design 
+The repository is organized in 7 folders, which details are described below:
+- **experiments**: the directory contains the main execution files for each experiment (every experiment has a separate execution file).
+- **testbeds** : the directory contains the use-cases utilised for the experiments. The super class `main_usecase.py` specifies the functionalities that any use-case must posses (if you want to implement an additional use-case). 
+- **algorithms**: contains the super class, `main_sampling.py` that specifies the minimum required functions, and the subclasses:
+    - population-based MCMC `mcmc.py`
+    - population-based ABC `abc.py`
+- **kernels**: contains the possible proposal distributions. 
+- **results**: the directory where the results will be stored.
+- **evaluate**: contains the execution files for the evaluation
+- **utils**: contains additional functionalities such as plotting or creating text files to aid storing the results in a more user-friendly way. 
+

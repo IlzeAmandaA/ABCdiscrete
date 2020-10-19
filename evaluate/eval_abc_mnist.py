@@ -7,7 +7,7 @@ import pandas as pd
 PYTHONPATH = 'specify the python path to folder'
 sys.path.append(os.path.dirname(os.path.expanduser(PYTHONPATH)))
 
-from testbeds.mnist_numpy import MNIST
+from testbeds.mnist import MNIST
 
 def eval_test(method_id):
     all_min_err =[]
@@ -30,8 +30,6 @@ def eval_test(method_id):
                                 error_argmin=error_min
                                 theta_best = y_hat
 
-
-
         Y_df = pd.DataFrame(Y_hat)
         Y_mode = np.array(Y_df.mode(axis=0))[0]
         error = use_case.distance(Y_mode, eval=True)
@@ -50,10 +48,10 @@ def report_txt(method_id, avg_error, ste, error_argmin, all_argmin, dist):
     textfile.write('percentage of 0s: {}'.format(dist))
     textfile.write('---------------------------------\n')
 
-
-loc =  'specify the path where the result files are stored'
+DATA_PATH = 'specify where to store the MNIST dataset'
+STORE =  'specify the path where the result files are stored'
 n = 5 #how many cross evaluations performed
-storage = [loc+str(i*10)+'/' for i in range(n)]
+storage = [STORE+str(i*10)+'/' for i in range(n)]
 res = 'specify the path where to store the result'
 type = 0.05 #best tolerance threshold value
 
@@ -61,7 +59,7 @@ image_size = (14, 14)
 hidden_units = 20
 
 labels = [0,1]
-use_case = MNIST(l1=labels[0], l2=labels[1], image_size=image_size, H=hidden_units, path='internal')
+use_case = MNIST(path=DATA_PATH,l1=labels[0], l2=labels[1], image_size=image_size, H=hidden_units)
 
 
 for method in ['dde-mc', 'mut+xor', 'ind-samp']:
