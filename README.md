@@ -6,6 +6,7 @@ The repository contains the python code required to reproduce the experiments ca
 ## Requirements 
 The code requires: 
 - python 3.5 or above
+- multiprocessing 
 - numpy 
 - nasbench software (https://github.com/google-research/nasbench)
 - matplotlib
@@ -15,6 +16,8 @@ The code requires:
 2. Select one of the experiments of interest
 3. Check the settings and update the **pythonpath** and the **datapath** (if needed)
 4. Run the experiment 
+
+*the python code is ran in multiple parallel processes, thus, check how many nodes you have available*
 
 ## Evaluate the Experiments
 1. Open the `evaluate` directory

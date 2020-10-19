@@ -20,7 +20,7 @@ parser.add_argument('--seed', type=int, default=0, metavar='int',
 parser.add_argument('--N', type=int, default=24, metavar='int',
                     help='seed')
 parser.add_argument('--pflip', type=float, default=0.01, metavar='float',
-                    help='bitflip probability')  # 0.1
+                    help='bitflip probability')
 parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
 parser.add_argument('--eval', type=int, default=5, metavar='int',
@@ -34,7 +34,7 @@ parser.add_argument('--ens', type=int, default=1, metavar='int',
 args = parser.parse_args()
 
 SEED_MODEL = 1
-MAX_PROCESS=1
+MAX_PROCESS=15
 DATA_PATH = 'specify the path to where the nasbench_only108.tfrecord is stored'
 
 

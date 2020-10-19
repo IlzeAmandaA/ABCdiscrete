@@ -14,13 +14,13 @@ from utils.func_support import *
 
 parser = argparse.ArgumentParser(description='ABC models for discrete data')
 parser.add_argument('--steps', type=int, default=80000, metavar='int',
-                    help='evaluation steps')#
+                    help='evaluation steps')
 parser.add_argument('--seed', type=int, default=4, metavar='int',
                     help='seed')
 parser.add_argument('--N', type=int, default=24, metavar='int',
                     help='seed')
 parser.add_argument('--pflip', type=float, default=0.01, metavar='float',
-                    help='bitflip probability') #0.1
+                    help='bitflip probability')
 parser.add_argument('--pcross', type=float, default=0.5, metavar='float',
                     help='crossover probability')
 parser.add_argument('--eval', type=int, default=80, metavar='int',
