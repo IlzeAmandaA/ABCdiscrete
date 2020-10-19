@@ -6,18 +6,22 @@ The repository contains the python code required to reproduce the experiments ca
 ## Requirements 
 The code requires: 
 - python 3.5 or above
-- multiprocessing 
 - numpy 
-- nasbench software (https://github.com/google-research/nasbench)
+- scipy
+- scikit-image
 - matplotlib
+- nasbench software and its dependencies (https://github.com/google-research/nasbench)
+
 
 ## Run the Experiments 
 1. Open the `experiments` directory 
 2. Select one of the experiments of interest
-3. Check the settings and update the **pythonpath** and the **datapath** (if needed)
+3. Check the settings and update the **pythonpath** and the **datapath** (if needed), see example below:
+    - PYTHONPATH = '/home/username/location/ABCdiscrete/experiments'
+    - DATA_PATH = '/home/username/location/nasbench_only108.tfrecord'
 4. Run the experiment 
 
-*the python code is ran in multiple parallel processes, thus, check how many nodes you have available*
+*the python code is ran in multiple parallel processes (MAX_PROCESS), thus, check how many nodes you have available*
 
 ## Evaluate the Experiments
 1. Open the `evaluate` directory

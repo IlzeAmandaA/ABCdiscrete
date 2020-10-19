@@ -4,7 +4,6 @@ import pickle
 import numpy as np
 from urllib import request
 from scipy.special import expit
-import sys
 from skimage.transform import resize
 from testbeds.main_usecase import Testbed
 
@@ -20,7 +19,6 @@ filename = [
 def transform_polar(image):
     image[image<0.5]=-1
     image[image>=0.5]=1
-    # return image
 
 class MNIST(Testbed):
 
@@ -35,6 +33,9 @@ class MNIST(Testbed):
         PYTHONPATH = path
 
         if not(os.path.isfile(PYTHONPATH + '/data/' + 'mnist.pkl')):
+            if not os.path.exists(PYTHONPATH + '/data'):
+                os.makedirs(PYTHONPATH + '/data')
+
             self.download_mnist(location=PYTHONPATH + '/data/')
             self.save_mnist(location=PYTHONPATH +'/data/')
 
@@ -48,8 +49,6 @@ class MNIST(Testbed):
         idx_l2 = np.where(y_train == l2)[0]
         idx = np.sort(np.concatenate((idx_l1, idx_l2), axis=None))
         train_size = len(idx)
-        # print(len(idx1))
-        # idx = np.sort(np.concatenate((idx_l1[0:int(train_size / 2)], idx_l2[0:int(train_size / 2)]), axis=None))
 
         x_train = np.reshape(x_train[idx], (train_size, 28, 28))
         self.x_train = np.zeros((x_train.shape[0], image_size[0], image_size[1]))
@@ -58,7 +57,6 @@ class MNIST(Testbed):
         self.x_train = np.reshape(self.x_train, (train_size, image_size[0] * image_size[1]))
         self.y_train = y_train[idx]  # [0:train_size]
         assert self.x_train.shape[0] == self.y_train.shape[0], 'incorrect dim xtrain and ytrain'
-        # self.x_train = transform_polar(self.x_train)
         transform_polar(self.x_train)
 
         print('Shape of train data {}'.format(self.x_train.shape))
@@ -76,7 +74,6 @@ class MNIST(Testbed):
         self.x_test = np.reshape(self.x_test, (self.x_test.shape[0], image_size[0] * image_size[1]))
         self.y_test = y_test[idx]
         assert self.x_test.shape[0] == self.y_test.shape[0], 'incorrect dim xtest and ytest'
-        # self.x_test = transform_polar(self.x_test)
         transform_polar(self.x_test)
 
         print('Shape of test data {}'.format(self.x_test.shape))
@@ -155,7 +152,7 @@ class MNIST(Testbed):
         batch_size = int(data_x.shape[0]/batch_count)
 
 
-        for i in range(batch_count): # range(data_x.shape[0] // self.batch_size):
+        for i in range(batch_count):
           #  First layer
             if i==(batch_count-1):
                 h = np.dot(data_x[i * batch_size: data_x.shape[0]], W1)
@@ -172,9 +169,9 @@ class MNIST(Testbed):
             prob = expit(logits)
 
             if i == (batch_count - 1):
-                y_pred[i * batch_size: data_x.shape[0]] = np.rint(np.squeeze(prob)) #np.argmax(prob, -1)
+                y_pred[i * batch_size: data_x.shape[0]] = np.rint(np.squeeze(prob))
             else:
-                y_pred[i * batch_size: (i + 1) * batch_size] = np.rint(np.squeeze(prob))  # np.argmax(prob, -1)
+                y_pred[i * batch_size: (i + 1) * batch_size] = np.rint(np.squeeze(prob))
 
         return y_pred.astype(int)
 
