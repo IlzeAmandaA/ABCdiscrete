@@ -1,7 +1,7 @@
 # ABCdiscrete: Approximate Bayesian Computation for Discrete Data
 The repository contains the python code required to reproduce the experiments carried out in the following paper:
 
-- Ilze A. Auzina, and Jakub M. Tomczak, 'ABC-di:Approximate Bayesian Computation for Discrete Data', 2020, [arXiv](https://arxiv.org/abs/2010.09790)
+- Auzina, I. A., & Tomczak, J. M. (2021). Approximate bayesian computation for discrete spaces. Entropy, 23(3), 312., [Entropy](https://www.mdpi.com/1099-4300/23/3/312)
 
 ## Requirements 
 The code requires: 
